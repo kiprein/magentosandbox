@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<config><acl><resources><resource id="Jonsaverda_Commercebug::admin"><resource id="Jonsaverda_Commercebug::system"><resource id="Jonsaverda_Commercebug::config"><resource id="Jonsaverda_Commercebug::commercebug" title="Configuration for Advanced Debugger"/></resource></resource></resource></resources></acl></config>

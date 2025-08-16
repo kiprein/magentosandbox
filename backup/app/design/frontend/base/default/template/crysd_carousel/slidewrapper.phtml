@@ -1,0 +1,18 @@
+<?php
+  foreach ($cSlides as $s){
+
+    $sHL = $s->getSlideHeadline();
+    $sSHL = $s->getSlideSubheadline();
+    $sBod = $s->getSlideBody();
+    $sHref = $s->getSlideLink();
+    $sCta = $s->getSlideLinkCta();
+    $sSlideImg = $s->getSlideImage();
+    $sSlideImgMobile = $s->getSlideImageMobile();
+    $sImg = Mage::getBaseUrl('media').'carousel/'.$sSlideImg;
+    $sMobImg = Mage::getBaseUrl('media').'carousel/'.$sSlideImgMobile;
+    $sTheme = $s->getSlideTheme();
+
+    include __DIR__ . '/slides/default.phtml';
+
+  }
+?>

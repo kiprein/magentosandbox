@@ -1,0 +1,44 @@
+<?php
+$product = $this->getProduct();
+$qty = $product->getStockItem()->getQty();
+
+// If product is a feature item product or not.
+//// @see app\design\frontend\rwd\crystald\template\catalog\product\view.phtml
+$isFeature = false;
+if($product->getInspirationCard() || 
+    $product->getIncludedPlate() || 
+    $product->getIncludedAccent() || 
+    $product->getColoredSpheres() || 
+    $product->getIncludedPanels() || 
+    $product->getData('goal_setter_block')){
+        $isFeature = true;
+}
+
+if($isFeature){
+    /** If we're dealing with a feature item that means the qty stored will be the qty of the base only.
+     * If this value appears to be wrong, it's probably because the product bill of materials order is not right.
+     * Make sure feature items are after the "P" component!!
+     */
+    //$qtyTitle = (int)$qty . " (base) Available";
+    $qtyTitle = "View (base) Available";
+} else {
+    //$qtyTitle = (int)$qty . " Available";
+    $qtyTitle = "View Available";
+}
+?>
+
+<a class="red-bold availability-popup visible-md visible-lg hidden-xs hidden-sm"
+   href="https://db.crystal-d.com/scripts/availability.php?s_item_num=<?php echo $product->getSku(); ?>">
+    <?php echo $qtyTitle; ?>
+</a>&nbsp;|&nbsp;
+
+<a class="red-bold compare-price visible-md visible-lg hidden-xs hidden-sm"
+   href="https://db.crystal-d.com/scripts/this_last_next.php?k_product_id=<?php echo $product->getOldProductId(); ?>">
+	Compare Next/This/Last Year
+</a>&nbsp;|&nbsp;
+
+<a class="private-info-trigger red-bold">Private Info</a>
+
+<?php if ($product->getSubsurfaceOnly()): ?>
+    &nbsp;|&nbsp;<a class="red-bold subsurface-trigger">Subsurface Only</a>
+<?php endif; ?>

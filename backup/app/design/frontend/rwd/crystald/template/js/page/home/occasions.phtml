@@ -1,0 +1,33 @@
+<?php
+/**
+ * Template for the occasions slider.  All of the slider code is commented out instead of removed as
+ * this could change very soon.  If still commented out at the start of 2019 remove.  Also search this in
+ * the homepage.css to comment out styling. occasions-container
+ */
+?>
+    <div class="bxslider occasions-slider">
+		<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('the-perfect-occasion')->toHtml(); ?>
+    </div>
+
+<?php
+/**
+ *
+  <script type="text/javascript">
+		jQuery(document).ready(function () {
+			jQuery('.occasions-slider').bxSlider({
+				auto: false,
+				slideWidth: 550,
+                slideMargin: 20,
+				moveSlides: 1,
+				prevText: '<',
+				nextText: '>',
+				minSlides: 1,
+				maxSlides: 2,
+                pager: false,
+							adaptiveHeight: true,
+			});
+		});
+    </script>
+ */
+?>
+

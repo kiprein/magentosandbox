@@ -1,0 +1,109 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/* @var $this Mage_Reports_Block_Product_Viewed */
+?>
+<?php if ( $_products = $this->getRecentlyViewedProducts() ): ?>
+    <h3 class="light-grey top-spacing">Recently Viewed Items:</h3>
+    <ul id="recent-viewed-slides">
+		<?php foreach ( $_products as $_item ): ?>
+		<?php
+		$mainProductImage = $_item->getMainProductImage() . '.jpg';
+		$retailPrice1     = $_item->getRetailprice1();
+		$retailPrice3     = $_item->getRetailprice3();
+
+		if ( ! empty( $retailPrice3 ) ) {
+			$priceRange = Mage::helper( 'core' )->currency( $retailPrice3 ) . "<span class='price-dash'>-</span>" . Mage::helper( 'core' )->currency( $retailPrice1 );
+		} else {
+			$priceRange = Mage::helper( 'core' )->currency( $retailPrice1 );
+		}
+		?>
+        <li class="<?php if(count($_products) == 1) { echo 'single-slide'; } ?>">
+            <div class="outer_slide">
+                <div class="award-image">
+                    <a href="<?php echo $_item->getProductUrl() ?>">
+                        <img alt="<?php echo $this->escapeHtml( $_item->getShortDescription()); ?> Image" src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $mainProductImage; ?>" loading="lazy">
+                    </a>
+                </div>
+                <div class="main-price mt-10">
+                    <a href="<?php echo $_item->getProductUrl() ?>" class="dark-grey">
+						<?php echo $_item->getShortDescription(); ?>
+                    </a>
+
+                    <div class="items light-grey">Item <span>#<?php echo $_item->getSku(); ?></span></div>
+                    <div class="list-price light-grey"><?php echo $priceRange; ?></div>
+                </div>
+            </div>
+			<?php endforeach; ?>
+        </li>
+    </ul>
+
+
+<script type="text/javascript">
+	<?php if(count( $_products ) > 1): ?>
+(function($j){
+		//build out the options for bx slider
+		var options = {
+			<?php if(count($_products) > 2): ?>
+			pager: true,
+			<?php else: ?>
+			pager: false,
+			<?php endif; ?>
+			auto: false,
+			slideWidth: 280,
+			adaptiveHeight: true,
+			moveSlides: 1,
+			slideMargin: 6,
+			minSlides: 2,
+			maxSlides: 4,
+			prevText: '<',
+			nextText: '>'
+		};
+		//3 conditionals for different window sizes added 1/2/18 #MGW
+		function updateOptions(){
+			var width = $j(window).width();
+			if(width >= 1235){
+				options.minSlides = 4;
+				options.maxSlides = 4;
+			} else if(width < 1235 && width >= 980){
+				options.minSlides = 3;
+				options.maxSlides = 3;
+			} else {
+				options.minSlides = 2;
+				options.maxSlides = 2;
+			}
+		}
+		//first load
+		updateOptions();
+		var slider = $j('#recent-viewed-slides').bxSlider(options);
+		//change options when window size changes
+		window.addEventListener('resize', function(){
+			updateOptions();
+			slider.reloadSlider(options);
+		});
+	})(jQuery);
+    <?php endif; ?>
+</script>
+<?php endif; ?>   

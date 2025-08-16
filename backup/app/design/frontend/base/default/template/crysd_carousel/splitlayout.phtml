@@ -1,0 +1,101 @@
+<div class="cd-car__wrapper <?php echo 'cd-car__wrapper--'.$cTheme . ' ' . 'cd-car__wrapper--'.$cStyle  ?>">
+
+  <?php
+
+    if($cHL || $cSHL){ ?>
+
+      <header class="cd-car__header <?php echo 'cd-car__header--'.$cTheme . ' ' . 'cd-car__header--'.$cStyle  ?>">
+
+        <?php
+          if($cHL){
+
+            $hlParts = explode('|', $cHL, 2);
+            $hlParts = array_map('trim', $hlParts);
+            
+          ?>
+
+            <h2 class="cd-car__headline <?php echo 'cd-car__headline--'.$cTheme . ' ' . 'cd-car__headline--'.$cStyle  ?>">
+              <?php
+                if(count($hlParts) >= 2){
+                  echo "<span>{$hlParts[0]}</span><span>{$hlParts[1]}</span>";
+                }else{
+                  echo trim($cHL);
+                }
+              ?>
+            </h2>
+
+          <?php }
+
+          if($cSHL){ ?>
+
+            <span class="cd-car__subheadline <?php echo 'cd-car__subheadline--'.$cTheme . ' ' . 'cd-car__subheadline--'.$cStyle  ?>">
+              <?php echo trim($cSHL); ?>
+            </span>
+
+          <?php } ?>
+
+      </header>
+
+    <?php }
+
+    if($cSlides){ ?>
+
+      <div class="cd-car__slides <?php echo 'cd-car__slides--'.$cTheme . ' ' . 'cd-car__slides--'.$cStyle  ?>">
+
+        <?php
+          if(count($cSlides) > $cNum){
+            include __DIR__ . '/carouselwrapper.phtml';
+          }else{
+            include __DIR__ . '/slidewrapper.phtml';
+          }
+        ?>
+
+      </div>
+
+    <?php }
+
+    if($cBod || $cLink || $cVideo){ ?>
+      
+      <footer class="cd-car__footer <?php echo 'cd-car__footer--'.$cTheme . ' ' . 'cd-car__footer--'.$cStyle  ?>">
+        <?php if($cBod){ ?>
+
+          <div class="cd-car__body <?php echo 'cd-car__body--'.$cTheme . ' ' . 'cd-car__body--'.$cStyle  ?>">
+            <?php echo trim($cBod); ?>
+          </div>
+        
+        <?php }
+
+      if($cLink || $cVideo){ ?>
+
+          <div class="cd-car__cta <?php echo 'cd-car__cta--'.$cTheme . ' ' . 'cd-car__cta--'.$cStyle  ?>">
+
+            <?php if($cLink){ ?>
+
+              <a class="cd-car__cta__button <?php echo 'cd-car__cta__button--'.$cTheme . ' ' . 'cd-car__cta__button--'.$cStyle  ?>" href="<?php echo $cLink; ?>">
+                <span>
+                  <?php echo $cCta ? trim($cCta) : 'Click Here'; ?>
+                </span>
+              </a>
+              
+            <?php }
+
+            if($cVideo){ ?>
+
+              <button type="button" class="cd-car__cta__button <?php echo 'cd-car__cta__button--'.$cTheme . ' ' . 'cd-car__cta__button--'.$cStyle  ?>" onclick="vidModal('<?php echo $cVideo; ?>')">
+                <span>
+                  Watch Video
+                </span>
+              </button>
+
+            <?php } ?>
+
+          </div>
+
+        <?php } ?>
+      </footer>
+
+    <?php }
+
+  ?>
+
+</div>

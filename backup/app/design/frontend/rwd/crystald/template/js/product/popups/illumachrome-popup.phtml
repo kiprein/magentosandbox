@@ -1,0 +1,44 @@
+<div class="container illumachrome-container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="popup-title">
+                Illumachrome™
+            </div>
+            <div class="row mt-20">
+	            <?php //For mobile ?>
+	            <?php if (Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+                    <div class="col-xs-12 center fs-14">
+                        <p class="lh-initial">Illumachrome™ is a process where any 4-color image can
+                            be
+                            adhered to a crystal award or gift, giving it a multi-dimensional and
+                            vibrant appearance. Average awards turn into stellar masterpieces when
+                            this
+                            process is employed.
+                            <br><br>
+                            Take a look!</p>
+                        <br>
+                        <iframe style="display: block; margin-left: auto; margin-right: auto; float: left;"
+                                src="https://www.youtube.com/embed/i9gJtp85zzg"></iframe>
+                    </div>
+	            <?php else: ?>
+                <div class="col-xs-3"></div>
+                <div class="col-xs-6 center fs-14">
+                    <p class="lh-initial">Illumachrome™ is a process where any 4-color image can be
+                        adhered to a crystal award or gift, giving it a multi-dimensional and
+                        vibrant appearance. Average awards turn into stellar masterpieces when this
+                        process is employed.
+                        <br><br>
+                        Take a look!</p>
+                    <br>
+                    <iframe src="https://www.youtube.com/embed/i9gJtp85zzg"
+                            style="width: 480px;height: 275px;"></iframe>
+                </div>
+                <div class="col-xs-3"></div>
+                <?php endif; ?>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>

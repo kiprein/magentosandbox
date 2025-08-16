@@ -1,0 +1,131 @@
+<?php /* @var $this CrysD_Carousel_Block_Adminhtml_Carousel_Edit_Slides */ ?>
+
+<!-- HIDDEN TEMPLATE: use __index__ as a placeholder for the row number -->
+<script type="text/html" id="slide-row-template">
+<tr>
+  <td><input name="slides[__index__][slide_headline]" value="" /></td>
+  <td><input name="slides[__index__][slide_subheadline]" value="" /></td>
+  <td><textarea name="slides[__index__][slide_body]"></textarea></td>
+  <td><input name="slides[__index__][slide_link]" value="" /></td>
+  <td><input name="slides[__index__][slide_link_cta]" value="" /></td>
+  <td><input name="slides[__index__][slide_video]" value="" /></td>
+  <td>
+    <select name="slides[__index__][slide_theme]">
+      <?php foreach (Mage::getSingleton('carousel/source_theme')->toOptionArray() as $opt): ?>
+        <option value="<?= $this->escapeHtml($opt['value']) ?>">
+          <?= $this->escapeHtml($opt['label']) ?>
+        </option>
+      <?php endforeach; ?>
+    </select>
+  </td>
+  <td>
+    <input type="file" name="slides[__index__][slide_image_mobile]" accept="image/*" />
+  </td>
+  <td>
+    <input type="file" name="slides[__index__][slide_image]" accept="image/*" />
+  </td>
+  <td><button type="button" class="remove-row">Remove</button></td>
+</tr>
+</script>
+
+<table id="slides_table" class="data">
+  <thead>
+    <tr>
+      <th>Headline</th>
+      <th>Subheadline</th>
+      <th>Body</th>
+      <th>Link</th>
+      <th>CTA</th>
+      <th>Video</th>
+      <th>Theme</th>
+      <th>Mobile Image</th>
+      <th>Image</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($this->getSlides() as $i => $slide): ?>
+      <tr>
+          
+        <td>
+
+        <input type="hidden"
+            name="slides[<?= $i ?>][slide_id]"
+            value="<?= (int)$slide->getSlideId() ?>"
+          />
+          
+        <input name="slides[<?= $i ?>][slide_headline]" 
+                   value="<?= $this->escapeHtml($slide->getSlideHeadline()) ?>" /></td>
+        <td><input name="slides[<?= $i ?>][slide_subheadline]" 
+                   value="<?= $this->escapeHtml($slide->getSlideSubheadline()) ?>" /></td>
+        <td><textarea name="slides[<?= $i ?>][slide_body]">
+            <?= $this->escapeHtml(trim($slide->getSlideBody())) ?></textarea></td>
+
+        <td>
+          <input name="slides[<?= $i ?>][slide_link]" value="<?= $this->escapeUrl($slide->getSlideLink()) ?>" />
+        </td>
+        <td>
+          <input type="text" name="slides[<?= $i ?>][slide_link_cta]" value="<?= $this->escapeHtml($slide->getSlideLinkCta()) ?>" />
+        </td>
+        <td>
+          <input type="text" name="slides[<?= $i ?>][slide_video]" value="<?= $this->escapeHtml($slide->getSlideVideo()) ?>" />
+        </td>
+        <td>
+          <select name="slides[<?= $i ?>][slide_theme]">
+            <?php foreach (Mage::getSingleton('carousel/source_theme')->toOptionArray() as $opt): ?>
+              <option value="<?= $this->escapeHtml($opt['value']) ?>"
+                <?= ($opt['value']==$slide->getSlideTheme() ? 'selected' : '') ?>>
+                <?= $this->escapeHtml($opt['label']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </td>
+        <td>
+  <input type="file"
+         name="slides[<?= $i ?>][slide_image_mobile]"
+         accept="image/*" />
+  <?php if ($slide->getSlideImageMobile()): ?>
+    <br/>
+    <img src="<?= $this->escapeUrl(Mage::getBaseUrl('media').'carousel/'.$slide->getSlideImageMobile())?>"
+         style="max-height:50px;"/>
+  <?php endif; ?>
+</td>
+         <td>
+          <input type="file" name="slides[<?= $i ?>][slide_image]" accept="image/*" />
+          <?php if ($slide->getSlideImage()): ?>
+            <br/>
+            <img src="<?= $this->escapeUrl(Mage::getBaseUrl('media') . 'carousel/' . $slide->getSlideImage()) ?>"
+                  style="max-width:100px; max-height:50px; margin-top:4px"/>
+          <?php endif; ?>
+        </td>
+        <td><button type="button" class="remove-row">Remove</button></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
+<button type="button" id="add-slide-button" class="scalable add">
+  <span>Add Slide</span>
+</button>
+
+<script type="text/javascript">
+//<![CDATA[
+document.observe('dom:loaded', function(){
+  var tbl   = $('slides_table').down('tbody'),
+      tpl   = $('slide-row-template').innerHTML,
+      removeSlide = function(event){
+        var btn = event.findElement('button.remove-row');
+        if (btn) btn.up('tr').remove();
+      };
+
+  // delegate remove buttons
+  tbl.observe('click', removeSlide);
+
+  $('add-slide-button').observe('click', function(){
+    var count   = tbl.select('tr').length,
+        rowHtml = tpl.replace(/__index__/g, count);
+    tbl.insert(rowHtml);
+  });
+});
+//]]>
+</script>

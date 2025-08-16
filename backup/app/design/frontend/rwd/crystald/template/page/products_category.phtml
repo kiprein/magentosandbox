@@ -1,0 +1,39 @@
+<?php
+$categories = $this->helper('js_category')->getCategoryChildrenCollection(4);
+$_categoryMediaUrl =Mage::getBaseUrl('media')."catalog/category/";
+?>
+<div class="row category-wrapper">
+	<?php $j = 1; foreach ( $categories as $category ): ?>
+		<div class="col-md-6 col-sm-6 col-xs-12 padding-fix category-group">
+			<div class="category-list-image">
+				<?php if ( ! empty( $category->getCustomCategoryImage() ) ) { ?>
+					<img alt="<?php echo htmlspecialchars($category->getName()); ?>" class="img-responsive img_full" src="<?php echo $_categoryMediaUrl.$category->getCustomCategoryImage() ?>">
+				<?php } else { ?>
+					<img class="img-responsive img_full" src="<?php echo Mage::getBaseUrl( 'media' ); ?>vga-1.png">
+				<?php } ?>
+                <h2 class="category-title"><a href="<?php echo $category->getUrl() ?>"><?php echo $category->getName(); ?></a></h2>
+			</div>
+			<div class="category-list no-display-mobile">
+				<?php $childrenCategories = $this->helper('js_category')->getCategoryChildrenCollection($category->getId()); ?>
+				<ul class="">
+					<?php $i = 0; foreach($childrenCategories as $childrenCategory): ?>
+						<?php //Exit loop and move on after 7 children ?>
+						<?php if($i > 6): ?>
+							<?php break; ?>
+						<?php endif; ?>
+						<li>
+							<a class="fs-14" href="<?php echo '/products?cat=' . $childrenCategory->getId() ?>"><?php echo $childrenCategory->getName(); ?> › </a>
+						</li>
+						<?php //Add in view all link ?>
+						<?php if($i == 6): ?>
+							<li><a class="fs-14" href="<?php echo $category->getUrl() ?>">View all ›</a></li>
+						<?php endif; ?>
+					<?php $i++; endforeach; ?>
+				</ul>
+			</div>
+		</div>
+		<?php if($j % 2 == 0): ?>
+			</div><div class="row category-wrapper">
+		<?php endif; ?>
+	<?php $j++; endforeach; ?>
+</div>

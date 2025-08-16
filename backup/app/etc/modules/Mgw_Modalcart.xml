@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Mgw_Modalcart>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Mgw_Modalcart>
+    </modules>
+</config>

@@ -1,0 +1,148 @@
+
+<?php
+    $enable = Mage::getStoreConfig('testimonial/status/enabled');
+    $output = Mage::getStoreConfig('advanced/modules_disable_output/Ravi_Testimonials');
+
+if($output == 0 && $enable == 1){
+
+?>
+
+<link href="<?php echo $this->getSkinUrl('testimonials/css/testimonial.css'); ?>" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+function close_pop(temp)
+{
+
+var over = "overlay" + temp;
+var top = "top_block" + temp;
+
+document.getElementById(over).style.visibility='hidden';
+document.getElementById(top).style.visibility='hidden';
+}
+
+function pop(temp)
+{
+var over = "overlay" + temp;
+var top = "top_block" + temp;
+	
+document.getElementById(over).style.visibility='visible';
+document.getElementById(top).style.visibility='visible';
+} 
+	
+	
+ </script>
+
+<div class="page-head">
+<h3><?php echo $this->__('Testimonials') ?></h3>
+</div>
+
+<?php 
+
+$collection = Mage::getModel('testimonials/testimonial')->getCollection();
+$noimage = "no-image.jpg";
+$i = 0;
+foreach ($collection as $item) {
+
+?>
+
+<div class="testimonial_list">
+
+<div class="testimonial_content">
+
+	
+    <div class="testimonial_image">
+    
+   <?php if($item->getPhoto() != null){ ?> 
+    
+<?php
+
+$photonew = substr($item->getPhoto(),25);
+
+// actual path of image
+$imageUrl = Mage::getBaseDir('media').DS."testimonials".DS."testimonial".DS.$photonew;
+
+// path of the resized image to be saved
+// here, the resized image is saved in media/resized folder
+$imageResized =     Mage::getBaseDir('media').DS."testimonials".DS."testimonial".DS."resized".DS.$photonew;
+
+// resize image only if the image file exists and the resized image file doesn't exist
+// the image is resized proportionally with the width/height 135px
+if (!file_exists($imageResized)&&file_exists($imageUrl)) :
+    $imageObj = new Varien_Image($imageUrl);
+    $imageObj->constrainOnly(TRUE);
+    $imageObj->keepAspectRatio(TRUE);
+    $imageObj->keepFrame(FALSE);
+    $imageObj->resize(200, 200);
+    $imageObj->save($imageResized);
+endif;
+
+$newImageUrl = Mage::getBaseUrl('media')."testimonials/testimonial/resized/".$photonew;
+?>
+<img src="<?php echo $newImageUrl ?>" />    
+
+<?php } else{ 
+
+$noImageUrl = Mage::getBaseUrl('media')."testimonials/testimonial/".$noimage;
+?>
+
+<img src="<?php echo $noImageUrl; ?>" />
+
+
+<?php } ?>
+
+<?php if($item->getVideo()!= null){ ?>
+<div class="translucent_cover" id="overlay<?php echo $i; ?>" style="visibility: hidden;">
+</div>
+
+<div class="top_block" id="top_block<?php echo $i; ?>" style="visibility: hidden;">
+
+<?php echo $item->getVideo(); ?>
+<div align="right">
+<input class="blue_button" id="<?php echo $i; ?>" onclick="close_pop(this.id)" type="button" value="Close" />
+</div>
+</div> 
+
+<div align="center" class="click_video">
+ <a href="javascript:void(0)" id="<?php echo $i; ?>" onclick="pop(this.id)"><?php echo $this->__('CLICK HERE FOR VIDEO') ?></a> 
+</div>
+<?php } ?>
+    
+    </div>
+
+	<div class="testimonial_comments">
+		<?php echo $item->getComments(); ?>
+	</div>
+</div>
+
+<div class="testimonial_name">
+	<span><?php echo $item->getFirstname(); ?></span>&nbsp;<span><?php echo $item->getLastname(); ?></span>
+</div>
+
+
+
+<div class="testimonial_exp">
+	<label><?php echo $this->__('Experience:') ?></label> <?php if($item->getRating() == 0){ echo $this->__('Good'); } else if($item->getRating() == 1){ echo $this->__('Very Good'); } else if($item->getRating() == 2){ echo $this->__('Bad'); } ?></span>
+</div>
+
+
+
+</div>
+
+<?php
+
+$i++;
+
+}
+//echo '<pre>';
+//print_r($collection);
+}
+?>
+
+
+
+
+
+
+
+
+

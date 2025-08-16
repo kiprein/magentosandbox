@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <catalog translate="title" module="js_category">
+            <children>
+                <js_featured_gallery>
+                    <title>Featured Galleries</title>
+                    <sort_order>71</sort_order>
+                    <action>adminhtml/gallery/featured</action>
+                </js_featured_gallery>
+            </children>
+        </catalog>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <js_featured_gallery>
+                        <title>Featured Gallery</title>
+                        <sort_order>150</sort_order>
+                    </js_featured_gallery>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <layout>
+        <updates>
+            <js_category>
+                <file>js_category.xml</file>
+            </js_category>
+        </updates>
+    </layout>
+</config>

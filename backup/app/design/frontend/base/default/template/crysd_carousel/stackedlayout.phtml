@@ -1,0 +1,29 @@
+<div class="cd-car__wrapper <?php echo 'cd-car__wrapper--'.$cTheme . ' ' . 'cd-car__wrapper--'.$cStyle  ?>">
+
+  <?php
+
+    if($cHL || $cSHL || $cBod){
+
+      include __DIR__ . '/header.phtml';
+
+    }
+
+    if($cSlides){ ?>
+
+      <div class="cd-car__slides <?php echo 'cd-car__slides--'.$cTheme . ' ' . 'cd-car__slides--'.$cStyle  ?>">
+
+        <?php
+          if(count($cSlides) > $cNum){
+            include __DIR__ . '/carouselwrapper.phtml';
+          }else{
+            include __DIR__ . '/slidewrapper.phtml';
+          }
+        ?>
+
+      </div>
+
+    <?php }
+
+  ?>
+
+</div>

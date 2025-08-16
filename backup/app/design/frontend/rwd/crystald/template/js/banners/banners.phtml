@@ -1,0 +1,49 @@
+<?php
+/**
+ * Template for the banner on the homepage
+ */
+$banners = $this->getBanners();
+$_helper = Mage::helper('js_banners');
+$bannerCount = count($banners);
+?>
+<div class="bxslider banner-slider">
+    <?php 
+    $index = 0;
+    foreach ($banners as $banner) : 
+        $bannerText = $banner->getBannerText();
+        $bannerLink = $banner->getLink();
+        $bannerAlt = $banner->getLabel();
+        $lazyLoading = $index > 0 ? 'loading="lazy"' : '';
+    ?>
+        <div class="banner-row">
+            <?php if (empty($bannerText)): ?>
+                <a class="banner-link" href="<?php echo $bannerLink; ?>">
+                    <img src="<?php echo $_helper->getBannerUrl() . $banner->getImage(); ?>" 
+                        alt="<?php echo $bannerAlt ?>" <?php echo $lazyLoading; ?>/>
+                </a>
+            <?php else: ?>
+                <img src="<?php echo $_helper->getBannerUrl() . $banner->getImage(); ?>" 
+                    alt="<?php echo $bannerAlt ?>" <?php echo $lazyLoading; ?>/>
+                <?php echo $bannerText; ?>
+            <?php endif; ?>
+        </div>
+    <?php 
+    $index++;
+    endforeach; 
+    ?>
+</div>
+
+<!-- Needs to be here so you can check the count -->
+<script type="text/javascript">
+jQuery(document).ready(function(){
+    <?php if($bannerCount > 1): ?>
+    jQuery('.banner-slider').bxSlider({
+        controls: false,
+        pager: true,
+        adaptiveHeight: true,
+        useCSS: false,
+        <?php if($bannerCount > 1): ?> auto: true, <?php endif; ?>
+    });
+    <?php endif; ?>
+});
+</script>

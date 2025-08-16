@@ -1,0 +1,389 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ */
+?>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php $_product = $this->getProduct(); ?>
+<?php $_productHelper = $this->helper('js_product'); ?>
+<?php $_productInfoBlock = $this->getChildHtml('product-information'); ?>
+
+<?php
+//Initial vars
+$searchUrl = Mage::getSingleton('core/session')->getSearchUrl();
+list($previousLink, $nextLink) = $_productHelper->getPreviousNextLinks( $_product->getId() );
+$inventory = $_product->getStockItem();
+$qty = $inventory->getQty();
+
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+$loggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+?>
+<script type="text/javascript">
+	var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->toHtml() ?></div>
+
+<div class="container">
+    <div class="product-navigation light-blue-bold center-md hidden-xs">
+		<?php if ( $previousLink ): ?>
+            <a class="light-blue" href="<?php echo $this->getUrl($previousLink);?>">< Previous Item</a> |
+		<?php endif; ?>
+        <a class="light-blue" href="<?php echo $searchUrl; ?>">Back to Search Results </a>
+		<?php if ($nextLink): ?>
+            | <a class="light-blue" href="<?php echo $this->getUrl($nextLink);?>">Next Item ></a>
+		<?php endif; ?>
+    </div>
+    <div class="product-navigation light-blue-bold hidden-sm hidden-md hidden-lg col-md-12 col-xs-12 col-sm-12 center-md zero-padding-mobile">
+		<?php if ( $previousLink ): ?>
+            <a class="light-blue previous" href="<?php echo $this->getUrl($previousLink);?>">< Prev</a>
+		<?php endif; ?>
+        <a class="light-blue search-results" href="<?php echo $searchUrl; ?>">Back To Search Results </a>
+		<?php if ($nextLink): ?>
+            <a class="light-blue next" href="<?php echo $this->getUrl($nextLink);?>">Next ></a>
+		<?php endif; ?>
+    </div>
+</div>
+
+<!-- Start of container  for name, images, and base info -->
+<div class="container center-md">
+    <div class="row product-header">
+        <div class="col-md-7 col-sm-12 padding-left-15">
+            <h1 class="product-name"><?php echo $_product->getShortDescription();?></h1>
+        </div>
+        <div class="col-md-5 col-sm-12">
+            <div class="fancy-text dark-blue">
+		        <!-- <?php if($_product->getBNewItem() == 1): ?>
+                    New Item!
+		        <?php endif; ?> -->
+		        <?php if($_product->getBExclusive() == 1): ?>
+                    Exclusively Ours!
+		        <?php endif ;?>
+            </div>
+        </div>
+    </div>
+
+    <!--Start of product information row -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 zero-padding">
+                <div class="row mt-20 product-information">
+                    <!-- Needed a way to chage where this shows on mobile and it was to diffculut to try and make this work with bootstrap -->
+                    <!--5-11-17 This got changed back so I'm leaving it this way in case the product info needs to show up else where. -->
+                    <div class="col-xs-12 col-md-7 pull-right">
+                        <?php echo $_productInfoBlock; ?>
+                    </div>
+                    <div class="col-xs-12 col-md-5 pull-left ps-15">
+                        <div class="row media-wrapper">
+                            <?php echo $this->getChildHtml('media'); ?>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-7 pull-right related-products">
+                        <?php echo $this->getChildHtml( 'related_products' ); ?>
+                    </div>
+
+	                <?php if($_product->getBPrivate() == 1): ?>
+                        <div class="catalog-link pr-10 hidden-md hidden-lg visible-xs visible-sm">
+                            <div class="red medium mb-10">Private Item</div>
+                        </div>
+	                <?php endif; ?>
+
+                    <div class="col-xs-12 col-md-7 pricing-table padding-right-15">
+                        <?php $trophyGroup = array(4, 6); ?>
+                        <?php $netGroup = array(4, 5, 6); ?>
+                        <?php $productPricing = $_productHelper->getProductPricing($_product, $loggedIn, $groupId); ?>
+                        <table class="fs-14" cellspacing="0" border="0">
+                            <tr>
+                                <th>Quantity</th>
+                                <th>Retail Price</th>
+                                <?php if(in_array($groupId, $netGroup)): ?>
+                                    <th>Net Price</th>
+                                <?php endif; ?>
+                                <?php if(in_array($groupId, $trophyGroup) && $_product->getBTrophyOk() == 1): ?>
+                                    <?php if(!empty($_product->getTrophyblankprice1()) || $_product->getTrophyblankprice1() != 0): ?>
+                                        <th>Trophy Blank</th>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </tr>
+                            <?php if(isset($productPricing['error']) && $productPricing['error'] == true): ?>
+                                <tr>
+                                    <td><?php echo $productPricing['message']; ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php else: ?>
+                                <?php $i = 0; foreach($productPricing as $pricing): ?>
+                                    <?php if($i == 4 && !in_array($groupId, $trophyGroup)) continue; ?>
+                                    <tr>
+                                        <td><?php echo $pricing['qty']; ?></td>
+                                        <td><?php echo $pricing['retail_price']; ?></td>
+                                        <?php if(in_array($groupId, $netGroup)): ?>
+                                            <td><?php echo $pricing['net_price']; ?></td>
+                                        <?php endif; ?>
+                                        <?php if(in_array($groupId, $trophyGroup) && $_product->getBTrophyOk() == 1): ?>
+                                            <?php if(!empty($_product->getTrophyblankprice1()) || $_product->getTrophyblankprice1() != 0): ?>
+                                                <td><?php echo $pricing['trophy_price']; ?></td>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </tr>
+                                    <?php $i++; ?>
+                                <?php endforeach;?>
+                            <?php endif; ?>
+                        </table>
+                    </div> <!--End of pricing table -->
+
+                    <?php
+                    $_wishlistProductIds = $this->helper('js_guestwishlist')->getWishlistProductIds();
+                    $_wishlistSubmitUrl = $this->helper('js_guestwishlist')->wishlistAddUrl($_product, true);
+                    ?>
+                    <div class="col-md-7 col-xs-12 pull-right form-buttons-wrapper">
+                        <div class="col-md-3 col-sm-3 col-xs-6 product-form-button first">
+	                        <?php if(in_array($_product->getId(), $_wishlistProductIds)): ?>
+                                <a class="button mt-10 wishlist-button" href="<?php echo $_wishlistSubmitUrl; ?>"><img src="<?php echo $this->getSkinUrl('images/filled-star.png', array('_secure'=>true)); ?>" alt="Added Wishlist Star" /><span class="form-button-line1">Added To</span> <span class="form-button-line2">Idea List</span></a>
+	                        <?php else: ?>
+                                <a class="button mt-10 wishlist-button" href="<?php echo $_wishlistSubmitUrl; ?>"><img src="<?php echo $this->getSkinUrl('images/empty-star.png', array('_secure'=>true)); ?>" alt="Add Wishlist Star" /><span class="form-button-line1">Add To</span> <span class="form-button-line2">Idea List</span></a>
+	                        <?php endif; ?>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 product-form-button">
+                            <a class="dealer-form-trigger button mt-10"><img src="<?php echo $this->getSkinUrl('images/request-a-dealer.png', array('_secure'=>true)); ?>" alt="Request A Dealer Icon" /><span class="form-button-line1">Request A</span> <span class="form-button-line2">Dealer</span></a>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 product-form-button">
+                            <a class="quote-form-trigger button mt-10"><img src="<?php echo $this->getSkinUrl('images/request-a-quote.png', array('_secure'=>true)); ?>" alt="Request A Quote Icon" /><span class="form-button-line1">Request A</span> <span class="form-button-line2">Quote</span></a>
+                        </div>
+                        <div class="col-md-3 col-sm-3 col-xs-6 product-form-button last">
+                            <a class="free-form-trigger button mt-10"><img src="<?php echo $this->getSkinUrl('images/request-a-virtual.png', array('_secure'=>true)); ?>" alt="Request Free Virtual Icon" /><span class="form-button-line1">Request Free</span> <span class="form-button-line2">Virtual</span></a>
+                        </div>
+                    </div>
+
+                    <!--Has the logic for the product forms -->
+                    <?php echo $this->getChildHtml('product_forms'); ?>
+                </div>
+            </div>
+        </div><!--End of product information row -->
+    </div>
+
+    <!-- Start of what's included and additional option row -->
+    <div class="container">
+        <div class="row mt-20" id="product-accordions">
+            <?php echo $this->getChildHtml('included_in_purchase'); ?>
+
+            <?php echo $this->getChildHtml('additional_options'); ?>
+        </div>
+    </div>
+    <!-- End of what's included and additional row -->
+
+    <!--second row of buttons -->
+    <div class="container">
+        <div class="row hidden-md hidden-sm hidden-xs mb-15">
+            <div class="col-md-12 col-xs-12">
+                <div class="col-md-3 col-xs-6 padding-left-0 padding-right-5 product-form-button">
+                    <?php if(in_array($_product->getId(), $_wishlistProductIds)): ?>
+                        <a class="button mt-10" href="<?php echo $_wishlistSubmitUrl; ?>"><img src="<?php echo $this->getSkinUrl('images/filled-star.png', array('_secure'=>true)); ?>" alt="Added Wishlist Star" />Added To Idea List</a>
+                    <?php else: ?>
+                        <a class="button mt-10" href="<?php echo $_wishlistSubmitUrl; ?>"><img src="<?php echo $this->getSkinUrl('images/empty-star.png', array('_secure'=>true)); ?>" alt="Add Wishlist Star" />Add To Idea List</a>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-3 col-xs-6 padding-side-5 product-form-button">
+                    <a class="dealer-form-trigger button mt-10"><img alt="Request A Dealer Icon" src="<?php echo $this->getSkinUrl('images/request-a-dealer.png', array('_secure'=>true)); ?>" />Request A Dealer</a>
+                </div>
+                <div class="col-md-3 col-xs-6 padding-side-5 product-form-button">
+                    <a class="quote-form-trigger button mt-10"><img alt="Request A Quote Icon" src="<?php echo $this->getSkinUrl('images/request-a-quote.png', array('_secure'=>true)); ?>" />Request A Quote</a>
+                </div>
+                <div class="col-md-3 col-xs-6 padding-left-5 product-form-button">
+                    <a class="free-form-trigger button mt-10"><img alt="Request Free Virtual Icon" src="<?php echo $this->getSkinUrl('images/request-a-virtual.png', array('_secure'=>true)); ?>" />Request Free Virtual</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  Start Product Detail, artwork, packaging and Private info -->
+    <div class="container product-tab-wrapper zero-padding-mobile">
+        <div id="product-tabs" class="align-left-mobile">
+	        <?php if ( $groupId == "6" ): ?>
+	            <?php $tabClass = "col-sm-3 col-xs-3 col-md-3 zero-padding-mobile"; ?>
+            <?php else: ?>
+		        <?php $tabClass = "col-sm-4 col-xs-4 col-md-4 zero-padding-mobile"; ?>
+	        <?php endif; ?>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active <?php echo $tabClass; ?>"><a href="#product-details-tab" aria-controls="product-details-tab" role="tab" data-toggle="tab" class="">Product Details</a></li>
+                <li role="presentation" class="<?php echo $tabClass; ?>">
+                    <a href="#artwork-tab" aria-controls="artwork-tab" role="tab" data-toggle="tab" class="">
+                        <span class="hidden-xs hidden-sm visible-md visible-lg">Artwork & Ordering Information</span>
+                        <span class="hidden-md hidden-lg visible-sm visible-xs">Artwork & Ordering</span>
+                    </a>
+                </li>
+                <li role="presentation" class="<?php echo $tabClass; ?>"><a href="#packaging-tab" aria-controls="packaging-tab" role="tab" data-toggle="tab" class="">Packaging & Shipping</a></li>
+	            <?php if ( $groupId == "6" ): ?>
+                <li id="wowtext" role="presentation" class="<?php echo $tabClass; ?>"><a href="#private-info-tab" aria-controls="private-info-tab" role="tab" data-toggle="tab" class="">Private Info</a></li>
+	            <?php endif ?>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="product-details-tab">
+                    <ul>
+		                <?php echo $_productHelper->getProductDetails($_product); ?>
+                    </ul>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="artwork-tab">
+	                <?php //Only time @ sign should be used ?>
+	                <?php $optionalCharges = @unserialize( $_product->getOptionalCharge() ); ?>
+	                <?php if ( $optionalCharges !== false || $optionalCharges === 'b:0;' ): ?>
+                        <table class="optional-services" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <th class="slider-header" width="60%"><strong>Optional Services</strong></th>
+                                <th class="slider-header align-right" width="20%"><strong>Price</strong></th>
+				                <?php if($loggedIn): ?>
+                                    <th class="slider-header align-right" width="20%"><strong>Net Price</strong></th>
+				                <?php endif; ?>
+                            </tr>
+			                <?php echo $_productHelper->getOptionalChargeRows($optionalCharges, $loggedIn); ?>
+                            </tbody>
+                        </table>
+	                <?php endif; ?>
+
+
+	                <?php echo $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'artwork-ordering' )->toHtml(); ?>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="packaging-tab">
+                    <div class="row giftbox-wrapper">
+                        <div class="col-md-6 col-sm-6 giftbox-image">
+                            <?php if ( ! empty( $_product->getGiftBoxImage() ) ): ?>
+                                <strong>Gift Box Included:</strong><br>
+                                <?php
+                                /**
+                                 * <img alt="<?php echo htmlspecialchars($_product->getGiftBoxAltText()); ?>"
+                                 * src='https://image.crystal-d.com/img.php?box=400-&file=<?php echo $_product->getGiftBoxImage(); ?>'>
+                                 */
+                                ?>
+                                <img alt="<?php echo htmlspecialchars($_product->getGiftBoxAltText()); ?>"
+                                     src='https://image.crystal-d.com/img/i400-n/package/<?php echo $_product->getSku(); ?>.jpg'>
+                            <?php endif; ?>
+                        </div>
+                        <div class="col-md-6 col-sm-6 giftbox-image-text">
+                            <?php echo $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'PD_packaging-shipping' )->toHtml(); ?>
+                        </div>
+                    </div>
+                </div>
+	            <?php if ( $groupId == "6" ): ?>
+                <div role="tabpanel" class="tab-pane" id="private-info-tab">
+                    <ul>
+	                    <?php echo $_productHelper->getProductPrivateInfo($_product); ?>
+                    </ul>
+
+                    <div class="mt-10 mb-10">
+                        <a class="red medium" href="javascript:void(0)" id="check_this_last_next">Compare Next/This/Last Year</a>
+                        <br>
+                        <a class="red medium" href="javascript:void(0)" id="check_availabilty"><?php echo (int) $qty." Available";?></a>
+
+                        <div id="this_last_next"></div>
+                        <div id="this_check_avail"></div>
+                    </div>
+                    <!--- Here is comment form -->
+                    <strong class="product-recent other1" style="font-size:20px;">Notes section</strong>
+
+                    <form method="post" id="frm_comment">
+                        <textarea id="s_wow_idea" class="form-control"></textarea>
+
+                        <div class="clearfix"></div>
+                        <input type="button" id="save_s_wow_idea" value="Submit" class="button">
+                        <span id="succ_comment_msg"></span>
+                    </form>
+                </div>
+                <?php endif; ?>
+            </div>
+
+        </div>
+    </div>
+    <!--  End Product Detail, artwork, packaging and Private info -->
+
+    <div class="container">
+        <div class="product-list recent-view other large-product-slider">
+		    <?php echo $this->getChildHtml('custom_product_crosssell'); ?>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="product-list recent-view other large-product-slider">
+			<?php echo $this->getLayout()->createBlock( 'reports/product_viewed' )->setTemplate( 'reports/product_viewed.phtml' )->toHtml(); ?>
+        </div>
+    </div>
+
+</div>
+<!-- End of container  for name, images, and base info -->
+
+<!-- On mobile you need to turn off the arrows since they look like garbage -->
+<?php if(Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+<style>
+    .large-product-slider .bx-wrapper .bx-controls-direction a, .panel-body .bx-wrapper .bx-controls-direction a {
+        display: none !important;
+    }
+</style>
+<?php endif; ?>
+
+<script type="text/javascript">
+  jQuery('#check_this_last_next').click( function() {
+    jQuery('#this_last_next').show();
+    jQuery.ajax( {
+      url: 'https://db.crystal-d.com/scripts/this_last_next.php',
+      data: {k_product_id: '<?php echo $_product->getOldProductId(); ?>'},
+      success: function( data, textStatus, jqXHR ) {
+        jQuery('#this_last_next').html( data );
+        jQuery('#this_check_avail').hide();
+      }
+    });
+  });
+
+  jQuery('#check_availabilty').click( function() {
+    jQuery('#this_check_avail').show();
+    jQuery.ajax( {
+      url: 'https://db.crystal-d.com/scripts/availability.php',
+      data: {s_item_num: '<?php echo $_product->getSku();?>'},
+      success: function( data, textStatus, jqXHR ) {
+        jQuery('#this_check_avail').html( data );
+        jQuery('#this_last_next').hide();
+      }
+    });
+  });
+
+  jQuery('#wowtext').click( function() {
+    jQuery.ajax( {
+      url: 'https://db.crystal-d.com/scripts/ajax/web/getWow.php',
+      data: {s_item_num: '<?php echo $_product->getSku();?>'},
+      success: function( data, textStatus, jqXHR ) {
+        var obj =jQuery.parseJSON(data);
+        jQuery('#s_wow_idea').val(obj.s_wow_idea);
+      }
+    });
+  });
+
+
+</script>

@@ -1,0 +1,60 @@
+<?php
+/**
+ * Template for the gallery on the homepage
+ * @var $this Js_Category_Block_Featured_Gallery
+ */
+$galleries     = $this->getGalleries();
+$helper     = Mage::helper('js_category');
+$galleriesCount = count($galleries);
+
+?>
+<div class="bxslider featured-gallery-wrapper">
+    <?php foreach ($galleries as $gallery) : ?>
+        <div class="featured-gallery-card">
+            <a href="<?php echo $gallery->getLink(); ?>">
+                <img src="<?php echo $helper->getFeaturedGalleryUrl() . $gallery->getImage(); ?>" alt="<?php echo $gallery->getAlt(); ?>"/>
+            </a>
+            <h4>
+                <?php echo $gallery->getTitle(); ?><br>
+            </h4>
+            <div>
+                <a href="<?php echo $gallery->getLink(); ?>" class="btn featured-gallery-btn">Search Now</a>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery('.featured-gallery-wrapper').bxSlider({
+	        auto: false,
+	        slideWidth: 260,
+            slideMargin: 20,
+	        moveSlides: 1,
+	        prevText: '<',
+	        nextText: '>',
+	        minSlides: 2,
+	        maxSlides: 4,
+            pager: false,
+	        useCSS: false,
+        });
+
+	    setTimeout(
+		    function () {
+			    /**
+                 * There is a ton of nonsense with the slider and styling.  I couldn't get the right
+                 * edge of the last image to show due to the calculated width.  So I'm waiting until
+                 * it's done loading and adding just a few extra px to fix this
+			     */
+			    var wrapperWidth = jQuery('.featured-gallery-container .bx-wrapper').css("max-width");
+			    var wrapperWidthFix = topPosition = parseInt(wrapperWidth) + 10;
+			    jQuery('.featured-gallery-container .bx-wrapper').css('max-width', wrapperWidthFix+'px');
+
+                jQuery('.featured-gallery-container .featured-gallery-card .featured-gallery-btn').css('color', '#003a74');
+		    }, 250);
+
+    });
+
+
+
+</script>

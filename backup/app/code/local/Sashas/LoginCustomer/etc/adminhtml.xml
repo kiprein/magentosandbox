@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * @author		Sashas
+ * @category    Sashas
+ * @package     Sashas_LoginCustomer
+ * @copyright   Copyright (c) 2015 Sashas IT Support Inc. (http://www.sashas.org)
+ * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
+ */
+-->
+<config>
+     <acl>
+        <resources>
+			<all>
+			  <title>Allow Everything</title>
+			</all>        
+            <admin>
+                <children>
+		 			<system>
+		 				<children>
+		 					<config>
+		 						<children>
+		 							<logincustomer translate="title" module="logincustomer">
+		 								<title>Login as Customer</title>
+		 							</logincustomer>
+		 						</children>
+		 					</config>
+		 					<tools>
+		 						<children>
+		 							<logincustomer translate="title" module="logincustomer">
+		 								<title>Login as Customer Log</title>
+		 							</logincustomer>
+		 						</children>
+		 					</tools>		 					
+		 				</children>		 				
+		 			</system>     
+		 			<customer>
+		 				<children>
+		 					<manage>
+		 						<children>
+		 							<logincustomer translate="title" module="logincustomer">
+		 								<title>Login as Customer</title>
+		 							</logincustomer>
+		 						</children>
+		 					</manage>
+		 				</children>		 				
+		 			</customer>           
+                </children>
+            </admin>
+        </resources>
+     </acl>	    
+    <menu>
+         <system>                   
+            <children>
+                <tools>
+                	<children>
+		                <logincustomer translate="title" module="logincustomer">
+		                    <title>Login as Customer Log</title>
+		                    <action>adminhtml/logincustomer/log</action>                   
+		                    <sort_order>5000</sort_order>
+		                </logincustomer>       
+					</children>
+                </tools>                            
+            </children>
+         </system>
+     </menu>       
+</config>

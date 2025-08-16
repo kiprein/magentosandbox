@@ -1,0 +1,144 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Template for Mage_Page_Block_Html
+ */
+?>
+
+<!DOCTYPE html>
+
+<!--[if lt IE 7 ]>
+<html lang="en" id="top" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>
+<html lang="en" id="top" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>
+<html lang="en" id="top" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>
+<html lang="en" id="top" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" id="top" class="no-js"> <!--<![endif]-->
+
+<head>
+	<?php echo $this->getChildHtml( 'head' ) ?>
+</head>
+<?php
+$customer = Mage::getSingleton( 'customer/session' )->getCustomer();
+$name     = $customer->getName();
+$email    = $customer->getEmail();
+$key = md5('Swordfish'.$email.date('Ymd'));
+$pltoken  = md5( $_SERVER['REMOTE_ADDR'] . strtolower($email) );
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+$blockVariables = [
+    "customer_name" => $name,
+    "customer_email" => $email,
+    "ot_key" => $key
+];
+?>
+
+<style>
+.mw-textsize1{font-size: 54px;}
+.mw-textsize2{font-size: 26px;}
+.mw-textsize3{font-size: 24px;}
+.mw-iframe{
+    max-width: 800px;
+    max-height: 450px;
+}
+.squish-row{padding: 0 180px;}
+.mw-overlay-wrapper{
+    width: 100%;
+    position: absolute;
+    text-shadow: 5px 3px 4px rgba(0,0,0,0.55);
+    color: white;  top: 50%;
+    transform: perspective(1px) translateY(-50%);
+}
+.mw-overlay-2nd-heading{
+
+}
+.mw-overlay-btn, .mw-overlay-btn:hover{
+    color: white;
+    border: 1px solid white;
+    background: none;
+    padding: 9px 14px;
+}
+@media (max-width: 768px){
+    .mw-textsize1{font-size: 20px;}
+    .mw-textsize2{font-size: 17px;}
+    .mw-textsize3{font-size: 12px;}
+}
+/*Squish rows*/
+@media (max-width: 1700px){
+    .squish-row{padding: 0 83px;}
+}
+@media (max-width: 1550px){
+    .squish-row{padding: 0 5px;}
+}
+</style>
+<body<?php echo $this->getBodyClass() ? ' class="' . $this->getBodyClass() . '"' : '' ?>>
+<!-- This form is used when a customer clicks "My websites" that renders in the selling and marketing static block -->
+<form action="http://pladm.crystal-d.com" method="post" id="pl-form">
+	<input type="hidden" name="email" value="<?php echo $email; ?>"/>
+	<input type="hidden" name="pltoken" value="<?php echo $pltoken; ?>"/>
+</form>
+<?php echo $this->getChildHtml( 'after_body_start' ) ?>
+<div class="wrapper" id="wrapper">
+	<?php echo $this->getChildHtml( 'global_notices' ) ?>
+	<div class="page">
+		<?php echo $this->getChildHtml( 'header' ) ?>
+		<?php if($groupId == 4):?>
+		<?php //Trophy retailer static block
+            $block = $this->getLayout()->createBlock('cms/block')->setBlockId('trophy-retailer-dashboard');
+            $filter = Mage::getSingleton('cms/template_filter');
+            $filter->setVariables($blockVariables);
+            echo $filter->filter($block->toHtml());
+        ?> 
+		<?php else: ?>
+        <style>
+        .mw-overlay-btn2, .mw-overlay-btn2:hover{
+			color: white;
+			border: 1px solid white;
+			background: #005883;
+			padding: 9px 14px;
+		}
+        </style>
+        <?php 
+            $block = $this->getLayout()->createBlock('cms/block')->setBlockId('dealer-dashboard');
+            $filter = Mage::getSingleton('cms/template_filter');
+            $filter->setVariables($blockVariables);
+            echo $filter->filter($block->toHtml());
+         ?>
+		<?php endif; ?>
+	</div>
+
+	<?php echo $this->getChildHtml( 'footer_before' ) ?>
+	<?php echo $this->getChildHtml( 'footer' ) ?>
+	<?php echo $this->getChildHtml( 'global_cookie_notice' ) ?>
+	<?php echo $this->getChildHtml( 'before_body_end' ) ?>
+</div>
+<?php echo $this->getAbsoluteFooter() ?>
+</body>
+</html>

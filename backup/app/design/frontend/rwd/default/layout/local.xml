@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="header">
+            <block type="core/template" name="mobile-menu" template="js/page/html/mobile-menu.phtml" />
+        </reference>
+        <reference name="after_body_start">
+            <block type="mgw_modalcart/modalcart" name="mwCart" template="mgw/mwCartRebuild.phtml"/>
+            <!-- <block type="checkout/cart_sidebar" name="mwCart" template="mgw/mwCart.phtml"/> -->
+        </reference>
+    </default>
+    <cms_index_index>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+
+            <block type="js_banners/banners" name="banners" template="js/banners/banners.phtml"/>
+            <block type="core/template" name="mobile-banners" template="js/banners/mobile-banner.phtml"/>
+
+            <block type="js_category/featured_gallery" name="featured.gallery" template="js/featured/gallery.phtml"/>
+            <block type="core/template" name="occasions" template="js/page/home/occasions.phtml"/>
+            <block type="core/template" name="callouts" template="js/page/home/callouts.phtml"/>
+
+
+        </reference>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/homepage.css</name>
+            </action>
+        </reference>
+    </cms_index_index>
+
+    <catalogsearch_result_index>
+        <reference name=" search_result_list">
+            <!-- Reorder search by price -->
+            <action method="setDefaultDirection">
+                <param>asc</param>
+            </action>
+            <action method="setSortBy">
+                <param>price</param>
+            </action>
+        </reference>
+    </catalogsearch_result_index>
+    <catalogsearch_advanced_result>
+        <reference name="search_result_list">
+            <!-- Reorder search by price -->
+            <action method="setDefaultDirection">
+                <param>asc</param>
+            </action>
+            <action method="setSortBy">
+                <param>price</param>
+            </action>
+        </reference>
+    </catalogsearch_advanced_result>
+</layout>

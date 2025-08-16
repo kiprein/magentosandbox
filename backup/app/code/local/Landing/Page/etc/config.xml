@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Landing_page>
+      <version>0.1.0</version>
+    </Landing_page>
+
+  </modules>
+  <global>
+    <page>
+      <layouts>
+        <landingpage translate="label">
+          <label>Landing_page</label>
+          <template>page/landingpage.phtml</template>
+          <layout_handle>Landing_page</layout_handle>
+        </landingpage>
+        <!-- add more layouts here -->
+      </layouts>
+    </page>
+  </global>
+</config>

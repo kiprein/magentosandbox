@@ -1,0 +1,57 @@
+<?php $_order = $this->getOrder() ?>
+<div class="box-left">
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-account"><?php echo Mage::helper('sales')->__('Additional Information') ?></h4>
+        </div>
+        <div class="fieldset">
+            <table cellspacing="0" class="form-list">
+            <?php 
+            	$customInputs = $this->getCustomVars();
+            	foreach($customInputs as $key => $value){ 
+
+                    if($key == '3rdpartyFedex'){
+                        $value = unserialize($value);
+                        ?><table><tr><th colspan=2>3rd Party Shipping Information</th></tr><?php
+                        foreach($value as $thirdPartyKey => $thirdPartyData){
+                            switch($thirdPartyKey){
+                                case 'acc':
+                                    $thirdPartyTitle = 'Account Number';
+                                    break;
+                                case 'carrier':
+                                    $thirdPartyTitle = 'Carrier';
+                                    break;
+                                case 'add1':
+                                    $thirdPartyTitle = 'Address Line 1';
+                                    break;
+                                case 'add2':
+                                    $thirdPartyTitle = 'Address Line 2';
+                                    break;
+                                case 'city':
+                                    $thirdPartyTitle = 'City';
+                                    break;
+                                case 'state':
+                                    $thirdPartyTitle = 'State';
+                                    break;
+                                case 'zip':
+                                    $thirdPartyTitle = 'Zipcode';
+                                    break;
+                                case 'country':
+                                    $thirdPartyTitle = 'Country';
+                                    break; 
+                            } ?>
+                            <tr>
+                                <td style="width:160px" class="label"><strong><?php echo Mage::helper('sales')->__($thirdPartyTitle) ?></strong></td>
+                                <td class="value"><?php echo $thirdPartyData;?></td>
+                            </tr>
+                    <?php } ?></table><?php } else { ?>
+                <tr>
+                    <td style="width:10%" class="label"><strong><?php echo Mage::helper('sales')->__($key) ?></strong></td>
+                    <td class="value"><?php echo $value;?></td>
+                </tr>
+            <?php }} ?>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>

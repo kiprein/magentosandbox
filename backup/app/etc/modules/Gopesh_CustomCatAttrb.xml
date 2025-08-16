@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Gopesh_CustomCatAttrb>
+      <active>false</active>
+      <codePool>local</codePool>
+    </Gopesh_CustomCatAttrb>
+  </modules>
+</config>

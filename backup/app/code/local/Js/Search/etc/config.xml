@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Search>
+            <version>0.1.0</version>
+        </Js_Search>
+    </modules>
+    <global>
+        <models>
+            <js_search>
+                <class>Js_Search_Model</class>
+            </js_search>
+        </models>
+    </global>
+    <frontend>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <js_custom_product_check>
+                        <type>singleton</type>
+                        <!-- Used to store a redirect back to the search from a product page -->
+                        <method>searchCheck</method>
+                        <class>Js_Search_Model_Observer</class>
+                    </js_custom_product_check>
+                </observers>
+            </controller_action_predispatch>
+        </events>
+    </frontend>
+</config>

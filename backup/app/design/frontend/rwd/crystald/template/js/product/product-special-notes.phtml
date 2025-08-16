@@ -1,0 +1,74 @@
+<?php
+$product = $this->getProduct();
+$loggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+$productHelper = $this->helper('js_product');
+$inventory = $product->getStockItem();
+$qty = $inventory->getQty();
+$quickShipText = $this->getLayout()->createBlock('cms/block')->setBlockId('quick-ship-text')->toHtml();
+?>
+
+<div class="product-notes hidden-sm hidden-xs">
+    <div class="col-xs-12" id="personalization-notes">
+        <p><span class="red bold">FREE</span> <span class="light-grey">Set-Ups&nbsp;&nbsp;|&nbsp;&nbsp;</span></p>
+        <?php if ($product->getPersonalizationExtra() == 0 && $product->priced_as_blank === "0"): ?>
+            <p><span class="red bold">FREE</span> <span class="light-grey">Personalizations&nbsp;&nbsp;|&nbsp;&nbsp;</span></p>
+        <?php endif; ?>
+        <p><span class="red bold">FREE</span> <span class="light-grey">Art Services&nbsp;&nbsp;|&nbsp;&nbsp;</span></p>
+        <p><span class="red bold">FREE</span> <span class="light-grey">Virtuals </span></p>
+        <?php if ($product->getPersonalizationExtra() == 1 && $product->getPriceHasPersonalization() == 1): ?>
+            <p>&nbsp;&nbsp;|&nbsp;&nbsp;<span class="red">Personalization Not Included</span></p>
+        <?php endif; ?>
+
+    </div>
+</div>
+
+<div id="new-product" class="red col-xs-12">
+	<?php if ($product->getImportantNote1()): ?>
+        <p class="padding-left-10-mobile red" style="font-weight: 800; font-size: 13px;"><?php echo $product->getImportantNote1(); ?></p>
+	<?php endif; ?>
+
+	<?php if ($product->getImportantNote2()): ?>
+        <p class="padding-left-10-mobile red" style="font-weight: 800; font-size: 13px;"><?php echo $product->getImportantNote2(); ?></p>
+	<?php endif; ?>
+</div>
+
+<?php if($product->getBPrivate() == 1): ?>
+    <div class="catalog-link pr-10 visible-md visible-lg hidden-xs hidden-sm">
+        <div class="red medium">Private Item</div>
+    </div>
+<?php endif; ?>
+
+<?php if ( $product->getQuickShip() == 397 ): ?>
+	<div class="catalog-link quickship pr-10 visible-md visible-lg hidden-xs hidden-sm">
+        <div class="quick-ship-hover hidden-sm hidden-xs"><?php echo $quickShipText; ?></div>
+	    <img alt="Quick Ship Truck Icon" src="<?php echo Mage::getBaseUrl( 'media' ) ?>wysiwyg/quick-ship.png"/>
+	    <span class="red medium">Call For Quick Ship!</span>
+	</div>
+<?php endif; ?>
+<div class="special-msg catalog-link pr-10">
+	<?php if($product->getBDiscontinued() == 1): ?>
+        Discontinued. Closeout.
+		<?php if($qty == 9999): ?>
+            Call for Availability
+		<?php endif; ?>
+	<?php endif; ?>
+	<?php if($product->getNotManufactured() == 1): ?>
+        No Longer Manufactured.
+	<?php endif; ?>
+	<?php if(!empty($product->getNDiscount())): ?>
+		<?php echo $productHelper->getDiscountLabel($product->getNDiscount()); ?>
+	<?php endif; ?>
+	<?php if($product->getBSpecialOrder() == 1): ?>
+        Special Order Available
+	<?php endif; ?>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function () {
+    jQuery( ".quickship" ).hover(function() {
+      jQuery(this).find('.quick-ship-hover').css('visibility', 'visible');
+    }, function() {
+      jQuery(this).find('.quick-ship-hover').css('visibility', 'hidden');
+    });
+  });
+</script>

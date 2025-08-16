@@ -1,0 +1,47 @@
+<?php
+$output = Mage::getStoreConfig('advanced/modules_disable_output/Ravi_Testimonials');
+
+    if($output == 0){
+
+$left = Mage::getStoreConfig('testimonial/display/leftorright');
+	if($left == 1){
+ ?>
+
+
+<link href="<?php echo $this->getSkinUrl('testimonials/css/testimonial.css'); ?>" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('testimonials/js/jquery-1.7.2.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('testimonials/js/jquery.quovolver.js'); ?>"></script>
+
+<!-- JavaScript Test Zone -->
+<script type="text/javascript">
+var noC1 = jQuery.noConflict();
+noC1(document).ready(function() {
+	
+	noC1('blockquote1').quovolver();
+	
+});
+</script>
+
+
+<?php 
+
+$collection = Mage::getModel('testimonials/testimonial')->getCollection();
+foreach ($collection as $item) {
+
+?>
+
+<blockquote1>
+			<p><?php echo substr($item->getComments(),0,200); ?></p>
+			<cite>&ndash; <?php echo $item->getFirstname(); ?>&nbsp;<?php echo $item->getLastname(); ?></cite>
+            <a class="sidebar-viewall" href="<?php echo $this->getUrl('testimonials-list'); ?>">View All</a>
+		</blockquote1>
+
+<?php }
+
+	}
+    }
+ ?>
+
+
+

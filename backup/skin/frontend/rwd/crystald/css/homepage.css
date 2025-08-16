@@ -1,0 +1,388 @@
+/*------------------------------------------------------------------
+When I first started working on this site the styling was in a state of despair.  Originally there 7 style sheets all with
+a different name for "style".  I've slowly been trying to merge them all into one.  However the client wanted to redo
+the product page which was a large overhaul of the original product page.  I decided to just add a product css file and remove
+what I can from everywhere else.  Once things are cleanup a little more this should be inserted into styles.css
+-------------------------------------------------------------------*/
+.product-view-container .col-lg-1, .product-view-container .col-lg-10, .product-view-container .col-lg-11,
+.product-view-container .col-lg-12, .product-view-container .col-lg-2, .product-view-container .col-lg-3,
+.product-view-container .col-lg-4, .product-view-container .col-lg-5, .product-view-container .col-lg-6,
+.product-view-container .col-lg-7, .product-view-container .col-lg-8, .product-view-container .col-lg-9,
+.product-view-container .col-md-1, .product-view-container .col-md-10, .product-view-container .col-md-11,
+.product-view-container .col-md-12, .product-view-container .col-md-2, .product-view-container .col-md-3,
+.product-view-container .col-md-4, .product-view-container .col-md-5, .product-view-container .col-md-6,
+.product-view-container .col-md-7, .product-view-container .col-md-8, .product-view-container .col-md-9,
+.product-view-container .col-sm-1, .product-view-container .col-sm-10, .product-view-container .col-sm-11,
+.product-view-container .col-sm-12, .product-view-container .col-sm-2, .product-view-container .col-sm-3,
+.product-view-container .col-sm-4, .product-view-container .col-sm-5, .product-view-container .col-sm-6,
+.product-view-container .col-sm-7, .product-view-container .col-sm-8, .product-view-container .col-sm-9,
+.product-view-container .col-xs-1, .product-view-container .col-xs-10, .product-view-container .col-xs-11,
+.product-view-container .col-xs-12, .product-view-container .col-xs-2, .product-view-container .col-xs-3,
+.product-view-container .col-xs-4, .product-view-container .col-xs-5, .product-view-container .col-xs-6,
+.product-view-container .col-xs-7, .product-view-container .col-xs-8, .product-view-container .col-xs-9 {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+/*------------------------------------------------------------------
+[Homepage General]
+-------------------------------------------------------------------*/
+.cms-index-index #wrapper .page-content {
+    background: url(../images/award-background.png) no-repeat center fixed;
+    background-size: cover;
+}
+.bg-grey {
+    background: #f4f4f4;
+}
+.bg-white {
+    background: #FFF;
+}
+.cms-index-index h3 {
+    font-size: 26px;
+}
+.bx-wrapper .bx-controls-direction a {
+    background: none;
+    text-indent: 0;
+    font-size: 20px;
+    color: #7987a0;
+}
+.bx-wrapper .bx-controls-direction a.bx-next {
+    right: -5px;
+    top: -15px;
+}
+.bx-wrapper .bx-controls-direction a.bx-prev {
+    left: 1040px;
+    top: -15px;
+}
+/*------------------------------------------------------------------
+[Main Banner Sliders]
+-------------------------------------------------------------------*/
+.bx-wrapper .bx-viewport {
+    border: none;
+    left: 0px;
+    box-shadow: none;
+}
+.main-slider-wrapper {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.banner-row {
+    display: block;
+    position: relative;
+    text-align: center;
+}
+.banner-row img {
+    width: 100%;
+}
+.banner-row a.btn {
+    min-height: auto;
+}
+.banner-overlay {
+    color: #fff;
+    position: absolute;
+    left: 0%;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+}
+.banner-link {
+    display: block;
+}
+.banner-overlay .banner-overlay-content {
+    top: 25%;
+    position: relative;
+}
+.banner-overlay .banner-overlay-content h2 {
+    font-size: 36px;
+    color: #FFF;
+}
+.banner-overlay .banner-overlay-content .btn.btn-white {
+    border: 1px solid #005883;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    background-color: #ffffff;
+    color: #005883;
+    border-radius: 0;
+    padding: 10px 30px;
+}
+.banner-overlay .banner-overlay-content .btn.btn-blue {
+    border: 1px solid #003a5d;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    background-color: #005883;
+    color: #ffffff;
+    border-radius: 0;
+    padding: 10px 30px;
+}
+/*------------------------------------------------------------------
+[Featured Gallery]
+-------------------------------------------------------------------*/
+.featured-gallery-container .bx-viewport, .occasions-container .bx-viewport {
+    background: #FFF;
+}
+.featured-gallery-container .bx-wrapper .bx-viewport {
+    border: none;
+    border-radius: 5px;
+    min-height: 380px;
+    box-shadow: none;
+    padding: 0 5px;
+    left: 0px;
+}
+.featured-gallery-card {
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    border: 1px solid #f4f4f4;
+    text-align: center;
+    padding: 5px 5px 15px 5px;
+    background: #fff;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+.featured-gallery-card img {
+    display: block;
+    margin: 0 auto;
+}
+.featured-gallery-card img:hover {
+    transform: scale(1.1);
+    border: 1px solid white;
+}
+.featured-gallery-card h4 {
+    font-size: 16px;
+    color: #7987a0;
+    font-weight: normal;
+    margin: 15px 0;
+}
+.featured-gallery-card h4 span {
+    color: #363d45;
+    font-size: 20px;
+    font-weight: normal;
+    margin: 10px 0 25px;
+    display: block;
+}
+.featured-gallery-card .featured-gallery-btn {
+    border: 1px solid #005883;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    background-color: #ffffff;
+    color: #005883;
+    border-radius: 0;
+    padding: 7px 15px;
+    font-size:14px;
+}
+/*------------------------------------------------------------------
+[Occasions Section]
+-------------------------------------------------------------------*/
+.occasions-container {
+    margin-bottom: 75px;
+}
+.occasions-container .slide {
+    padding: 15px;
+}
+/*
+.occasions-container .bx-wrapper .bx-viewport {
+    border: none;
+    min-height: 385px;
+    box-shadow: none;
+    padding: 0 5px;
+    left: 0px;
+}
+.occasions-container .slide {
+    box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    background: #fff;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+*/
+/*------------------------------------------------------------------
+[Video Section]
+-------------------------------------------------------------------*/
+.video-wrapper {
+    position: relative;
+    height: 300px;
+}
+.video-wrapper p {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 75px;
+}
+.video-wrapper img {
+    display: block;
+    margin: 0 auto;
+    width: 90px;
+    margin-top: 35px;
+}
+.video-wrapper iframe {
+    top: 0;
+    left: 0;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    display: none;
+    position: absolute;
+}
+.video-wrapper .video-close {
+    display: none;
+    position: absolute;
+    right: 35px;
+    top: 10px;
+    color: #fff;
+    font-size: 22px;
+    z-index: 1;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/*------------------------------------------------------------------
+[Callouts]
+-------------------------------------------------------------------*/
+.callouts-container {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.callout-card {
+    width:475px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    border: 1px solid #f4f4f4;
+    text-align: center;
+    padding: 5px 5px 20px 5px;
+    background: #fff;
+    float: left;
+    margin-right: 90px;
+}
+
+.callout-card .callout-header {
+    font-size: 26px;
+    text-align: left;
+    padding: 20px 10px 10px;
+}
+.callout-card .callout-text {
+    font-size: 14px;
+    text-align: left;
+    line-height: 20px;
+    margin-bottom: 25px;
+    padding: 0px 10px 10px 10px;
+}
+.callout-card .btn-register {
+    border: 1px solid #005883;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    background-color: #ffffff;
+    color: #005883;
+    border-radius: 0;
+    padding: 10px 45px;
+}
+.callouts-container .callout-card img {
+    width: 100%;
+    height: 290px;
+}
+/*------------------------------------------------------------------
+[Ideas]
+-------------------------------------------------------------------*/
+.idea-callout-wrapper {
+    text-align: center;
+    height: 210px;
+}
+.idea-callout-header {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 50px;
+}
+.idea-callout-text {
+    font-size: 18px;
+    color: #363d45;
+    margin: 30px 0;
+}
+.idea-callout-wrapper .btn-register {
+    border: 1px solid #005883;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
+    background-color: #ffffff;
+    color: #005883;
+    border-radius: 0;
+    padding: 10px 30px;
+}
+@media (max-width: 767px) {
+
+    .mobile-m-0 {
+        margin: 0;
+    }
+    .mobile-ps-0 {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .main-slider-wrapper {
+        margin: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .main-slider-wrapper .col-xs-12 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .test {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .banner-overlay .banner-overlay-content {
+        top: 0%;
+    }
+    .cms-index-index h3 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .featured-gallery-container .bx-wrapper .bx-viewport {
+        min-height: 335px;
+    }
+    .bx-wrapper .bx-controls-direction a.bx-next {
+        right: 8px;
+        top: -15px;
+        height: 25px;
+        width: 25px;
+        text-align: center;
+    }
+    .featured-gallery-card h4 {
+        font-size: 14px;
+    }
+    .featured-gallery-card .featured-gallery-btn {
+        padding: 3px 10px;
+        font-sze: 13px;
+    }
+    .banner-row {
+        /*min-height: 300px;*/
+        /*height:300px;*/
+    }
+    .bx-wrapper .bx-controls-direction a.bx-prev {
+        left: 265px;
+    }
+
+    .occasions-container .bx-wrapper .bx-viewport {
+        min-height: 235px;
+    }
+    .video-wrapper p {
+        font-size: 28px;
+        margin-top: 30px;
+        line-height: 35px;
+    }
+    .video-wrapper img {
+        width: 100px;
+    }
+    .container.callouts-container .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .callout-card {
+        width: 100%;
+         margin: 0;
+    }
+    .callouts-container .callout-card.first {
+        margin-bottom: 25px;
+    }
+    .callouts-container .callout-card img {
+        width: 100%;
+        height: 100%;
+    }
+    .idea-callout-wrapper {
+        height: 100%;
+        padding: 0 15px 35px 15px;
+    }
+}
+@media (max-width: 479px) {
+
+}

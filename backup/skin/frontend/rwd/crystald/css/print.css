@@ -1,0 +1,62 @@
+/** Global Elements **/
+*, body, :after, :before {
+    color: #868585 !important
+}
+[class*="col-sm-"] {
+    float: left !important;
+}
+h1, h2, h3 {
+    color: #003a5d !important;
+}
+a {
+    color: #973F2F !important;
+}
+.top-nav {
+    display: none !important;
+}
+.top-menu a {
+    color: #003a5d !important;
+}
+.top-menu .input-search {
+    display: none !important;
+}
+.col-right {
+    display: none !important;
+}
+a[href]:after {
+    content: none !important;
+}
+footer {
+    background: #f6f6f6 !important;
+}
+footer .full-width a{
+    color: #003a5d !important;
+}
+footer .social-main {
+    background: #FFF !important;
+}
+footer .news-letter {
+    display: none !important;
+}
+footer .footer-link a{
+    color: #868585 !important
+}
+/** Wishlist **/
+.wishlist-index-index footer, .js-guestwishlist-view-index footer, .js-guestwishlist-share-index footer {
+    display: none !important;
+}
+.my-wishlist .buttons-set, .wishlist-index-share .buttons-set, .js-guestwishlist-view-index .buttons-set{
+    display: none !important;
+}
+ul.wishlist-list .actions  {
+    display: none !important;
+}
+ul.wishlist-list li {
+    /*margin-bottom: 15px !important;*/
+}
+ul.wishlist-list {
+    border: none !important;
+}
+form#form-validate-share {
+    display: none !important;
+}

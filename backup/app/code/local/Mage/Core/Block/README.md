@@ -1,0 +1,1 @@
+This file was overwritten to make sure the trailing slash was always removed any site urls.  The method is getUrl  Nothing else has been changed here.  If any patches change this file make sure to update.

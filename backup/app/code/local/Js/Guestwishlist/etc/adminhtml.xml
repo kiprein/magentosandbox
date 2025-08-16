@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author Jon Saverda
+ * @copyright Copyright (c) 2017 (jonsaverda.com)
+ * @package Js_Guestwishlist
+ */
+-->
+<config>
+    <menu>
+        <customer>
+            <children>
+                <js_guestwishlist translate="title" module="js_guestwishlist">
+                    <title>Wishlists</title>
+                    <sort_order>900</sort_order>
+                    <children>
+                        <guests translate="title" module="js_guestwishlist">
+                            <title>Guest Wishlists</title>
+                            <action>adminhtml/wishlist/guests</action>
+                            <sort_order>10</sort_order>
+                        </guests>
+                        <general translate="title" module="js_guestwishlist">
+                            <title>Logged-in Wishlists</title>
+                            <action>adminhtml/wishlist/general</action>
+                            <sort_order>20</sort_order>
+                        </general>
+                    </children>
+                </js_guestwishlist>
+            </children>
+        </customer>
+    </menu>
+
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <customer>
+                        <children>
+                            <js_guestwishlist>
+                                <title>Wishlists</title>
+                                <children>
+                                    <guests>
+                                        <title>Guest Wishlists</title>
+                                    </guests>
+                                    <general>
+                                        <title>Logged-in Wishlists</title>
+                                    </general>
+                                </children>
+                            </js_guestwishlist>
+                        </children>
+                    </customer>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config> 

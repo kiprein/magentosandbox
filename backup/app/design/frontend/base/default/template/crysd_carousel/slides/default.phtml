@@ -1,0 +1,107 @@
+<?php
+
+  $hasImg;
+
+  if(!$sSlideImg && !$sSlideImgMobile){
+    $hasImg = ' cd-car__slide--noimg';
+  }
+
+  $slideImg = '<img src="'. $sMobImg .'" alt="" loading="lazy" class="cd-car__slide__img cd-car__slide__img--mobile">
+
+          <img src="'. $sImg .'" alt="" loading="lazy" class="cd-car__slide__img cd-car__slide__img--desktop">';
+
+?>
+
+<article class="cd-car__slide <?php echo 'cd-car__slide--'.$sTheme . ' ' . 'cd-car__slide--'.$cStyle  ?><?php echo $hasImg; ?>">
+  <?php if($sHL || $sSHL || $sBod || $sHref){ ?>
+
+    <header class="cd-car__slide__header <?php echo 'cd-car__slide__header--'.$sTheme . ' ' . 'cd-car__slide__header--'.$cStyle  ?>">
+
+      <?php
+        if($sHL){ ?>
+          <h3 class="cd-car__slide__headline <?php echo 'cd-car__slide__headline--'.$sTheme . ' ' . 'cd-car__slide__headline--'.$cStyle  ?>">
+            <?php echo $sHL; ?>
+          </h3>
+        <?php }
+        if($sSHL){ ?>
+          <span class="cd-car__slide__subheadline <?php echo 'cd-car__slide__subheadline--'.$sTheme . ' ' . 'cd-car__slide__subheadline--'.$cStyle  ?>">
+            <?php echo $sSHL; ?>
+          </span>
+        <?php }
+        if($sBod){ ?>
+          <p class="cd-car__slide__body <?php echo 'cd-car__slide__body--'.$sTheme . ' ' . 'cd-car__slide__body--'.$cStyle  ?>">
+            <?php echo trim($sBod); ?>
+          </p>
+        <?php }
+        if($sHref || $sVideo){ ?>
+          <div class="cd-car__slide__cta <?php echo 'cd-car__slide__cta--'.$sTheme . ' ' . 'cd-car__slide__cta--'.$cStyle  ?>">
+            
+            <?php
+            if($sHref !== "#"){ ?>
+
+              <a href="<?php echo $sHref ?>" class="cd-car__slide__cta__button <?php echo 'cd-car__slide__cta__button--'.$sTheme . ' ' . 'cd-car__slide__cta__button--'.$cStyle  ?>">
+                <span class="">
+                  <?php echo $sCta ? $sCta : 'Click Here' ?>
+                </span>
+              </a>
+              
+            <?php }else { ?>
+
+              <span class="">
+                -<?php echo $sCta ? $sCta : 'Customer Name' ?>
+              </span>
+
+            <?php }
+
+            if($sVideo){ ?>
+
+              <button type="button" class="cd-car__slide__cta__button <?php echo 'cd-car__slide__cta__button--'.$sTheme . ' ' . 'cd-car__slide__cta__button--'.$cStyle  ?>" onclick="vidModal('<?php echo $sVideo; ?>')">
+                <span>
+                  Watch Video
+                </span>
+              </button>
+              
+            <?php }
+
+            ?>
+
+
+          </div>
+        <?php }
+      ?>      
+    
+    </header>
+
+    <?php
+
+      if($sSlideImg && $sSlideImgMobile){ ?>
+
+        <figure class="cd-car__slide__figure <?php echo 'cd-car__slide__figure--'.$sTheme . ' ' . 'cd-car__slide__figure--'.$cStyle  ?>">
+
+          <?php
+            if(
+              $cStyle !== 'pageheader'
+            ){ ?>
+
+              <a href="<?php echo $sHref; ?>">
+                <?php echo $slideImg; ?>
+              </a>
+            
+            <?php } else {
+              echo $slideImg;
+            }
+          ?>
+
+        </figure>
+
+      <?php }else{ ?>
+
+        
+
+      <?php }
+    
+    ?>
+    
+  <?php } ?>
+  
+</article>

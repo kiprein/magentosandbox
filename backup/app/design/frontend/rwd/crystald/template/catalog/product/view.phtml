@@ -1,0 +1,483 @@
+<?php
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ */
+
+//Initial Vars
+$product   = $this->getProduct();
+$productHelper = $this->helper('js_product');
+$wishlistHelper = $this->helper('js_guestwishlist');
+
+$searchUrl = Mage::getSingleton('core/session')->getSearchUrl();
+list($previousLink, $nextLink) = $productHelper->getPreviousNextLinks($product->getId());
+
+$loggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+
+$wishlistProductIds = $wishlistHelper->getWishlistProductIds();
+$wishlistSubmitUrl  = $wishlistHelper->wishlistAddUrl($product, true);
+$isMobile = Mage::helper('mobiledetect')->isMobile();
+$isTablet = Mage::helper('mobiledetect')->isTablet();
+ // 6 = employee, 4 = trophy retailer
+$trophyOk = false;
+$pricedAsBlank = false;
+if((in_array($groupId, Array(4, 6))) 
+    && $product->getBDiscontinued() == 0
+    && $product->getStockItem()->getQty() > 0){
+        $trophyOk = $product->getBTrophyOk() == 1? true : false;
+        $pricedAsBlank = $product->getPricedAsBlank() == 1? true : false;
+}
+if($trophyOk || $pricedAsBlank){
+    $cart = Array(
+        'productId' => $product->getId(),
+        'descrip' => "#" . $product->getSku() . " " . $product->getMetaTitle(),
+        'img_url' => $product->getMainProductImage(),
+        'tr_qty2' => (int)$product->getProductquantity2(),
+        'tr_qty3' => (int)$product->getProductquantity3(),
+        'avail' => (int)$product->getStockItem()->getQty(),
+        'url' => $this->getUrl($product->getUrlKey()),
+        'needs_assembly' => (int)$product->getAssemblyRequired(),
+        'needs_trophy_assembly' => (int)$product->getTrophyAssemblyRequired(),
+        'country' => $product->getCountry() //#tariffSurcharge
+    );
+    if($trophyOk){
+        $cart['tr_price1'] = (float)$product->getTrophyblankprice1();
+        $cart['tr_price2'] = (float)$product->getTrophyblankprice2();
+        $cart['tr_price3'] = (float)$product->getTrophyblankprice3();
+    } else {
+        $cart['tr_price1'] = (float)$product->getNetprice1();
+        $cart['tr_price2'] = (float)$product->getNetprice2();
+        $cart['tr_price3'] = (float)$product->getNetprice3();
+    }
+    //Get a list of included options for customer to select
+    if($inspiration = $product->getInspirationCard()){
+        $cart['options'][] = [
+            'label' => 'inspiration',
+            'list' => $inspiration
+        ];
+    }
+    /*if($battery = $product->getBatteryPackIncluded()){
+        $cart['options'][] = [
+            'label' => 'battery',
+            'list' => $battery
+        ];
+    }*/
+    if($plates = $product->getIncludedPlate()){
+        $cart['options'][] = [
+            'label' => 'plates',
+            'list' => $plates
+        ];
+    }
+    if($accent = $product->getIncludedAccent()){
+        $cart['options'][] = [
+            'label' => 'accent',
+            'list' => $accent
+        ];
+    }
+    if($goal_setter = $product->getData('goal_setter_block')){
+        $cart['options'][] = [
+            'label' => 'goal_setter',
+            'list' => $goal_setter
+        ];
+    }
+    if($sphere = $product->getColoredSpheres()){
+        $cart['options'][] = [
+            'label' => 'sphere',
+            'list' => $sphere
+        ];
+    }
+    if($panels = $product->getIncludedPanels()){
+        $cart['options'][] = [
+            'label' => 'panels',
+            'list' => $panels
+        ];
+    }
+    $cart = json_encode($cart);
+}
+?>
+
+<div class="container product-view-container">
+    <div class="breadcrumb-wrapper row mb-20">
+        <div class="col-md-6">
+			<?php echo $this->getChildHtml('breadcrumbs') ?>
+        </div>
+        <div class="col-md-6">
+            <a class="light-grey product-search-link" href="<?php echo $searchUrl; ?>">Back to Search ></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="popup-links-wrapper col-md-5 pl-10 hidden-xs hidden-sm">
+                    <?php if($groupId == 6): ?>
+                        <?php echo $this->getChildHtml('popup-links') ?>
+                    <?php endif; ?>
+                </div>
+                <div class="col-xs-12 col-md-7 mobile-mb-25">
+                    <div class="row product-nav-wrapper">
+                        <?php if ($previousLink): ?>
+                            <div class="col-xs-3">
+                                <?php //Need to change the text on mobile ?>
+                                <a class="light-grey product-nav-link" href="<?php echo $this->getUrl($previousLink); ?>">
+	                                <?php if (Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+                                        &lt; Prev
+                                    <?php else: ?>
+                                        &lt; Previous
+                                    <?php endif; ?>
+
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                            <div class="col-xs-6 fancy-text exclusively-ours-text red">
+                            <?php if ($product->getBExclusive() == 1): ?>
+                                <p>Exclusively Ours!</p>
+                            <?php endif; ?>
+                            </div>
+                        <?php if ($nextLink): ?>
+                        <div class="col-xs-3">
+                            <a class="light-grey product-nav-link right" href="<?php echo $this->getUrl($nextLink); ?>">Next  &gt;</a>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper row mt-10">
+        <div class="col-xs-12 col-md-7 pull-right wrapper ">
+	        <?php if (!empty($product->getSCatalogPage())): ?>
+                <div class="dark-red align-right pr-10 visible-md visible-lg hidden-xs hidden-sm">
+                    <img alt="Catalog Icon" class="catalog-page-icon"
+                         src="<?php echo Mage::getBaseUrl('media', true) ?>images/icons/catalog-page.jpg"/>
+                    <a class="red fs-14"
+                       href="<?php echo $productHelper->getCatalogUrl(); ?><?php echo $product->getSCatalogPage() ?>"
+                       target='_blank'>
+                        Catalog Page <?php echo $product->getSCatalogPage(); ?>
+                    </a>
+                </div>
+	        <?php endif; ?>
+
+            <div class="product-title col-md-12 mb-20">
+                <h1 class="dark-grey"><span class="light-blue"> #<?php echo $product->getSku(); ?></span>
+                    <?php //The meta title is hooked up the the s_short_desc which in the product db is item name ?>
+                    <?php echo $product->getMetaTitle(); ?>
+                </h1>
+            </div>
+
+            <?php /** rwd/crytald/frontend/template/js/product/product-info.phtml */ ?>
+	        <?php echo $this->getChildHtml('product-special-notes'); ?>
+        </div>
+        <div class="col-xs-12 col-md-5 pull-left wrapper mt-10 product-image-wrapper">
+	        <?php echo $this->getChildHtml('media'); ?>
+        </div>
+        <div class="col-xs-12 col-md-7 pull-right wrapper out-of-product-wrapper-names">
+	        <?php /** rwd/crytald/frontend/template/js/product/prices.phtml */ ?>
+	        <?php echo $this->getChildHtml('product-prices'); ?>
+
+            <?php if($product->getProp64() == 1): ?>
+            <div class="row product-block-right ">
+                <div class="col-xs-12">
+                    <div class="subject-65-notice">
+                        <p>
+                            <span class="">
+                                <img class="media-icon" alt="Subject 65 Warning"
+                                    src="<?php echo $this->getSkinUrl('images/icons/warning-image.png', array('_secure' => true)); ?>"/>
+                            </span>
+                            <strong>WARNING:</strong> Cancer and Reproductive Harm
+                        <a href="https://www.P65Warnings.ca.gov" target="_blank">www.P65Warnings.ca.gov</a></p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            <?php if($product->getImperfections() == 1): ?>
+            <div class="row product-block-right ">
+                <div class="col-xs-12">
+                    <div class="subject-65-notice">
+                        <p style="line-height:1.35">
+                            The unique charm of hand-blown art glass will include air bubbles, natural imperfections, and color and size variations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <?php endif; ?>
+            
+            <div class="row mt-20 product-block-right">
+                <script type="text/javascript">
+                    //mwcart script
+                    var pricedAsBlank = <?php echo json_encode($pricedAsBlank); ?>;
+                    jQuery(document).ready(function(){
+                        jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                            var tabText = jQuery(e.target).text();
+                            if(tabText == 'Blank Price' || (tabText == 'Net Price' && pricedAsBlank)){
+                                jQuery('#mwCart-add-btn-wrp').css('display', 'block');
+                            } else {
+                                jQuery('#mwCart-add-btn-wrp').css('display', 'none');
+                            }
+                        });
+                    });
+                </script>
+                <?php if($trophyOk || $pricedAsBlank): ?>
+                    <div class="col-xs-12" id="mwCart-add-btn-wrp">
+                        <div class="row">
+                            <div class="col-xs-1 hidden-md"></div>
+                                <script>var mwCart_tempProduct = <?php echo $cart; ?>;</script>
+                                <style>
+                                    #mwCart-addToCartBtn{ background: #7987a0; }
+                                    #mwCart-addToCartBtn:hover{ background: white; }
+                                </style>
+                                <div class="col-xs-10 col-md-12 form-btn request-quote-btn mb-10 pointer" style="height: inherit;">
+                                    <a id="mwCart-addToCartBtn" onclick="mwCart_selectProductOptions(mwCart_tempProduct)">Add Blank to Cart</a>
+                                    <!--old magento add method-->
+                                    <!-- <form action="<?php echo $this->getSubmitUrl($product, array('_secure' => $this->_isSecure())) ?>" 
+                                        method="post" id="product_addtocart_form"
+                                        <?php if($product->getOptions()): ?>enctype="multipart/form-data"<?php endif; ?>>
+                                        <?php echo $this->getChildHtml('addtocart') ?>
+                                    </form> -->
+                                </div>
+                            <div class="col-xs-1 hidden-md"></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-1 hidden-md"></div>
+                            <div class="col-xs-10 col-md-12 form-btn request-quote-btn mb-10 pointer">
+                                <a class="quote-form-trigger">Request a Quote or Virtual</a>
+                            </div>
+                        <div class="col-xs-1 hidden-md"></div>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-1 hidden-md"></div>
+                        <div class="col-xs-10 col-md-12 form-btn wishlist-btn mb-10 pointer">
+	                        <?php if (in_array($product->getId(), $wishlistProductIds)): ?>
+                                <a href="<?php echo $wishlistSubmitUrl; ?>">Added to Idea List</a>
+	                        <?php else: ?>
+                                <a href="<?php echo $wishlistSubmitUrl; ?>">Add to Idea List</a>
+	                        <?php endif; ?>
+                        </div>
+                        <div class="col-xs-1 hidden-md"></div>
+                    </div>
+                </div>
+                <?php echo $this->getChildHtml('product-forms'); ?>
+            </div>
+            <div class="row mt-20 product-block-right" id="product-accordions">
+	            <?php /** rwd/crytald/frontend/template/js/product/accordions/product-details.phtml */ ?>
+	            <?php echo $this->getChildHtml('product-details'); ?>
+
+	            <?php /** rwd/crytald/frontend/template/js/product/accordions/included.phtml */ ?>
+	            <?php echo $this->getChildHtml('product-included'); ?>
+
+	            <?php /** rwd/crytald/frontend/template/js/product/accordions/additional-options.phtml */ ?>
+	            <?php echo $this->getChildHtml('product-additional-options'); ?>
+            </div>
+        </div>
+    </div>
+    <div id="large-slider-check" class="row wrapper large-product-slider-wrapper">
+        <div class="container">
+            <div class="product-list recent-view other large-product-slider">
+			    <?php echo $this->getChildHtml('custom-product-crosssell'); ?>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="product-list recent-view other large-product-slider">
+			    <?php echo $this->getLayout()->createBlock('reports/product_viewed')->setTemplate('reports/product_viewed.phtml')->toHtml(); ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php //Popup containers ?>
+<div class="hidden">
+	<?php echo $this->getChildHtml('private-info-popup'); ?>
+	<?php echo $this->getChildHtml('subsurface-popup'); ?>
+	<?php echo $this->getChildHtml('deep-etch-popup'); ?>
+    <?php echo $this->getChildHtml('illumachrome-popup'); ?>
+    <?php /** rwd/crytald/frontend/template/js/product/public-inventory-modal.phtml */ ?>
+    <?php echo $this->getChildHtml('public-inventory-modal'); ?>
+</div>
+
+
+<script type="text/javascript">
+	(function ($) {
+		$(function () {
+
+			$('#product-accordions').on('click', '.panel-title', function (e) {
+                var accordionToggle = $(this).find('.accordion-toggle');
+				var toggleHtml = accordionToggle.html();
+
+                if(toggleHtml == '+') {
+	                accordionToggle.html('-');
+                } else if(toggleHtml == '-') {
+                	accordionToggle.html('+');
+                }
+			});
+
+			$(".private-info-trigger").click(function () {
+				$.colorbox({
+					inline: true,
+					href: '.private-info-container',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X"
+				});
+			});
+			$(".subsurface-trigger").click(function () {
+				$.colorbox({
+					inline: true,
+					href: '.subsurface-container',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X",
+					scrolling: false
+				});
+			});
+			//Deep Etch
+			$(".addetch-trigger").click(function () {
+				$.colorbox({
+					inline: true,
+					href: '.deep-etch-container',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X",
+					scrolling: false
+				});
+			});
+			//Illumachrome
+			$(".addill-trigger").click(function () {
+				$.colorbox({
+					inline: true,
+					href: '.illumachrome-container',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X",
+					scrolling: false
+				});
+			});
+			//Subsurface
+			$(".add3d-trigger").click(function () {
+				$.colorbox({
+					inline: true,
+					href: '.subsurface-container',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X",
+					scrolling: false
+				});
+            });
+            //Added 12/27/18 MGW, show public inventory
+            $(".public-inventory-trigger").click(function(){
+                $.colorbox({
+					inline: true,
+					href: '.public-inv-modal',
+					width: '95%',
+					maxWidth: '1080px',
+					close: "X",
+					scrolling: false
+				});
+            });
+		});
+
+		//On the product view page the accordions need to start in the open postion to make sure all js code fires
+		//This closes them a split second later
+		setTimeout(
+			function () {
+				$('#additional-panel').removeClass('in');
+				$('#product-details-panel').removeClass('in');
+				$('#whats-included-panel').removeClass('in');
+
+				//This bring in the note in the private popup
+                jQuery.ajax({
+                    url: 'https://db.crystal-d.com/scripts/ajax/web/getWow.php',
+                    data: {s_item_num: '<?php echo $product->getSku();?>'},
+                    success: function (data, textStatus, jqXHR) {
+                        var obj = jQuery.parseJSON(data);
+                        jQuery('#s_wow_idea').val(obj.s_wow_idea);
+                    }
+                });
+
+			}, 750);
+
+
+		$('.popup-form-box li.fields').addClass('row');
+		$('.popup-form-box li.wide').addClass('row');
+	})(jQuery);
+
+	jQuery('#save_s_wow_idea').click(function () {
+		var comment_field = jQuery('#s_wow_idea').val();
+		if (comment_field == '') {
+			alert('Please enter Notes.');
+			jQuery("#s_wow_idea").focus();
+			return false;
+		}
+
+		jQuery.ajax({
+			url: 'https://db.crystal-d.com/scripts/ajax/web/saveWow.php',
+			data: {
+				s_item_num: '<?php echo $product->getSku();?>',
+				s_wow_idea: jQuery('#s_wow_idea').val()
+			},
+			success: function (data, textStatus, jqXHR) {
+				var obj = jQuery.parseJSON(data);
+
+				jQuery('#succ_comment_msg').html(obj.msg);
+				jQuery('#s_wow_idea').val(jQuery('#s_wow_idea').val());
+			}
+		});
+	});
+</script>
+<script type="text/javascript">
+//Magento cart implimentation from \app\design\frontend\base\default\template\catalog\product\view.phtml
+    //<![CDATA[
+        var productAddToCartForm = new VarienForm('product_addtocart_form');
+        productAddToCartForm.submit = function(button, url) {
+            var form = this.form;
+            var oldUrl = form.action;
+
+            if (url) {
+                form.action = url;
+            }
+            var e = null;
+            try {
+                this.form.submit();
+            } catch (e) {
+            }
+            this.form.action = oldUrl;
+            if (e) {
+                throw e;
+            }
+
+            if (button && button != 'undefined') {
+                button.disabled = true;
+            }
+        }.bind(productAddToCartForm);
+
+        productAddToCartForm.submitLight = function(button, url){
+            if(this.validator) {
+                var nv = Validation.methods;
+                delete Validation.methods['required-entry'];
+                delete Validation.methods['validate-one-required'];
+                delete Validation.methods['validate-one-required-by-name'];
+                // Remove custom datetime validators
+                for (var methodName in Validation.methods) {
+                    if (methodName.match(/^validate-datetime-.*/i)) {
+                        delete Validation.methods[methodName];
+                    }
+                }
+
+                if (this.validator.validate()) {
+                    if (url) {
+                        this.form.action = url;
+                    }
+                    this.form.submit();
+                }
+                Object.extend(Validation.methods, nv);
+            }
+        }.bind(productAddToCartForm);
+    //]]>
+    </script>

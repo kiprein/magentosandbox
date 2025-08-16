@@ -1,0 +1,90 @@
+<?php $_product = $this->getProduct(); ?>
+<?php $_productHelper = $this->helper('js_product'); ?>
+<?php if ( $_crossSellProducts = $_product->getCrossSellProducts() ): ;?>
+	<?php $_resource      = Mage::getSingleton( 'catalog/product' )->getResource(); ?>
+	<h3 class="light-grey top-spacing">You May Also Like:</h3>
+	<ul id="crosssell-slides">
+		<?php foreach ( $_crossSellProducts as $_item ): ?>
+			<?php
+			$urlKey           = $_resource->getAttributeRawValue( $_item->getEntityId(), 'url_key', Mage::app()->getStore() );
+			$mainProductImage = $_resource->getAttributeRawValue( $_item->getEntityId(), 'main_product_image', Mage::app()->getStore() );
+			//Need to use short description since the name's are no longer unique to make the filter and order by work correctly
+			$productName      = $_resource->getAttributeRawValue( $_item->getEntityId(), 'short_description', Mage::app()->getStore() );
+
+			$retailPrice1 = $_resource->getAttributeRawValue( $_item->getEntityId(), 'retailprice1', Mage::app()->getStore() );
+			$retailPrice3 = $_resource->getAttributeRawValue( $_item->getEntityId(), 'retailprice3', Mage::app()->getStore() );
+			$offline = $_resource->getAttributeRawValue( $_item->getEntityId(), 'b_offline', Mage::app()->getStore() );
+
+			if ( ! empty( $retailPrice3 ) ) {
+				$priceRange = Mage::helper( 'core' )->currency( $retailPrice3 ) . "<span class='price-dash'>-</span>" . Mage::helper( 'core' )->currency( $retailPrice1 );
+			} else {
+				$priceRange = Mage::helper( 'core' )->currency( $retailPrice1 );
+			}
+			?>
+            <li>
+                <div class="outer_slide">
+                    <div class="award-image">
+                        <a href="<?php echo $urlKey ?>">
+                            <img alt="<?php echo $this->escapeHtml( $productName); ?> Image" src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $mainProductImage; ?>.jpg">
+                        </a>
+                    </div>
+                    <div class="main-price mt-10">
+                        <a href="<?php echo $urlKey ?>" class="dark-grey"><?php echo $productName ?></a>
+                        <div class="items light-grey">
+                            <span>Item #<?php echo $_item->getSku(); ?></span>
+                        </div>
+                        <div class="list-price light-grey">
+                            <span><?php echo $priceRange ?></span>
+                        </div>
+                    </div>
+                </div>
+            </li>
+		<?php endforeach; ?>
+	</ul>
+<?php endif; ?>
+
+<script type="text/javascript">
+	<?php if(count($_crossSellProducts) > 1): ?>
+	(function($j){
+		//build out the options for bx slider
+		var options = {
+			<?php if(count($_crossSellProducts) > 2): ?>
+			pager: true,
+			<?php else: ?>
+			pager: false,
+			<?php endif; ?>
+			auto: false,
+			slideWidth: 280,
+			adaptiveHeight: true,
+			moveSlides: 1,
+			slideMargin: 6,
+			minSlides: 2,
+			maxSlides: 4,
+			prevText: '<',
+			nextText: '>'
+		};
+		//3 conditionals for different window sizes added 1/2/18 #MGW
+		function updateOptions(){
+			var width = $j(window).width();
+			if(width >= 1235){
+				options.minSlides = 4;
+				options.maxSlides = 4;
+			} else if(width < 1235 && width >= 980){
+				options.minSlides = 3;
+				options.maxSlides = 3;
+			} else {
+				options.minSlides = 2;
+				options.maxSlides = 2;
+			}
+		}
+		//first load
+		updateOptions();
+		var slider = $j('#crosssell-slides').bxSlider(options);
+		//change options when window size changes
+		window.addEventListener('resize', function(){
+			updateOptions();
+			slider.reloadSlider(options);
+		});
+	})(jQuery);
+	<?php endif; ?>
+</script>

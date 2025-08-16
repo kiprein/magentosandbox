@@ -1,0 +1,207 @@
+<?php
+/**
+ * NeoTheme Austrlia (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com.au/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com.au so we can send you a copy immediately.
+ *
+ * This software comes with no warrenty of any kind. By Using this software, the user agrees to hold 
+ * Neo Industries Pty Ltd harmless of any damage it may cause.
+ *
+ * @category    modules
+ * @module      NeoTheme_ImageRotator
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com.au)
+ * @license     http://www.neotheme.com.au/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+/**
+ * @see NeoTheme_Blog_Block_Post_List
+ */
+?>
+
+
+
+<?php if ($this->getCategoryId()):?>
+<div class="page-title">
+    <h1><?php echo $this->getCategory()->getName();?></h1>
+</div>
+<?php endif; ?>
+<?php if (!$this->getCollection()->count()):?>
+	<div class="note-msg"><?php echo Mage::helper('neotheme_blog')->__('There are no posts in this category'); ?></div>
+<?php else: ?>
+<ul class="custom-blog">
+	<?php foreach($this->getCollection() as $post):?>
+    <li>
+        <?php //maybe a better way of doing this maybe a getChildHtml('summary_');
+    
+        echo $this->getSummaryBlock($post)->toHtml(); 
+        ?>
+    </li>
+    <?php endforeach; ?>
+  
+<?php endif;?>
+</ul>
+<div class="row">
+<div class="col-md-12">
+<div class="toolbar"><?php echo $this->getPagerHtml(); ?></div>
+</div>
+</div>
+<script>
+jQuery('ul.custom-blog li:first').addClass( "first-block" );
+</script>
+<style>
+.toolbar{background:#fff;}
+</style>
+<style>
+ul.custom-blog {
+  float: left;
+  list-style: outside none none;
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 0;
+  width: 100%;
+}
+ul.custom-blog > li {
+  background: #fff none repeat scroll 0 0;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  float: left;
+  height: 330px;
+  line-height: 1.5em;
+  margin: 0 1% 20px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 23%;
+}
+.blog-image img {
+  height: auto;
+  width: 100%;
+}
+.blog-image a {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+    background: #ccc none repeat scroll 0 0;
+  width: 100%;
+}
+.first-block .blog-image a {
+  align-content: center;
+  align-items: center;
+
+  display: flex;
+  height: 300px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  width: 100%;
+}
+.post_date {
+  float: right;
+  font-size: 11px;
+}
+.blog-title {
+  padding: 15px;
+}
+.custom-blog h2 {
+  margin: 0;
+}
+.custom-blog h2 a {
+  color: #000;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 18px;
+  font-size-adjust: none;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  text-decoration: none;
+}
+.custom-blog .blog-readmore {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  padding: 5px 15px;
+  position: absolute;
+  width: 100%;
+  z-index: 9;
+}
+
+.custom-blog .blog-readmore a {
+  text-decoration:none;
+  color:#003a5d;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.custom-blog .first-block {
+  height: 680px;
+  width: 48%;
+}
+.custom-blog .first-block h2 a {
+  font-size: 50px;
+  line-height: 58px;
+
+}
+.blog-readmore > a {
+  display: block;
+}
+@media (max-width:991px){
+.custom-blog 	.first-block {
+  height: 330px;
+  margin: 0 1% 20px;
+  width: 23%;
+}
+.custom-blog .first-block h2 a {
+  color: #000;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 18px;
+  font-size-adjust: none;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  text-decoration: none;
+}
+.first-block .blog-image a,
+.blog-image a {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  width: 100%;
+}
+}
+@media (max-width:800px){
+		.custom-blog .first-block ,
+	ul.custom-blog li {
+  height: 330px;
+  margin: 0 1% 20px;
+  width: 48%;
+}
+@media (max-width:500px){
+	.custom-blog	.first-block ,
+	ul.custom-blog li {
+  height: auto;
+  margin: 0 0% 20px;
+  width: 100%;
+}
+ .custom-blog .blog-title {
+  margin-bottom: 44px;
+  padding: 15px;
+}
+}
+</style>

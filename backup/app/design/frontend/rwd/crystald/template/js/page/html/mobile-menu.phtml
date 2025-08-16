@@ -1,0 +1,75 @@
+<?php
+/**
+ * Template for the mobile menu.  I went this route since this menu basically combines the two from desktop.  Also easier to edit here then a static block
+ */
+
+$_wishlistCount  = $this->helper( 'js_guestwishlist' )->getWishlistCount();
+$wishlistViewUrl = $this->helper( 'js_guestwishlist' )->wishlistViewUrl();
+?>
+<nav id="nav2">
+    <ol class="nav-primary">
+        <?php if ( Mage::getSingleton( 'customer/session' )->isLoggedIn() ): ?>
+            <li class="level0 nav-1 first">
+                <a class="level0 " href="<?php echo $this->getUrl( 'dashboard' ); ?>">Dashboard</a>
+            </li>
+        <?php else: ?>
+            <li class="level0 nav-1 first background-red">
+                <a class="level0 " href="<?php echo $this->getUrl( 'customer/account/login' ); ?>">Login / Register</a>
+            </li>
+        <?php endif; ?>
+        <li class="level0 nav-2"><a href="/products">Search Awards &amp; Gifts</a></li>
+        <li class="level0 nav-3"><a href="<?php echo $this->getUrl( 'ideas' ); ?>">Ideas</a></li>
+        <li class="level0 nav-4"><a href="<?php echo $this->getUrl('sales-tools'); ?>">Sales Tools</a></li>
+        <li class="level0 nav-5">
+            <a href="<?php echo $wishlistViewUrl ?>">
+                Award Idea List <?php if ( $_wishlistCount > 0 ) {
+					echo '(' . $_wishlistCount . ')';
+				} ?>
+            </a>
+        </li>
+        <li class="level0 nav-6 parent last">
+            <a class="level0 has-children" href="<?php echo $this->getUrl( 'ideas' ); ?>">Company Information</a>
+            <ul class="level0 first-list">
+                <li class="level1 nav-2-1">
+                    <a href="<?php echo $this->getUrl( 'about-crystal-d' ); ?>" class="level1 ">About Crystal D</a>
+                </li>
+                <li class="level1 nav-2-2">
+                    <a href="<?php echo $this->getUrl( 'about-crystal-d/meet-our-memory-makers' ); ?>" class="level1 ">Meet Our Memory Makers</a>
+                </li>
+                <li class="level1 nav-2-3">
+                    <a href="<?php echo $this->getUrl( 'how-to-order' ); ?>" class="level1 ">How To Order</a>
+                </li>
+                <li class="level1 nav-2-4">
+                    <a href="<?php echo $this->getUrl( 'about-crystal-d/achievements' ); ?>" class="level1 ">Our Achievements</a>
+                </li>
+                <li class="level1 nav-2-4">
+                    <a href="<?php echo $this->getUrl( 'about-crystal-d/customer-testimonials' ); ?>" class="level1 ">Customer Testimonials</a>
+                </li>
+                <li class="level1 nav-2-5">
+                    <a href="<?php echo $this->getUrl( 'blog' ); ?>" class="level1 ">Blog</a>
+                </li>
+                <li class="level1 nav-2-6">
+                    <a href="<?php echo $this->getUrl( 'faq' ); ?>" class="level1 ">FAQ</a>
+                </li>
+                <li class="level1 nav-2-7">
+                    <a href="<?php echo $this->getUrl( 'dealers' ); ?>" class="level1 ">Dealers</a>
+                </li>
+                <li class="level1 nav-2-8">
+                    <a href="<?php echo $this->getUrl( 'products/custom-awards' ); ?>" class="level1 ">Custom Awards</a>
+                </li>
+                <li class="level1 nav-2-9">
+                    <a href="<?php echo $this->getUrl( 'contact-us' ); ?>" class="level1 ">Contact Us</a>
+                </li>
+                <li class="level1 nav-2-10">
+                    <a href="<?php echo $this->getUrl( 'contact-us/catalog-request' ); ?>" class="level1 ">Catalog Request</a>
+                </li>
+				<li class="level1 nav-2-11">
+                    <a href="<?php echo $this->getUrl( 'careers' ); ?>" class="level1 ">Careers</a>
+                </li>
+            </ul>
+        </li>
+	    <?php if ( Mage::getSingleton( 'customer/session' )->isLoggedIn() ): ?>
+            <li class="level0 nav-2"><a href="<?php echo $this->getUrl( 'customer/account/logout' ); ?>">Logout</a></li>
+	    <?php endif; ?>
+    </ol>
+</nav>

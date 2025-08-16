@@ -1,0 +1,11 @@
+<!-- Main Category Filter -->
+<p class="category-header light-grey">Broaden Search</p>
+<div class="filter-wrapper main-categories">
+    <dt></span>Category</dt>
+    <dd><?php echo Mage::helper('js_category')->getCategoryTree(4, false, false); ?></dd>
+    <div class="filter-links">
+        <a href="" class="button category-submit">Apply Filter</a>
+        <a class="clear-filter" href="<?php echo Mage::helper('js_product')->getRemoveUrl('cat');?>">Clear Filter</a>
+    </div>
+    <input type="hidden" name="selected-main-categories" value="" />
+</div>

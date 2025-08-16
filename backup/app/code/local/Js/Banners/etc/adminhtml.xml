@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <js_banners translate="title" module="js_banners">
+            <title>Banners</title>
+            <sort_order>82</sort_order>
+            <children>
+                <rotator>
+                    <title>Rotator</title>
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/banners/index</action>
+                </rotator>
+            </children>
+        </js_banners>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <js_banners>
+                        <title>Js Rotator</title>
+                        <sort_order>150</sort_order>
+                    </js_banners>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+    <layout>
+        <updates>
+            <banners>
+                <file>banners.xml</file>
+            </banners>
+        </updates>
+    </layout>
+</config>

@@ -1,0 +1,383 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @see Mage_Catalog_Block_Product_List
+ */
+/* @var $this Mage_Catalog_Block_Product_List */
+$_productCollection=$this->getLoadedProductCollection();
+//$_productCollection->addAttributeToSelect('b_discontinued');
+//$_productCollection->getSelect()->order('b_discontinued', 'DESC');
+//echo json_encode(Mage::getSingleton('catalog/session')->getSortOrder());
+//$_productCollection->addAttributeToSort('b_discontinued', 'DESC');
+//https://mage2-blog.com/magento-1-set-order-of-collection/
+//cloudways.com/blog/magento-product-collections/
+//echo $_productCollection->getSelect()->__toString();
+
+$_helper = $this->helper('catalog/output');
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+$quickShipText = $this->getLayout()->createBlock('cms/block')->setBlockId('quick-ship-text')->toHtml();
+$customerSession = Mage::getSingleton('customer/session');
+?>
+
+<?php
+//Used as a height fix for lazy loader since depending on logic state product card has more info
+?>
+<style>
+
+    <?php if($groupId == 6 ): ?>
+	.products-grid li.product-container {
+        height: 455px;
+    }
+    .products-grid li.product-container.discontinued {
+        height: 455px;
+    }
+
+    @media (max-width: 767px) {
+        .products-grid li.product-container {
+            height: 455px;
+        }
+    }
+    <?php elseif($groupId == 4): ?>
+    .products-grid li.product-container {
+        height: 440px;
+    }
+    .products-grid li.product-container.discontinued {
+        height: 440px;
+    }
+
+    @media (max-width: 767px) {
+        .products-grid li.product-container {
+            height: 415px;
+        }
+    }
+	<?php elseif($groupId == 5): ?>
+    .products-grid li.product-container {
+        height: 414px;
+    }
+    .products-grid li.product-container.discontinued {
+        height: 414px;
+    }
+
+    @media (max-width: 767px) {
+        .products-grid li.product-container {
+            height: 405px;
+        }
+    }
+    <?php else: ?>
+    .products-grid li.product-container {
+        height: 375px;
+    }
+    .products-grid li.product-container.discontinued {
+        height: 375px;
+    }
+    @media (max-width: 767px) {
+        .products-grid li.product-container.discontinued {
+            height: 375px;
+        }
+    }
+    <?php endif; ?>
+</style>
+
+<?php if(!$_productCollection->count()): ?>
+	<!-- Copied the global message error for now -->
+	<ul class="messages">
+		<li class="error-msg">
+			<ul>
+				<li><span><?php echo $this->__('There are no products matching the selection.') ?></span></li>
+			</ul>
+		</li>
+	</ul>
+<?php else: ?>
+<div class="container">
+	<?php echo $this->getToolbarHtml() ?>
+</div>
+<?php // Grid Mode ?>
+<?php $_wishlistProductIds = $this->helper('js_guestwishlist')->getWishlistProductIds(); ?>
+<?php $_collectionSize = $_productCollection->count() ?>
+
+<?php $_columnCount = $this->getColumnCount(); ?>
+	<div class="product-list mt-15">
+	    <ul class="products-grid products-grid--max-<?php echo $_columnCount; ?>-col">
+			<?php foreach ($_productCollection  as $_product): ?>
+				<?php
+				$imageName =$_product->getMainProductImage().'.jpg';
+				$qty = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product)->getQty();
+
+				/////// Special Message
+				$b_discontinu= $_product->getBDiscontinued();
+				$manufactured= $_product->getNotManufactured();
+				$ndiscount=$_product->getNDiscount();
+				$special_order=$_product->getBSpecialOrder();
+				$min_special_order=$_product->getMinSpecialOrder();
+
+				//Another height fix when there is more info to show
+                $discontinuedClass  = '';
+                if($b_discontinu == 1) {
+                    //if(!$customerSession->isLoggedIn()) continue;
+                    $discontinuedClass = ' discontinued ';
+                }
+				?>
+				<li class="col-md-3 col-sm-6 col-xs-6 product-container zero-padding-mobile <?php echo $discontinuedClass; ?>">
+					<div class="award-image">
+					    <div class="overlay-icons">
+								<?php if($_product->getBNewItem() || $_product->getBNewItemFuture()){ ?>
+										<img class="new-item-overlay" alt="New Item Ribbon" src="<?php echo Mage::getDesign()->getSkinUrl( 'images/new-ribbon-icon.png', array( '_secure' => true ) ); ?>"/>
+								<?php } ?>
+								<?php if($_product->getIsGiveback()){ ?>
+
+									<img class="quick-ship-overlay" alt="Giveback Icon" src="<?php echo Mage::getDesign()->getSkinUrl("images/icon--giveback.png", array("_secure"=>true)); ?>" />
+
+								<?php } ?>
+
+						    <?php if($_product->getQuickShip() == 397):?>
+										<div class="quick-ship-hover hidden-sm hidden-xs"><?php echo $quickShipText; ?></div>
+										<img class="quick-ship-overlay" alt="Quick Ship Icon" src="<?php echo Mage::getDesign()->getSkinUrl('images/images/quick_ship_icon--ribbon.png', array('_secure'=>true)); ?>" />
+								<?php endif; ?>
+                        </div>
+					    <a href="<?php echo $_product->getProductUrl() ?>">
+						    <img alt="<?php echo htmlspecialchars($_product->getShortDescription()); ?>" src="https://image.crystal-d.com/img/u214-y/jpg/<?php echo $imageName;?>" loading="lazy">
+						</a>
+					</div>
+					<div class="main-price medium mt-10">
+
+						<a href="<?php echo $_product->getProductUrl() ?>" class="list-name dark-grey"><?php echo html_entity_decode($_product->getShortDescription());?></a>
+						<div class="items light-grey">Item <span>#<?php echo $_product->getSku();?></span></div>
+						<div class="list-price light-grey"><?php echo $this->helper('js_product')->getRetailPriceRange($_product); ?></div>
+					</div>
+
+					<ul class="add-to-links">
+						<?php $_wishlistSubmitUrl = $this->helper('js_guestwishlist')->wishlistAddUrl($_product); ?>
+
+						<?php if(in_array($_product->getId(), $_wishlistProductIds)): ?>
+							<li class="wishlist-list selected">
+                                <a href="<?php echo $_wishlistSubmitUrl; ?>" class="light-blue link-wishlist">
+                                    <span class="wishlist-star selected">
+                                        <img alt="Added to Wishlist"
+                                             src="<?php echo $this->getSkinUrl('images/star-blue.png', array('_secure'=>true)); ?>" />
+                                    </span>Added to Award Idea List
+                                </a>
+                            </li>
+						<?php else: ?>
+							<li class="wishlist-list">
+                                <a href="<?php echo $_wishlistSubmitUrl; ?>" class="light-blue link-wishlist">
+                                    <span class="wishlist-star">
+                                        <img alt="Add to Wishlist"
+                                            src="<?php echo $this->getSkinUrl('images/star-gray.png', array('_secure'=>true)); ?>" />
+                                    </span>Add to Award Idea List
+                                </a>
+                            </li>
+						<?php endif; ?>
+					</ul>
+
+					<!-- Loged user-->
+					<?php if($groupId == 6 || $groupId == 4 || $groupId == 5): ?>
+						<div class="employee-price">
+							<ul>
+									<li class="light-grey">Net Price: <span><?php echo Mage::helper('core')->currency($_product->getNetprice3());  ?> - <?php echo Mage::helper('core')->currency($_product->getNetprice1())  ?></span></li>
+								<?php if($groupId == 6 || $groupId == 4): ?>
+									<li class="light-grey">Trophy Blank: <span><?php echo Mage::helper('core')->currency($_product->getTrophyblankprice3());  ?> - <?php echo Mage::helper('core')->currency($_product->getTrophyblankprice1());  ?></span></li>
+								<?php endif; ?>
+								<?php if($groupId == 6): ?>
+								<li>
+									<?php if ($qty > 0): ?>
+									<span>
+										<a class="red availability-popup" 
+											href="https://db.crystal-d.com/scripts/availability.php?s_item_num=<?php echo $_product->getSku(); ?>">
+										View Available</a>
+									</span>
+									<?php else: ?>
+										<span><?php echo $this->__('Out of stock') ?></span>
+									<?php endif; ?>
+                                </li>
+								<?php endif; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
+
+					<div class="discontinued-text">
+						<?php
+                        //This should be cleaned up but has been here since before my time
+						///// Special message
+						if($b_discontinu==1){
+							echo "<p>Discontinued Closeout</p>";
+						}
+
+						if($groupId==6 && $manufactured==1){
+							echo "<p>No Longer Manufactured</p>";
+						}
+
+						if(!empty($ndiscount)){
+							$whole = floor($ndiscount);      // 1
+							$fraction = $ndiscount - $whole; // .25
+							$nprice_val= substr(number_format($fraction,2),-2);
+							echo "<p>Save ".$nprice_val."%</p>";
+						}
+
+						if($qty=="9999" && $b_discontinu==1){
+							echo "<p>Call for Availability</p>";
+						}
+
+						if($qty!="9999" && $b_discontinu==1 && $qty!=""){
+							if($qty>99999999){
+								$pd_quant="999999999";
+							}else{
+								$pd_quant=$qty;
+							}
+							if($pd_quant<2){
+								$ava="piece";
+							}else{
+								$ava="pieces";
+							}
+							echo "<p>".(int) $pd_quant." ".$ava." left in stock!</p>";
+						}
+
+						if($special_order==1){
+							echo "<p>Special Order Available</p>";
+						}
+
+						?>
+					</div>
+					<!-- end loged user-->
+				</li>
+
+			<?php endforeach ?>
+		</ul>
+
+
+		<div id="myModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+
+					</div>
+					<div class="modal-body">
+						<div id="available_quantity"></div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd','even','first','last'])</script>
+
+
+		<div class="toolbar-bottom row">
+			<?php echo $this->getToolbarBlock()->setTemplate('catalog/product/list/toolbar-bottom.phtml')->toHtml() ?>
+		</div>
+
+        <a href="#" id="nav_up" title="Back to top" class="red"><img alt="Back to Top Arrow" src="<?php echo $this->getSkinUrl('images/back-to-top-arrow.png', array('_secure'=>true)); ?>" /><br>Back To Top</a>
+	</div>
+	<?php
+	// Provides a block where additional page components may be attached, primarily good for in-page JavaScript
+	if ($this->getChild('after')) {
+		$_afterChildren = $this->getChild('after')->getSortedChildren();
+		foreach ($_afterChildren as $_afterChildName) {
+			$_afterChild = $this->getChild('after')->getChild($_afterChildName);
+			//set product collection on after blocks
+			$_afterChild->setProductCollection($_productCollection);
+			echo $_afterChild->toHtml();
+		}
+	}
+	?>
+	<script>
+		function show_qty(val){
+			//alert(val);
+			jQuery( "#available_quantity" ).html('');
+			var datastring = "s_item_num="+val;
+
+			var url = "https://db.crystal-d.com/scripts/availability.php?s_item_num="+val;
+			jQuery.ajax({
+				type: 'POST',
+				url: url,
+				dataType: "html",
+				cache: false,
+				success: function(message) {
+					//alert(message);
+					jQuery( "#available_quantity" ).html(message);
+
+				}
+			});
+		}
+
+        //jQuery( ".quick-ship-overlay" ).hover(function() {
+          //jQuery(this).prev().css('visibility', 'visible');
+        //}, function() {
+          //jQuery(this).prev().css('visibility', 'hidden');
+        //});
+
+        /**
+         * Code for slide to top
+         */
+        jQuery('#nav_up').fadeIn('slow');
+
+        // whenever we scroll fade out both buttons
+        jQuery(window).bind('scrollstart', function(){
+          jQuery('#nav_up').stop().animate({'opacity':'0.2'});
+        });
+        // ... and whenever we stop scrolling fade in both buttons
+        jQuery(window).bind('scrollstop', function(){
+          jQuery('#nav_up').stop().animate({'opacity':'1'});
+        });
+
+        // clicking the "up" button will make the page scroll to the top of the page
+        jQuery('#nav_up').click(
+          function (e) {
+            jQuery('html, body').animate({scrollTop: '0px'}, 600);
+          }
+        );
+
+        if (jQuery('#nav_up').length) {
+          var scrollTrigger = 200, // px
+            backToTop = function () {
+              var scrollTop = jQuery(window).scrollTop();
+              if (scrollTop > scrollTrigger) {
+                jQuery('#nav_up').addClass('show');
+              } else {
+                jQuery('#nav_up').removeClass('show');
+              }
+            };
+          backToTop();
+          jQuery(window).on('scroll', function () {
+            backToTop();
+          });
+          /**
+           * End of Code for slide to top
+           */
+
+        }
+	</script>
+<?php endif; ?>

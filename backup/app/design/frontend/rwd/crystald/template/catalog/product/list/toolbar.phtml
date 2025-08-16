@@ -1,0 +1,156 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @see Mage_Catalog_Block_Product_List_Toolbar
+ */
+$page_module = Mage::app()->getRequest()->getModuleName();
+if ( $page_module == "catalog" ) {
+	$_category           = Mage::registry( 'current_category' );
+	$currentCategoryId   = $_category->getId();
+	$categoryUrl = Mage::getModel( "catalog/category" )->load( $currentCategoryId )->getUrl();
+} else {
+	$categoryUrl = Mage::getModel( "catalog/category" )->load( '4' )->getUrl();;
+}
+
+$categoryId = Mage::app()->getRequest()->getParam( 'cat');
+$price = Mage::app()->getRequest()->getParam( 'price');
+$height = Mage::app()->getRequest()->getParam( 'height');
+$limit = Mage::app()->getRequest()->getParam( 'limit');
+
+$clearLink = $categoryUrl . "?cat=" . $categoryId . "&price=" . $price . "&height=" . $height;
+?>
+<?php if ( $this->getCollection()->getSize() ): ?>
+	<div class="toolbar row">
+		<div class="col-md-12">
+		<?php if ( $this->isExpanded() ): ?>
+			<div class="col-md-4 col-sm-6 col-xs-12 padding-right-0 padding-left-0">
+				<div class="sorter">
+					<div class="sort-by">
+						<label><?php echo $this->__( 'Sort By' ) ?></label>
+						<select onchange="setLocation(this.value)">
+							<option value="<?php echo $this->getOrderUrl( 'price', 'asc' ) ?>"<?php if ( $this->isOrderCurrent( 'price' ) && $this->getCurrentDirection() == 'asc' ): ?> selected="selected"<?php endif; ?>>
+								Price - Low to High
+							</option>
+
+							<?php if ( Mage::app()->getRequest()->getParam( 'order' ) == "" and Mage::app()->getRequest()->getParam( 'dir' ) == "" ) { ?>
+								<option value="<?php echo $this->getOrderUrl( 'price', 'desc' ) ?>" selected="selected">
+									Price - High to Low
+								</option>
+							<?php } else { ?>
+								<option
+									value="<?php echo $this->getOrderUrl( 'price', 'desc' ) ?>"<?php if ( $this->isOrderCurrent( 'price' ) && $this->getCurrentDirection() == 'desc' ): ?> selected="selected"<?php endif; ?>>
+									Price - High to Low
+								</option>
+							<?php } ?>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'sku', 'asc' ) ?>"<?php if ( $this->isOrderCurrent( 'sku' ) && $this->getCurrentDirection() == 'asc' ): ?> selected="selected"<?php endif; ?>>
+								Item number - Low to High
+							</option>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'sku', 'desc' ) ?>"<?php if ( $this->isOrderCurrent( 'sku' ) && $this->getCurrentDirection() == 'desc' ): ?> selected="selected"<?php endif; ?>>
+								Item number - High to Low
+							</option>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'height', 'asc' ) ?>"<?php if ( $this->isOrderCurrent( 'height' ) && $this->getCurrentDirection() == 'asc' ): ?> selected="selected"<?php endif; ?>>
+								Size - Low to High
+							</option>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'height', 'desc' ) ?>"<?php if ( $this->isOrderCurrent( 'height' ) && $this->getCurrentDirection() == 'desc' ): ?> selected="selected"<?php endif; ?>>
+								Size - High to Low
+							</option>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'name', 'asc' ) ?>"<?php if ( $this->isOrderCurrent( 'name' ) && $this->getCurrentDirection() == 'asc' ): ?> selected="selected"<?php endif; ?>>
+								Name A-Z
+							</option>
+
+							<option
+								value="<?php echo $this->getOrderUrl( 'name', 'desc' ) ?>"<?php if ( $this->isOrderCurrent( 'name' ) && $this->getCurrentDirection() == 'desc' ): ?> selected="selected"<?php endif; ?>>
+								Name Z-A
+							</option>
+
+
+						</select>
+					</div>
+				</div>
+			</div>
+
+		<?php endif; ?>
+			<?php //Remove the hidden class to restore ?>
+			<div class="pager col-md-4 hidden">
+				<div class="row">
+				<?php if ( $this->getLastPageNum() > 1 ): ?>
+					<div class="amount amount--has-pages">
+						Showing <?php echo $this->__( '%s-%s of %s', $this->getFirstNum(), $this->getLastNum(), $this->getTotalNum() ) ?>
+				<?php else: ?>
+					<div class="amount amount--no-pages">
+						Showing <strong><?php echo $this->__( '%s Item(s)', $this->getTotalNum() ) ?></strong>
+
+				<?php endif; ?>
+						<span class="show-amount">
+							<label>Per Page</label>
+							<select id="amount-select" onchange="setLocation(this.value)"
+							        title="<?php echo Mage::helper( 'core' )->quoteEscape( $this->__( 'Results per page' ) ); ?>">
+								<?php foreach ( $this->getAvailableLimit() as $_key => $_limit ): ?>
+								    <?php if($_limit != 'All'): ?>
+									<option value="<?php echo $this->getLimitUrl( $_key ) ?>"<?php if ( $this->isLimitCurrent( $_key ) ): ?> selected="selected"<?php endif ?>> <?php echo $_limit ?> </option>
+									<?php else: ?>
+									     <?php continue; ?>
+                                    <?php endif; ?>
+								<?php endforeach; ?>
+							</select>
+							<?php ///For the show all link link ?>
+							<?php if ( $limit == "all" ): ?>
+								<a href="/products" title="<?php echo $this->__( 'Clear Show All' ) ?>"
+								   class="">&nbsp;Clear Show All</a>
+							<?php else: ?>
+								<a href="<?php echo Mage::helper('core/url')->getCurrentUrl().'&limit=all'; ?>" title="<?php echo $this->__( 'Show All' ) ?>"
+								   class="show-all-link red">&nbsp;Show All</a>
+							<?php endif; ?>
+						</span>
+					</div>
+				</div>
+			</div>
+            <?php  //Remove the hidden class to restore ?>
+			<div class="col-md-4 col-sm-12 col-xs-12 pager-containter hidden">
+				<?php echo $this->getPagerHtml() ?>
+			</div>
+
+            <div class="showing-container col-md-4 col-xs-12 float_right dark-grey fs-14 padding-right-0 padding-left-0">
+                Showing <?php echo $this->getTotalNum(); ?> Awards and Gifts
+            </div>
+        </div>
+	</div>
+<?php endif ?>
+

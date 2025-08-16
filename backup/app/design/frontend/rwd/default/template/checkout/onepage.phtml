@@ -1,0 +1,57 @@
+<?php
+/**
+ * ONE PAGE BASE TEMPLATE
+ *  #usedOnepageTemplate
+ */
+?>
+<script type="text/javascript" src="<?php echo $this->getJsUrl('varien/accordion.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/opcheckout_rwd.js') ?>"></script>
+<ol class="opc opc-firststep-<?php echo $this->getActiveStep() ?>" id="checkoutSteps">
+<?php $i=0; foreach($this->getSteps() as $_stepId => $_stepInfo): ?>
+<?php if (!$this->getChild($_stepId) || !$this->getChild($_stepId)->isShow()): continue; endif; $i++ ?>
+    <li id="opc-<?php echo $_stepId ?>" 
+        class="section<?php echo !empty($_stepInfo['allow']) || $_stepId == 'shipping' ?' allow':'' ?><?php echo !empty($_stepInfo['complete'])?' saved':'' ?>">
+        <div class="step-title">
+            <h2><span class="number"><?php echo $i ?></span><?php echo $_stepInfo['label'] ?></h2>
+            <!--<a href="#"><?php echo $this->__('Edit') ?></a>-->
+        </div>
+        <div id="checkout-step-<?php echo $_stepId ?>" class="step a-item" style="display:none;">
+            <?php echo $this->getChildHtml($_stepId) ?>
+        </div>
+    </li>
+<?php endforeach ?>
+</ol>
+<script type="text/javascript">
+//<![CDATA[
+    var accordion = new Accordion('checkoutSteps', '.step-title', true);
+    <?php if($this->getActiveStep()): ?>
+    accordion.openSection('opc-<?php echo $this->getActiveStep() ?>');
+    <?php endif ?>
+    var checkout = new Checkout(accordion,{
+        progress: '<?php echo $this->getUrl('checkout/onepage/progress') ?>',
+        review: '<?php echo $this->getUrl('checkout/onepage/review') ?>',
+        saveMethod: '<?php echo $this->getUrl('checkout/onepage/saveMethod') ?>',
+        failure: '<?php echo $this->getUrl('checkout/cart') ?>'}
+    );
+    jQuery(document).ready(function(){
+        
+        //matching the <ol id="checkoutSteps"> height to the current active <div>, MGW 9/6/19
+        //class added on all the buttons
+        var adjustHeightToDiv = function(){
+            var height = jQuery('.opc:first-of-type .active .step').height(); //returns like 400px
+            jQuery('#checkoutSteps').css('height', height + 247); //allows for a litle play room + margins
+        }
+        //These events are fired in opcheckout.js, Fire this event whenever the viewport on the checkout changes.
+        document.observe('mgw:adjustHeightToDiv', function(){
+            setTimeout(function(){
+                adjustHeightToDiv();
+            }, 200);
+        });
+        adjustHeightToDiv();
+        //Need to hid the overlay cart to prvent anyone from editing the cart after shipping has been calculated.
+        jQuery('#mwCart').css('display', 'none');
+        jQuery('#mwCart-trigger').css('visibility', 'hidden');
+    });
+//]]>
+</script>

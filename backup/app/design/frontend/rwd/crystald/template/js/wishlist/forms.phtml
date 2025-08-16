@@ -1,0 +1,7 @@
+<div class="col-md-12 col-sm-12 col-xs-12">
+	<?php if(!Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+		<a class="button btn-add" id="email-wishlist" href="<?php echo $this->getUrl('guest-wishlist/share'); ?>" title="EMAIL WISHLIST" type="button"><span><span>EMAIL Award Idea List</span></span></a>
+	<?php else: ?>
+		<a class="button btn-add" id="email-wishlist" href="<?php echo $this->getUrl('wishlist/index/share'); ?>" title="EMAIL WISHLIST" type="button"><span><span>EMAIL Award Idea List</span></span></a>
+	<?php endif; ?>
+</div>

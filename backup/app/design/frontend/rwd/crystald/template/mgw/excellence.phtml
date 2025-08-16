@@ -1,0 +1,38 @@
+<form id="co-excellence-form" action="">
+<fieldset>
+    <ul class="form-list">
+    <li id="excellence-form">
+        <fieldset>
+            <ul>
+                <li class="wide">
+                    <label for="excellence:poNumber"><?php echo $this->__('PO Number') ?></label>
+                    <div class="input-box">
+                        <input type='text' name='excellence[poNumber]'  class="input-text" id="excellence:poNumber" value='<?php echo $this->getQuote()->getPoNumber(); ?>'/>
+                    </div>
+                </li>
+                <li class="wide">
+                    <label for="excellence:comments"><?php echo $this->__('Comments') ?></label>
+                    <div class="input-box">
+                        <textarea  name='excellence[comments]' class="" id="excellence:comments"><?php echo $this->getQuote()->getComments(); ?></textarea>
+                    </div>
+                </li>
+            </ul>
+        </fieldset>
+     </li>
+    </ul>
+    <div class="buttons-set" id="excellence-buttons-container">
+        <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+        <button type="button" title="<?php echo $this->__('Continue') ?>" class="button" onclick="excellence.save()"><span><span><?php echo $this->__('Continue') ?></span></span></button>
+        <span class="please-wait" id="excellence-please-wait" style="display:none;">
+            <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Loading next step...') ?>" title="<?php echo $this->__('Loading next step...') ?>" class="v-middle" /> <?php echo $this->__('Loading next step...') ?>
+        </span>
+    </div>
+</fieldset>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+    console.log("excellence.phtml loaded");
+    var excellence = new ExcellenceMethod('co-excellence-form','<?php echo $this->getUrl('mgw/onepage/saveExcellence') ?>');
+    var excellenceForm2 = new VarienForm('co-excellence-form');
+//]]>
+</script>

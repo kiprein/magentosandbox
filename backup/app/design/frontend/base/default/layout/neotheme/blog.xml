@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NeoTheme (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com.au/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com.au so we can send you a copy immediately.
+ *
+ *
+ * @category    modules
+ * @module      NeoTheme_Blog
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com.au)
+ * @license     http://www.neotheme.com.au/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+ -->
+<layout>
+    <default>
+        <reference name="top.links">
+            <action ifconfig="blog/general/enable_top_menu_link" method="addLink" translate="title label" module="neotheme_blog"><label helper="neotheme_blog/getBlogLabel"/><url helper="neotheme_blog/getBlogUrl"/><title helper="neotheme_blog/getBlogTitle"/><prepare/><urlParams/><position>10</position></action>
+            <!--<action method="removeLinkByUrl"><url><url helper="neotheme_blog/getBlogUrl"/></url></action>-->
+        </reference>
+    </default>
+    <neotheme_blog_default>
+		<reference name="breadcrumbs">
+		  <action method="addCrumb">
+		  <crumbName>home</crumbName>
+		  <crumbInfo>
+		  <label>Home</label>
+		  <title>Go to Home Page</title>
+		  <link>/</link>
+		  </crumbInfo>
+		  </action>
+		  <action method="addCrumb">
+		  <crumbName>About crystal D</crumbName>
+		  <crumbInfo>
+		  <label>About crystal D</label>
+		  <title>About crystal D</title>
+		  <link>/about-crystal-d</link>
+		  </crumbInfo>
+		 </action>
+	</reference>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title helper="neotheme_blog/getBlogTitle"/></action>
+            <action method="addCss"><value>css/neotheme/blog/blog.css</value></action>
+        </reference> 
+        <!--<reference name="left">
+            <block type="neotheme_blog/tag_list" name="blog.tag.list" />
+        </reference>-->
+        <reference name="right">
+            
+            <block type="neotheme_blog/category_list" before="-" name="blog.category.list">
+                <action method="setShowPopulatedOnly" ><show>1</show></action>
+            </block>
+            <block type="neotheme_blog/widget_post_list" after="blog.category.list" name="blog.latest.posts"/>
+            <block  type="neotheme_blog/category_list_rss" after="blog.latest.posts" name="blog.category.list.rss">
+                <action method="setShowPopulatedOnly" ><show>1</show></action>
+            </block>
+        </reference>
+    </neotheme_blog_default>
+    
+    <neotheme_blog_index_index>
+        <update handle="neotheme_blog_default"/>
+        <reference name="content">
+            <block type="neotheme_blog/post_list" name="post.list">
+                <action method="setSummaryBlockType"><block>neotheme_blog/post_summary</block></action>
+                <action method="setSummaryTemplate"><block>neotheme/blog/post/summary.phtml</block></action>
+                <action ifconfig="blog/customer/enabled" method="setUseCustomerPreferences"><use_customer_preferences>true</use_customer_preferences></action>
+            </block>
+        </reference>
+    </neotheme_blog_index_index>
+
+    <neotheme_blog_index_all>
+		<reference name="breadcrumbs">
+		  <action method="addCrumb">
+		  <crumbName>home</crumbName>
+		  <crumbInfo>
+		  <label>Home</label>
+		  <title>Go to Home Page</title>
+		  <link>/</link>
+		  </crumbInfo>
+		  </action>
+		  <action method="addCrumb">
+		  <crumbName>About crystal D</crumbName>
+		  <crumbInfo>
+		  <label>About crystal D</label>
+		  <title>About crystal D</title>
+		  <link>/about-crystal-d</link>
+		  </crumbInfo>
+		 </action>
+	</reference>
+        <update handle="neotheme_blog_index_index"/>
+        <reference name="post.list">
+            <action ifconfig="blog/customer/enabled" method="setUseCustomerPreferences"><use_customer_preferences>false</use_customer_preferences></action>
+        </reference>
+    </neotheme_blog_index_all>
+
+    <neotheme_blog_post_index>
+        <update handle="neotheme_blog_default"/>
+        <reference name="content">
+            <block type="neotheme_blog/post_detail" name="blog.post.detail" >
+                <block type="neotheme_blog/comment_list" name="blog.post.comment.list" />
+                <block type="neotheme_blog/comment_form" name="blog.post.comment.form" />
+            </block>
+        </reference>
+    </neotheme_blog_post_index>
+    
+    <neotheme_blog_category_index>
+        <update handle="neotheme_blog_index_index"/>
+    </neotheme_blog_category_index>
+    
+    <rss_blog_index>
+       <block  type="neotheme_blog/rss_blog" output="toHtml" name="rss.blog"/>
+    </rss_blog_index>
+    <rss_index_index>
+        <reference name="rss.list">
+              <action method="setTemplate"><template>neotheme/blog/rss/list.phtml</template></action>
+        </reference>
+    </rss_index_index>
+    
+    <customer_account>
+        <reference name="customer_account_navigation">			
+            <action method="addLink" translate="label" module="neotheme_blog">
+                <name>blog_preferences</name>
+                <path>blog/preferences/index/</path>
+                <label>Blog Preferences</label>
+            </action>	
+        </reference>
+    </customer_account>
+    <neotheme_blog_preferences_index translate="label">
+        <label>Customer My Account Blog Preferences Edit Form</label>
+        <!-- Mage_Customer -->
+        <update handle="customer_account"/>
+        <reference name="my.account.wrapper">
+            <block type="neotheme_blog/account_preferences_edit" name="neotheme_blog_preferences_edit" template="neotheme/blog/account/preferences/edit.phtml"/>
+        </reference>
+    </neotheme_blog_preferences_index>
+</layout>

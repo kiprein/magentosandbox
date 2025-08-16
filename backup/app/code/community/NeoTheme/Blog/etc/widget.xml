@@ -1,0 +1,147 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * NeoTheme (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com so we can send you a copy immediately.
+ *
+ * This software comes with no warrenty of any kind. By Using this software, the user agrees to hold 
+ * Neo Industries Pty Ltd harmless of any damage it may cause.
+ *
+ * @category    modules
+ * @module      NeoTheme_Blog
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com)
+ * @license     http://www.neotheme.com/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+-->
+<widgets>
+    <neotheme_blog_latest_posts type="neotheme_blog/widget_post_list" module="neotheme_blog">
+        <name>Blog Latest Post List</name>
+        <description>Creates a Latest Posts Section</description>
+        <parameters>
+           <category_id translate="label">
+                <required>0</required>
+                <visible>1</visible>
+                <label>Category</label>
+                <sort_order>20</sort_order>
+                <type>label</type>
+                <helper_block>
+                    <type>neotheme_blog/adminhtml_category_widget_chooser</type>
+                    <data>
+                        <button translate="open">
+                            <open>Select Category...</open>
+                        </button>
+                    </data>
+                </helper_block>
+                <sort_order>5</sort_order>
+            </category_id>    
+            <post_count>
+                <required>0</required>
+                <visible>1</visible>
+                <sort_order>20</sort_order>
+                <label>Number of Posts to Show</label>
+                <type>text</type>
+                <value>5</value>
+            </post_count>
+            <title>
+                <required>0</required>
+                <visible>1</visible>
+                <sort_order>30</sort_order>
+                <label>Title</label>
+                <type>text</type>
+                <value>Latest Posts</value>
+            </title>
+            <template>
+                <required>1</required>
+                <visible>1</visible>
+                <sort_order>40</sort_order>
+                <label>Template To Use</label>
+                <type>select</type>
+                <value>neotheme/blog/widget/post/list_inline.phtml</value>
+                <values>
+                    <default translate="label">
+                        <value>neotheme/blog/widget/post/list_block.phtml</value>
+                        <label>Post List Block Template</label>
+                    </default>
+                    <link_inline translate="label">
+                        <value>neotheme/blog/widget/post/list_inline.phtml</value>
+                        <label>Post List Inline Template</label>
+                    </link_inline>
+                </values>
+            </template>
+        </parameters>
+    </neotheme_blog_latest_posts>
+    <neotheme_blog_selected_post type="neotheme_blog/widget_post_selected" module="neotheme_blog">
+        <name>Blog Selected Post</name>
+        <description>Shows the selected post</description>
+        <parameters>
+            <post_id translate="label">
+                <required>1</required>
+                <visible>1</visible>
+                <label>Post</label>
+                <sort_order>20</sort_order>
+                <type>label</type>
+                <helper_block>
+                    <type>neotheme_blog/adminhtml_post_widget_chooser</type>
+                    <data>
+                        <button translate="open">
+                            <open>Select Post...</open>
+                        </button>
+                    </data>
+                </helper_block>
+                <sort_order>5</sort_order>
+                <description>Publishing dates, Draft and Inactive statuses apply. The widget will output nothing when invalid</description>
+            </post_id>
+            <template>
+                <required>1</required>
+                <visible>1</visible>
+                <sort_order>40</sort_order>
+                <label>Template To Use</label>
+                <type>select</type>
+                <value>neotheme/blog/post/summary.phtml</value>
+                <values>
+                    <default translate="label">
+                        <value>neotheme/blog/post/summary.phtml</value>
+                        <label>Post Summary Template</label>
+                    </default>
+                    <link_inline translate="label">
+                        <value>neotheme/blog/post/detail.phtml</value>
+                        <label>Post Detail Template</label>
+                    </link_inline>
+                </values>
+            </template>
+        </parameters>
+    </neotheme_blog_selected_post>
+    <neotheme_blog_latest_post type="neotheme_blog/widget_post_latest" module="neotheme_blog">
+        <name>Blog Latest Post</name>
+        <description>Shows the latest post</description>
+        <parameters>
+            <template>
+                <required>1</required>
+                <visible>1</visible>
+                <sort_order>40</sort_order>
+                <label>Template To Use</label>
+                <type>select</type>
+                <value>neotheme/blog/post/summary.phtml</value>
+                <values>
+                    <default translate="label">
+                        <value>neotheme/blog/post/summary.phtml</value>
+                        <label>Post Summary Template</label>
+                    </default>
+                    <link_inline translate="label">
+                        <value>neotheme/blog/post/detail.phtml</value>
+                        <label>Post Detail Template</label>
+                    </link_inline>
+                </values>
+            </template>
+        </parameters>
+    </neotheme_blog_latest_post>
+</widgets>

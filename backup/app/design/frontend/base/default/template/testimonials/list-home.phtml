@@ -1,0 +1,116 @@
+<?php
+$enable = Mage::getStoreConfig('testimonial/status/enabled');
+$output = Mage::getStoreConfig('advanced/modules_disable_output/Ravi_Testimonials');
+
+if($output == 0 && $enable == 1){
+
+?>
+<link href="<?php echo $this->getSkinUrl('testimonials/css/testimonial.css'); ?>" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('testimonials/js/jquery-1.7.2.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('testimonials/js/modernizr.custom.28468.js'); ?>"></script>
+<link href='http://fonts.googleapis.com/css?family=Economica:700,400italic' rel='stylesheet' type='text/css'>
+
+<div id="da-slider" class="da-slider">
+
+<?php 
+
+$collection = Mage::getModel('testimonials/testimonial')->getCollection();
+$noimage = "no-image.jpg";
+$i = 0;
+foreach ($collection as $item) {
+
+    $count = Mage::getStoreConfig('testimonial/status/homepage');
+
+    
+    if($i == $count){ break; }
+
+?>
+
+
+
+
+				<div class="da-slide">
+					<h2><?php echo $item->getFirstname(); ?>&nbsp;<?php echo $item->getLastname(); ?></h2>
+					<p><?php echo substr($item->getComments(),0,300); ?></p>
+					<a href="<?php echo $this->getUrl('testimonials-list'); ?>" class="da-link">Read More</a>
+					<div class="da-img">
+                    <?php if($item->getPhoto() != null){ ?> 
+    
+<?php
+
+$photonew = substr($item->getPhoto(),25);
+
+// actual path of image
+$imageUrl = Mage::getBaseDir('media').DS."testimonials".DS."testimonial".DS.$photonew;
+
+// path of the resized image to be saved
+// here, the resized image is saved in media/resized folder
+$imageResized =     Mage::getBaseDir('media').DS."testimonials".DS."testimonial".DS."resized".DS.$photonew;
+
+// resize image only if the image file exists and the resized image file doesn't exist
+// the image is resized proportionally with the width/height 135px
+if (!file_exists($imageResized)&&file_exists($imageUrl)) :
+    $imageObj = new Varien_Image($imageUrl);
+    $imageObj->constrainOnly(TRUE);
+    $imageObj->keepAspectRatio(TRUE);
+    $imageObj->keepFrame(FALSE);
+    $imageObj->resize(200, 200);
+    $imageObj->save($imageResized);
+endif;
+
+$newImageUrl = Mage::getBaseUrl('media')."testimonials/testimonial/resized/".$photonew;
+?>
+<img src="<?php echo $newImageUrl ?>" />    
+
+<?php } else{ 
+
+$noImageUrl = Mage::getBaseUrl('media')."testimonials/testimonial/".$noimage;
+?>
+
+<img src="<?php echo $noImageUrl; ?>" />
+
+
+<?php } ?>
+                    
+                    </div>
+				</div>
+				
+				
+				
+
+
+
+
+
+<?php
+
+
+
+
+$i++;
+
+}
+?>
+
+				<nav class="da-arrows">
+					<span class="da-arrows-prev"></span>
+					<span class="da-arrows-next"></span>
+				</nav>
+			</div>
+
+
+
+
+            
+		<script type="text/javascript" src="<?php echo $this->getSkinUrl('testimonials/js/jquery.cslider.js'); ?>"></script>
+		<script type="text/javascript">
+		var noC = jQuery.noConflict();
+			noC(function() {
+			
+				
+				noC('#da-slider').cslider();
+				
+			});
+		</script>	
+<?php } ?>

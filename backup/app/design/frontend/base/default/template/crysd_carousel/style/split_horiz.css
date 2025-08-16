@@ -1,0 +1,123 @@
+.cd-car--split_horiz {
+  padding: 64px 16px;
+}
+
+.cd-car__wrapper--split_horiz {
+  gap:0;
+  max-width: 1366px;
+  margin: auto;
+}
+
+.cd-car__header--split_horiz,
+.cd-car__footer--split_horiz {
+  text-align: center;
+}
+
+.cd-car__header--split_horiz{
+  gap: 24px;
+  align-items: center;
+  padding: 0 0 32px;
+}
+
+.cd-car__headline--split_horiz {
+  font-size: clamp(1.5rem, 0.0687rem + 6.1069vw, 3rem);
+  line-height: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cd-car__headline--split_horiz > span:first-child {
+  font-size: clamp(1.125rem, 0.2901rem + 3.5623vw, 2rem);
+}
+
+.cd-car__subheadline--split_horiz {
+  font-size: clamp(1.125rem, 0.7672rem + 1.5267vw, 1.5rem);
+  line-height: 1;
+}
+
+.cd-car__footer--split_horiz {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0 0;
+}
+
+.cd-car__body--split_horiz {
+  max-width: 65ch;
+  margin: auto;
+}
+
+.cd-car__slides--split_horiz {
+  display: flex;
+  gap: 4px;
+}
+
+.cd-car__slide--split_horiz {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  padding: 16px;
+}
+.cd-car__slide__header--split_horiz {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cd-car__slide__headline--split_horiz {
+  font-size: 18px;
+  font-weight: 700;
+}
+.cd-car__slide__subheadline--split_horiz {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.cd-car__slide__figure--split_horiz {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cd-car__slide__figure--split_horiz .cd-car__slide__img{
+  transform: scale(1);
+  transition: transform 0.25s ease-in-out;
+}
+
+@media (hover:hover){
+  .cd-car__slide__figure--split_horiz:hover {
+    background: hsl(from var(--primary) h s 40% / 1);
+  }
+  .cd-car__slide__figure--split_horiz:hover .cd-car__slide__img{
+    transform: scale(0.98);
+  }
+}
+
+@media (min-width: 1024px){
+  .cd-car__headline--split_horiz {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
+  .cd-car__headline--split_horiz,
+  .cd-car__headline--split_horiz > span:first-child {
+    font-size: 32px;
+  }
+
+  .cd-car__headline--split_horiz > span:first-child:after {
+    content: "|";
+    margin: 0 8px;
+  }
+
+  .cd-car__subheadline--split_horiz {
+    font-size: 18px;
+    line-height: 1;
+  }
+}

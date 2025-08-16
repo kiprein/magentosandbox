@@ -1,0 +1,57 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$customerGroupId =Mage::getSingleton('customer/session')->getCustomerGroupId();
+$_helper = $this->helper('js_product');
+?>
+<?php if($this->getItems()->getSize()): ?>
+<div class="medium mb-15">Other Sizes:</div>
+<?php foreach($this->getItems() as $_item): ?>
+    <div class="col-md-4 col-sm-4 col-xs-6 ps-10 col-lg-3">
+        <div class="item-block mb-15">
+            <a href="<?php echo $_item->getProductUrl(); ?>">
+                <img alt="<?php echo $this->escapeHtml( $_item->getShortDescription()); ?> Image" src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $_item->getMainProductImage();?>.jpg" />
+            </a>
+            <div class="mt-5 fs-14 center medium">
+                <a href="<?php echo $_item->getProductUrl(); ?>" class="red"><?php echo $_item->getShortDescription();?></a>
+                <div class="line-items">Item #<span><?php echo $_item->getSku(); ?></span></div>
+                <div class="line-items"><span><?php echo $_helper->getRetailPriceRange($_item);?></span></div>
+                <?php  if($customerGroupId==6): ?>
+                    <div class="list-price">
+                        <?php if ($_item->isAvailable()): ?>
+                            <?php $inventory = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_item);?>
+                            <span class="red"><?php echo (int) $inventory->getQty()?> <?php echo $this->__('Available') ?></span>
+                        <?php else: ?>
+                            <span class="red"><?php echo $this->__('Out of stock') ?> <?php echo $this->__('Availability') ?></span>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>
+<?php endif; ?>

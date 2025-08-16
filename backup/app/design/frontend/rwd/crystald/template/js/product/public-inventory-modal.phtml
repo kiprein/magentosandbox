@@ -1,0 +1,345 @@
+<?php
+/**
+ * Created on 12/27/18 #MGW
+ * show a dumbed down version of inventory to the public
+ * 
+ * 
+ */
+$product = $this->getProduct();
+//Mark Wickline 1/11/2022 changing criteria for getting feature items
+// @see app\design\frontend\rwd\crystald\template\catalog\product\view.phtml
+$isFeature = false;
+if($product->getInspirationCard() || 
+    $product->getIncludedPlate() || 
+    $product->getIncludedAccent() || 
+    $product->getColoredSpheres() || 
+    $product->getIncludedPanels() || 
+    $product->getData('goal_setter_block')){
+        $isFeature = true;
+}
+if(!$isFeature){ //this if statement is ended on the very bottom
+// if($product->getStockItem()->getQty() < 99999){ //this if statement is ended on the very bottom
+$relatedProducts = $product->getRelatedProductCollection($this->displayFields())->addAttributeToSelect('old_product_id');
+//connecting to the database directly
+$resource = Mage::getSingleton('core/resource');
+$readConnection = $resource->getConnection('core_read');
+
+//set of helper functions for this template
+$convertDate = function($inputDate){
+    $dateArray = explode('-', $inputDate);
+    $year = (int)$dateArray[0];
+    $month = (int)$dateArray[1];
+    $curYear = (int)date('Y');
+    $curMonth = (int)date('m');
+    if($year > $curYear || ($year == $curYear && $month >= $curMonth ) || ($year < $curYear && $month == 12)){
+        $dateObj   = DateTime::createFromFormat('!m', $month);
+        return $dateObj->format('F');
+    } else {
+        return false;
+    }
+};
+
+// $getInventorySearch = function($inputId) use ($readConnection){
+//     $query = "select qty, date 
+//     from inventory_avail
+//     where product_id = {$inputId}
+//     order by date";
+//     return $readConnection->fetchAll($query);
+// };
+
+$getInventorySearch = function($inputId) use ($readConnection) {
+    $token = 'h2kznVAK7ybA4FHoPDZBblaJDQ6jb8';
+    $productId = trim($inputId);
+    $url = "https://genesis.crystal-d.com/api/product/{$inputId}/public-inventory";
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "X-API-KEY: {$token}",
+            "Accept: application/json"
+        ],
+        CURLOPT_TIMEOUT => 10
+    ]);
+
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        curl_close($ch);
+        return [];
+    }
+
+    curl_close($ch);
+
+    $result = json_decode($response, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return [];
+    }
+
+    if (is_array($result)) {
+        if (isset($result['data']) && is_array($result['data'])) {
+            return $result['data'];
+        }
+        return $result;
+    }
+
+    return [];
+};
+
+
+//get resutls from parent product
+$parentResults = $getInventorySearch($product->getOldProductId());
+?>
+<style>
+    .public-inv-modal .popup-title{
+        margin-top: 20px;
+    }
+    .public-inv-table{
+        border-spacing: 0;
+        border-collapse: collapse;
+        text-align: center;
+        margin: 12px auto;
+    }
+    .public-inv-th > th{
+        text-align: center;
+        padding: 10px 10px;
+    }
+    .public-inv-table td{
+        color: #363d45;
+        padding: 10px 8px;
+    }
+    .public-inv-master-body{
+        border: 1px solid #005883;
+        -webkit-box-shadow: 0px 1px 5px 2px rgba(148, 148, 148, 0.5);
+        -moz-box-shadow: 0px 1px 5px 2px rgba(148, 148, 148, 0.5);
+        box-shadow: 0px 1px 5px 2px rgba(148, 148, 148, 0.5);
+    }
+    .public-inv-rel-body{
+        border: 1px solid #cacbce;
+    }
+    .inv-spacer-tr > td{
+        padding: 2px;
+    }
+    .inv-bottom-border{
+        border-bottom: 1px dashed #e9eaec;
+    }
+    .inv-item-num{
+        color: #005883;
+        font-weight: bold;
+    }
+    .public-inv-table .inv-size{
+        color: #7987a0; 
+        font-size: 15px;
+    }
+</style>
+<div class="container public-inv-modal">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="popup-title">
+            Product Inventory
+        </div>
+        <div clas="row mt-20">
+            <div class="col-xs-12 center">
+                <table class="public-inv-table">
+                    <thead>
+                    <tr class="public-inv-th">
+                        <th>Item #</th>
+                        <th>Size</th>
+                        <th>On Hand Qty.</th>
+                        <th>On Order Qty.</th>
+                        <th>Expected Date</th>
+                    </tr>
+                    </thead>
+                    <tbody class="public-inv-master-body">
+                    <tr class="public-inv-first-tr <?php if(count($parentResults) > 2){echo 'inv-bottom-border';} ?>">
+                        <td class="inv-item-num">
+                            <?php echo $product->getSku()
+                            // . ":" . $product->getId()
+                            ; ?>
+                        </td>
+                        <td class="inv-size">
+                            <?php echo $this->getDimensions($product) ?: "No Size Available"; ?>
+                        </td>
+                        <td class="inv-onhand">
+                            <?php
+                                if(isset($parentResults[0]['qty']) && $parentResults[0]['qty'] !== 0){
+                                    echo round($parentResults[0]['qty']);
+                                }else{
+                                    echo '
+                                    <section style="font-size:14px; display:flex; gap: 4px">
+                                        <header>
+                                            <span>
+                                                Contact us for availability
+                                            </span>
+                                        </header>
+                                        <div style="display:flex; gap:8px">
+                                            <a style="text-decoration:underline" href="tel:8442496323">
+                                                844-249-6323
+                                            </a>
+                                            <a style="text-decoration:underline" href="/contact-us">
+                                                Email
+                                            </a>
+                                        </div>
+                                    </section>
+                                    ';
+                                }
+                                
+                            ?>
+                        </td>
+                        <?php if(count($parentResults) <= 1): ?>
+                            <td class="inv-nextord">-</td>
+                            <td class="inv-expectdate">-</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php 
+                                $numResults = count($parentResults);
+                                $lastFailed = false;
+                                $trAdded = false; //fail safe
+                            ?>
+                            <?php for($x = 1 ; $x < $numResults; $x++): ?>
+                                <?php $checkDate = $convertDate($parentResults[$x]['date']); ?>
+                                <?php if(!$lastFailed && $x > 1): ?>
+                                    <tr class="public-inv-tr <?php if($x < ($numResults - 1)){echo 'inv-bottom-border';} ?>">
+                                    <td colspan="3"></td>
+                                <?php endif; ?>
+                                <?php if($checkDate): ?>
+                                    <td class="inv-nextord">
+                                        <?php echo $parentResults[$x]['qty']; ?>
+                                    </td>
+                                    <td class="inv-expectdate"><?php echo $checkDate; ?></td>
+                                    </tr>
+                                    <?php 
+                                        /* need to hold the last VALID amount to subtract current from it*/ 
+                                        $trAdded = true;
+                                        $lastFailed = false;
+                                    ?>
+                                <?php else: ?>
+                                    <?php $lastFailed = true; //if the last item failed don't start a new tr ?>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+                            <?php if(!$trAdded){ //if all dates failed ?>
+                                <td class="inv-nextord">-</td>
+                                <td class="inv-expectdate">-</td>
+                                </tr>
+                            <?php } else {
+                                $trAdded = false; //reset to false for related results
+                            } ?>
+                        <?php endif; ?>
+                    </tbody>
+                    <!-- START OF RELATED PRODUCTS-->
+                    <?php if(count($relatedProducts) >= 1): ?>
+                    <tbody>
+                        <tr class="inv-empty-tr"><td colspan="5" style="text-align: left;">More Sizes</td></tr>
+                    </tbody>
+                    <?php foreach ($relatedProducts as $relatedProduct): ?>
+                    <tbody class="public-inv-rel-body">
+                    <?php /** New search for relatedProducts */ ?>
+                    <?php $relatedResults = $getInventorySearch($relatedProduct->getOldProductId()); ?>
+                    <tr class="public-inv-tr <?php if(count($relatedResults) > 2){echo 'inv-bottom-border';} ?>">
+                        <td class="inv-item-num">
+                            <a href="<?php echo $relatedProduct->getUrlKey(); ?>">
+                                <?php echo $relatedProduct->getSku(); ?>
+                            </a>
+                        </td>
+                        <td class="inv-size">
+                            <?php echo $this->getDimensions($relatedProduct) ?: "No Size Available"; ?>
+                        </td>
+                        <td class="inv-onhand">
+                            <?php
+                                if(isset($relatedResults[0]['qty']) && is_numeric($relatedResults[0]['qty']) && $relatedResults[0]['qty'] !== 0){
+                                    echo round($relatedResults[0]['qty']);
+                                }else{
+                                    echo '
+                                    <section style="font-size:14px; display:flex; gap: 4px">
+                                        <header>
+                                            <span>
+                                                Contact us for availability
+                                            </span>
+                                        </header>
+                                        <div style="display:flex; gap:8px">
+                                            <a style="text-decoration:underline" href="tel:8442496323">
+                                                844-249-6323
+                                            </a>
+                                            <a style="text-decoration:underline" href="/contact-us">
+                                                Email
+                                            </a>
+                                        </div>
+                                    </section>
+                                    ';
+                                }
+                            
+                            ?>
+                        </td>
+                    <?php if(count($relatedResults) <= 1): ?>
+                        <td class="inv-nextord">-</td>
+                        <td class="inv-expectdate">-</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php 
+                            $numResults = count($relatedResults);
+                            $lastFailed = false;
+                            $trAdded = false; //fail safe
+                        ?>
+                        <?php for($x = 1 ; $x < $numResults ; $x++): ?>
+                            <?php $checkDate = $convertDate($relatedResults[$x]['date']); ?>
+                            <?php if(!$lastFailed && $x > 1): ?>
+                                <tr class="public-inv-tr <?php if($x < ($numResults - 1)){echo 'inv-bottom-border';} ?>">
+                                <td colspan="3"></td>
+                            <?php endif; ?>
+                            <?php if($checkDate): ?>
+                                <td class="inv-nextord">
+                                    <?php echo $relatedResults[$x]['qty']; ?>
+                                </td>
+                                <td class="inv-expectdate"><?php echo $checkDate; ?></td>
+                                </tr>
+                                <?php 
+                                    $trAdded = true;
+                                    $lastFailed = false;
+                                ?>
+                            <?php else: ?>
+                                <?php $lastFailed = true; //if the last item failed don't start a new tr ?>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                        <?php if(!$trAdded){ //if all dates failed ?>
+                            <td class="inv-nextord">-</td>
+                            <td class="inv-expectdate">-</td>
+                            </tr>
+                        <?php } else {
+                            $trAdded = false; //reset to false for more related results
+                        } ?>
+                    <?php endif; ?>
+                    </tbody>
+                    <tbody><tr class="inv-spacer-tr"><td></td></tr></tbody>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </table>
+            </div>
+        </div>
+        <div clas="row mt-20">
+            <div class="col-xs-12 center">
+                <p style="margin-top: 10px;">Not seeing the inventory you want? 
+                    Give us a call at 844-249-6323 or contact us 
+                    <a style="color:" href="https://www.crystal-d.com/contact-us">here</a>, 
+                and we can make the magic happen.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<?php }else{ //if item is considered a feature item?>
+<div class="container public-inv-modal">
+    <div class="row">
+        <div class="col-xs-12">
+            <div style="margin-top: 20px;" class="popup-title">
+                Product Inventory
+            </div>
+            <p style="padding: 20px 20px; text-align: center;">
+                Give us a call at 844-249-6323 or contact us 
+                <a href="https://www.crystal-d.com/contact-us">here</a> for updated inventory status.</p>
+        </div>
+    </div>
+</div>
+<?php } ?>

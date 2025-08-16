@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<layout version="0.1.0">
+
+    <!--
+    Default layout, loads most of the pages
+    -->
+    <!--Updated where this info goes based on latest google info -->
+    <default>
+        <!-- Chapagain_GoogleTagManager -->
+        <reference name="head" before="-">
+            <block type="googletagmanager/gtm" name="chapagain_google_tag_manager" as="chapagain_google_tag manager" template="chapagain/googletagmanager/gtm.phtml" />
+        </reference>
+
+        <reference name="after_body_start" before="-">
+            <block type="googletagmanager/gtm" name="chapagain_noscript_google_tag_manager"
+                   as="chapagain_noscript_google_tag manager"
+                   template="chapagain/googletagmanager/noscript-tagmanager.phtml"/>
+        </reference>
+
+    </default>
+</layout>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Ravi_Testimonials>
+      <active>true</active>
+      <codePool>local</codePool>
+      <version>0.1.0</version>
+    </Ravi_Testimonials>
+  </modules>
+</config>

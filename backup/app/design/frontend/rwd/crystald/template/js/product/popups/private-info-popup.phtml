@@ -1,0 +1,40 @@
+<?php
+$product       = $this->getProduct();
+$productHelper = $this->helper('js_product');
+$privateInfo = $productHelper->getProductPrivateInfo($product);
+?>
+
+<div class="container private-info-container">
+    <div class="popup-title">
+        Private Information
+    </div>
+    <div class="row ps-15 mb-20">
+        <div class="col-xs-4">
+            <ul class="private-info-list">
+				<?php $j = 1; foreach ($privateInfo as $info): ?>
+                    <li class="dark-grey fs-12 mt-5 mb-5"><?php echo $info; ?></li>
+				<?php if ($j % 5 == 0): ?>
+                    </ul></div>
+        <div class="col-xs-4">
+                    <ul class="private-info-list">
+
+
+				<?php endif; ?>
+				<?php $j++;endforeach; ?>
+            </ul>
+        </div>
+    </div>
+
+    <div class="popup-title mb-20">
+        Notes section
+    </div>
+    <form method="post" id="frm_comment">
+        <textarea id="s_wow_idea" class="form-control"></textarea>
+
+        <div class="center">
+            <input type="button" id="save_s_wow_idea" value="Submit" class="button">
+        </div>
+        <span id="succ_comment_msg"></span>
+    </form>
+
+</div>

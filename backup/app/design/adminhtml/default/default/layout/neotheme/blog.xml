@@ -1,0 +1,249 @@
+<?xml version="1.0"?>
+
+<!--
+    Document   : blog.xml
+    Created on : 06 May 2012 11:25 PM
+    Author     : tony
+
+-->
+
+<layout>
+    <adminhtml_neotheme_blog_post_index>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>Post Manager</title></action>
+        </reference>
+        <reference name="menu">
+            <action method="setActive"><menupath>neotheme_blog/post</menupath></action>
+        </reference>  
+        <reference name="content">
+            <block type="neotheme_blog/adminhtml_post" name="post_list">
+               <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                    <action method="setUseConfirm"><params>0</params></action>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_neotheme_blog_post_index>
+    
+    <adminhtml_neotheme_blog_post_edit>
+        <update handle="editor"/>
+        <reference name="menu">
+            <action method="setActive"><menupath>neotheme_blog/post</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="neotheme_blog/adminhtml_post_edit" name="post_edit"></block>
+        </reference>
+        <reference name="left">
+           <block type="neotheme_blog/adminhtml_post_edit_tabs" name="blog_tabs"></block>
+        </reference>
+         <reference name="js">
+            <block type="core/template" template="catalog/wysiwyg/js.phtml" name="catalog.wysiwyg.js" />
+        </reference>
+       <!-- <reference name="js">
+            <block type="core/template" name="image.additional.js" template="neotheme/neotheme_blog/banner/js.phtml"/>
+        </reference>-->
+    </adminhtml_neotheme_blog_post_edit>
+
+
+    <adminhtml_neotheme_blog_category_index>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>Category Manager</title></action>
+        </reference>
+        <reference name="menu">
+            <action method="setActive"><menupath>neotheme_blog/category</menupath></action>
+        </reference>  
+        <reference name="content">
+            <block type="neotheme_blog/adminhtml_category" name="category_list">
+               <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                    <action method="setUseConfirm"><params>0</params></action>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_neotheme_blog_category_index>
+    <adminhtml_neotheme_blog_category_edit>
+        <update handle="editor"/>
+        <reference name="menu">
+            <action method="setActive"><menupath>neotheme_blog/category</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="neotheme_blog/adminhtml_category_edit" name="post_edit"></block>
+        </reference>
+        <reference name="left">
+           <block type="neotheme_blog/adminhtml_category_edit_tabs" name="blog_tabs"></block>
+        </reference>
+         <reference name="js">
+            <block type="core/template" template="catalog/wysiwyg/js.phtml" name="catalog.wysiwyg.js" />
+        </reference>
+       <!-- <reference name="js">
+            <block type="core/template" name="image.additional.js" template="neotheme/neotheme_blog/banner/js.phtml"/>
+        </reference>-->
+    </adminhtml_neotheme_blog_category_edit>
+    
+    <adminhtml_neotheme_blog_comment_index>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>Comment Manager</title></action>
+        </reference>
+        <reference name="menu">
+            <action method="setActive"><menupath>neotheme_blog/comment</menupath></action>
+        </reference>  
+        <reference name="content">
+            <block type="neotheme_blog/adminhtml_comment" name="comment_list">
+               <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                    <action method="setUseConfirm"><params>0</params></action>
+                </block>
+            </block>
+        </reference>
+    </adminhtml_neotheme_blog_comment_index>
+    
+    
+    
+    <!--
+    
+    <adminhtml_neotheme_banner_banner_products>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_products" name="image.edit.tab.products"/>
+            <block type="adminhtml/widget_grid_serializer" name="related_grid_serializer">
+                <reference name="related_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>image.edit.tab.products</grid_block_name>
+                        <data_callback>getSelectedProducts</data_callback>
+                        <hidden_input_name>links[product_ids]</hidden_input_name>
+                        <reload_param_name>related_product_ids</reload_param_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_neotheme_banner_banner_products>
+    <adminhtml_neotheme_banner_banner_productsgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_products" name="image.edit.tab.products"/>
+        </block>
+    </adminhtml_neotheme_banner_banner_productsgrid>
+    
+    <adminhtml_neotheme_banner_banner_promotions>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_promotions" name="image.edit.tab.promotions"/>
+            <block type="adminhtml/widget_grid_serializer" name="related_grid_serializer">
+                <reference name="related_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>image.edit.tab.promotions</grid_block_name>
+                        <data_callback>getSelectedPromos</data_callback>
+                        <hidden_input_name>links[promo_ids]</hidden_input_name>
+                        <reload_param_name>related_promo_ids</reload_param_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_neotheme_banner_banner_promotions>
+    <adminhtml_neotheme_banner_banner_promotionsgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_promotions" name="image.edit.tab.promotions"/>
+        </block>
+    </adminhtml_neotheme_banner_banner_promotionsgrid>
+    <adminhtml_neotheme_banner_banner_cmspages>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_cmspages" name="image.edit.tab.cmspages"/>
+            <block type="adminhtml/widget_grid_serializer" name="related_grid_serializer">
+                <reference name="related_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>image.edit.tab.cmspages</grid_block_name>
+                        <data_callback>getSelectedCmsPages</data_callback>
+                        <hidden_input_name>links[cms_ids]</hidden_input_name>
+                        <reload_param_name>related_cms</reload_param_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_neotheme_banner_banner_cmspages>
+    <adminhtml_neotheme_banner_banner_cmspagesgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_cmspages" name="image.edit.tab.cmspages"/>
+        </block>
+    </adminhtml_neotheme_banner_banner_cmspagesgrid>
+    
+
+    <adminhtml_neotheme_banner_banner_rotators>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_rotators" name="image.edit.tab.rotators"/>
+            <block type="adminhtml/widget_grid_serializer" name="related_grid_serializer">
+                <reference name="related_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>image.edit.tab.rotators</grid_block_name>
+                        <data_callback>getSelectedRotators</data_callback>
+                        <hidden_input_name>links[imagerotator_ids]</hidden_input_name>
+                        <reload_param_name>related_rotator_ids</reload_param_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_neotheme_banner_banner_rotators>
+    <adminhtml_neotheme_banner_banner_rotatorsgrid>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="imagerotator/adminhtml_image_edit_tab_rotators" name="image.edit.tab.rotators"/>
+        </block>
+    </adminhtml_neotheme_banner_banner_rotatorsgrid>
+    <adminhtml_neotheme_banner_position_rotators>
+        <referense name="head">
+            <action method="setTitle" translate="title"><title>Position Manager</title></action>
+        </referense>
+        <reference name="menu">
+            <action method="setActive"><menupath>imagerotator/rotators</menupath></action>
+        </reference>  
+        <reference name="content">
+            <block type="imagerotator/adminhtml_imagerotator" name="imagerotator_list">
+                <block type="adminhtml/store_switcher" name="store_switcher" as="store_switcher">
+                    <action method="setUseConfirm"><params>0</params></action>
+                </block>
+            </block>
+            
+        </reference>
+        
+    </adminhtml_neotheme_banner_position_rotators>
+
+    <adminhtml_neotheme_banner_position_edit>
+        <update handle="editor"/>
+        <reference name="menu">
+            <action method="setActive"><menupath>imagerotator/rotators</menupath></action>
+        </reference>
+        <reference name="content">
+            <block type="imagerotator/adminhtml_imagerotator_edit" name="imagerotator_edit"></block>
+        </reference>
+        <reference name="left">
+           <block type="adminhtml/store_switcher" name="store_switcher" before="-"></block>
+           <block type="imagerotator/adminhtml_imagerotator_edit_tabs" name="imagerotator_tabs"></block>
+        </reference>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type><value>js/neotheme/imagerotator/ordering_column.js</value>
+            </action>
+        </reference>
+        <reference name="js">
+            <block type="core/template" name="image.additional.js" template="neotheme/imagerotator/position/js.phtml"/>
+             <block type="imagerotator/adminhtml_imagerotator_edit_js" template="neotheme/imagerotator/js.phtml" name="banner_position_js"></block>
+        </reference>
+    </adminhtml_neotheme_banner_position_edit>
+    <adminhtml_neotheme_banner_position_image>
+        <block type="core/text_list" name="root" output="toHtml">
+            
+            <block type="imagerotator/adminhtml_imagerotator_edit_tab_images" name="imagerotator.edit.tab.images"/>
+            <block type="adminhtml/widget_grid_serializer" name="related_grid_serializer">
+                <reference name="related_grid_serializer">
+                    <action method="initSerializerBlock">
+                        <grid_block_name>imagerotator.edit.tab.images</grid_block_name>
+                        <data_callback>getSerializerData</data_callback>
+                        <hidden_input_name>links[images]</hidden_input_name>
+                        <reload_param_name>selected_images</reload_param_name>
+                    </action>
+                    <action method="addColumnInputName">
+                        <hidden_input_name>chooser_position</hidden_input_name>
+                        <hidden_input_name>image_ids</hidden_input_name>
+                    </action>
+                </reference>
+            </block>
+        </block>
+    </adminhtml_neotheme_banner_position_image>
+    <adminhtml_neotheme_banner_position_imagegrid>
+        <block type="core/text_list" name="root" output="toHtml">        
+            <block type="imagerotator/adminhtml_imagerotator_edit_tab_images" name="imagerotator.edit.tab.images"/>    
+        </block>
+    </adminhtml_neotheme_banner_position_imagegrid>-->
+</layout>

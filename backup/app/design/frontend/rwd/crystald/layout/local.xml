@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <catalog_category_view>
+        <reference name="head">
+
+            <!-- Default -->
+            <action method="addCss">
+                <stylesheet>webforms/form.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>webforms/results.css</stylesheet>
+            </action>
+
+            <!-- Logic -->
+            <action method="addJs">
+                <js>webforms/logic.js</js>
+            </action>
+
+            <!-- Tooltip -->
+            <action method="addJs">
+                <js>webforms/opentip/opentip-native-excanvas.min.js</js>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>webforms/opentip/opentip.css</name>
+            </action>
+
+            <!-- Multistep template -->
+            <action method="addJs">
+                <js>webforms/multistep.js</js>
+            </action>
+
+            <!-- Star Rating -->
+            <action method="addCss">
+                <stylesheet>webforms/stars.css</stylesheet>
+            </action>
+            <action method="addJs">
+                <js>webforms/stars.js</js>
+            </action>
+
+            <!-- Date Picker -->
+            <action method="addItem">
+                <type>js_css</type>
+                <name>calendar/calendar-blue.css</name>
+            </action>
+            <action method="addJs">
+                <js>calendar/calendar.js</js>
+            </action>
+            <action method="addJs">
+                <js>calendar/calendar-setup.js</js>
+            </action>
+
+            <!-- Ajax Submission Popup Windows -->
+            <action method="addJs">
+                <js>prototype/window.js</js>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/default.css</name>
+            </action>
+            <action method="addItem">
+                <type>js_css</type>
+                <name>prototype/windows/themes/alphacube.css</name>
+            </action>
+
+            <!-- HTML Editor -->
+            <action method="addJs">
+                <js>tiny_mce/tiny_mce.js</js>
+            </action>
+
+        </reference>
+
+        <reference name="content">
+
+            <!-- Date Picker Block -->
+            <block type="core/html_calendar" name="head.calendar" as="calendar" template="page/js/calendar.phtml"/>
+
+            <!-- HTML Editor Block -->
+            <block type="core/template" name="tiny_mce.init" template="webforms/scripts/tiny_mce.phtml"/>
+
+        </reference>
+    </catalog_category_view>
+</layout>

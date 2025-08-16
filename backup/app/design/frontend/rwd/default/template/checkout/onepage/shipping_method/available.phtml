@@ -1,0 +1,204 @@
+<?php
+/**
+ * Shipping
+ */
+ #usedOnepageTemplate
+?>
+<?php /** @var $this Mage_Checkout_Block_Onepage_Shipping_Method_Available */ ?>
+<div style="text-align: left; margin-left: 25px;" id="shipping-info-container">
+<h1>Shipping Method</h1>
+<p class="text-gray">FOB St. Paul, Minnesota 55103</p>
+<?php $_shippingRateGroups = $this->getShippingRates(); ?>
+<?php if (!$_shippingRateGroups): ?>
+    <p><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></p>
+<?php else: ?>
+    <dl class="sp-methods" id="sp_methods_wrapper">
+    <?php $shippingCodePrice = array(); ?>
+    <?php $_sole = count($_shippingRateGroups) == 1; foreach ($_shippingRateGroups as $code => $_rates): ?>
+        <!--<dt><?php echo $this->escapeHtml($this->getCarrierName($code)) ?></dt>-->
+        <dd>
+            <ul>
+            <?php $_sole = $_sole && count($_rates) == 1; foreach ($_rates as $_rate): ?>
+                <?php $shippingCodePrice[] = "'".$_rate->getCode()."':".(float)$_rate->getPrice(); ?>
+                <li>
+                   <?php if ($_rate->getErrorMessage()): ?>
+                        <ul class="messages"><li class="error-msg"><ul><li><?php echo $this->escapeHtml($_rate->getErrorMessage()) ?></li></ul></li></ul>
+                   <?php else: ?>
+                        <?php if ($_sole) : ?>
+                        <span class="no-display"><input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>" checked="checked" /></span>
+                        <?php else: ?>
+                        <input name="shipping_method" type="radio" value="<?php echo $_rate->getCode() ?>" id="s_method_<?php echo $_rate->getCode() ?>"<?php if($_rate->getCode()===$this->getAddressShippingMethod()) echo ' checked="checked"' ?> class="radio"/>
+
+                            <?php if ($_rate->getCode() === $this->getAddressShippingMethod()): ?>
+                            <script type="text/javascript">
+                                //<![CDATA[
+                                    lastPrice = <?php echo (float)$_rate->getPrice(); ?>;
+                                //]]>
+                            </script>
+                            <?php endif; ?>
+                            <?php if($_rate->getCode() == 'mgw_modalcart_fedex_3rdparty'): ?>
+                            <script>
+                                //<![CDATA[
+                                    //Opens the 3rdPartyFormWrapper
+                                    jQuery(document).ready(function() {
+                                        var isThirdPartyChecked = function(){
+                                            if(jQuery('#s_method_mgw_modalcart_fedex_3rdparty').is(':checked')){
+                                                jQuery('#thirdPartyFormWrapper').css('display', 'block');
+                                            } else{
+                                                jQuery('#thirdPartyFormWrapper').css('display', 'none');
+                                            }
+                                        }
+                                        jQuery('#sp_methods_wrapper').click(function(){
+                                            isThirdPartyChecked();
+                                            document.fire('mgw:adjustHeightToDiv');
+                                        });
+                                        isThirdPartyChecked();
+                                        document.fire('mgw:adjustHeightToDiv');
+                                    });
+                                    
+                                //]]
+                            </script>
+                            <?php endif ?>
+                        <?php endif; ?>
+                        <label for="s_method_<?php echo $_rate->getCode() ?>" class="shipping-method-label">
+                        <?php echo $this->escapeHtml($_rate->getMethodTitle()) ?>
+                        <?php $_excl = $this->getShippingPrice($_rate->getPrice(), $this->helper('tax')->displayShippingPriceIncludingTax()); ?>
+                        <?php $_incl = $this->getShippingPrice($_rate->getPrice(), true); ?>
+                        <?php if( $_rate->getCode() != 'mgw_modalcart_fedex_3rdparty'): ?>
+                            <?php echo $_excl; ?>
+                            <?php if ($this->helper('tax')->displayShippingBothPrices() && $_incl != $_excl): ?>
+                                (<?php echo $this->__('Incl. Tax'); ?> <?php echo $_incl; ?>)
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        </label>
+                    <?php endif ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </dd>
+    <?php endforeach; ?>
+    </dl>
+    </div><!--End of shipping-info-container -->
+    <!-- MGW third party shipping impliment -->
+    <?php $quote = Mage::getSingleton('checkout/session')->getQuote(); 
+    /**
+     * javascript for `get3rdPartyAcc()` lives in
+     * app\design\frontend\rwd\default\template\checkout\onepage\shipping_method.phtml
+     *  */?>
+    <div id="thirdPartyFormWrapper">
+    <h2>Third Party Shipping Information</h2>
+    <?php if( $quote->getData('3rdpartyFedex')){
+        $thirdPartyData = unserialize($quote->getData('3rdpartyFedex'));
+    } else {
+        $thirdPartyData = Array();
+    } ?>
+    <div class="flex-twoColumn">
+        <div class="text-left">
+            <label for="billing_3rdpartyAccountNumber">* Carrier Account Number</label>
+            <input type="text" name="custom[3rdpartyAccountNumber]"
+                value="<?php echo $thirdPartyData['acc'] ?: ''; ?>" class="input-text thirdParty-required" 
+                id="billing_3rdpartyAccountNumber" onkeyup="get3rdPartyAcc(this.value)"
+                title="Third Party Carrier Account Number"/>
+        </div>
+        
+        <div class="text-left">
+            <label for="billing_3rdPartyCarrier">* Carrier</label>
+            <input type="text" id="billing_3rdPartyCarrier" name="custom[3rdPartyCarrier]"
+                class="thirdParty-required" title="Carrier"
+                value="<?php echo $thirdPartyData['carrier'] ?: ''; ?>"/>
+        </div>
+        <div class="text-left">
+            <label for="billing_3rdPartyPreferredService">* Preferred Shipping Method</label>
+            <input type="text" id="billing_3rdPartyPreferredService" name="custom[3rdPartyPreferredService]"
+                placeholder="e.g. Standard Overnight"
+                class="thirdParty-required" title="Third Party Preferred Shipping Method"
+                value="<?php echo $thirdPartyData['preferred'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left">
+            <label for="billing_3rdPartyCompany">* Account Holder's Company Name</label>
+            <input type="text" name="custom[3rdPartyCompany]" id="billing_3rdPartyCompany"
+            class="thirdParty-required" title="Company Name"
+            value="<?php echo $thirdPartyData['company'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left">
+            <label for="billing_3rdPartyAddress1">* Account Holder's Street Address 1</label>
+            <input type="text" id="billing_3rdPartyAddress1" name="custom[3rdPartyAddress1]"
+            class="thirdParty-required" title="Street Address 1"
+            value="<?php echo $thirdPartyData['add1'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left">
+            <label for="billing_3rdPartyAddress2">Account Holder's Street Address 2</label>
+            <input type="text" id="billing_3rdPartyAddress2" name="custom[3rdPartyAddress2]"
+            value="<?php echo $thirdPartyData['add2'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left">
+            <label for="billing_3rdPartyCity">* Account Holder's City</label>
+            <input type="text" id="billing_3rdPartyCity" name="custom[3rdPartyCity]"
+            class="thirdParty-required" title="City"
+            value="<?php echo $thirdPartyData['city'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left" style="max-width: 218px;">
+            <label for="billing_3rdPartyState">* State/Province</label>
+            <input type="text" id="billing_3rdPartyState" name="custom[3rdPartyState]"
+                class="thirdParty-required" title="Third Party State/Province"
+                value="<?php echo $thirdPartyData['state'] ?: ''; ?>"/>
+        </div>
+        
+        <div class="text-left" style="max-width: 218px;">
+            <label for="billing_3rdPartyZip">* ZIP/Postal Code</label>
+            <input type="text" id="billing_3rdPartyZip" name="custom[3rdPartyZip]"
+                class="thirdParty-required" title="Third Party Zip/Postal Code"
+                value="<?php echo $thirdPartyData['zip'] ?: ''; ?>"/>
+        </div>
+
+        <div class="text-left">
+            <label for="billing_3rdPartyCountry">* Country</label>
+            <input type="text" id="billing_3rdPartyCountry" name="custom[3rdPartyCountry]"
+                class="thirdParty-required" title="Third Party Country"
+                value="<?php echo $thirdPartyData['country'] ?: ''; ?>"/>
+                <script>
+                //<![CDATA[
+                    //todo, make country and state dropdown fields??
+                //]]>
+                </script>
+        </div>
+
+        <!-- For ajax -->
+        <input type="hidden" id="3rdparty_url" value="<?php echo $this->getUrl('mgw/index/thirdPartyAcc?accNum='); ?>"/>
+    </div>
+    </div>
+    <!-- MGW end of third party shipping -->
+<script type="text/javascript">
+//<![CDATA[
+    <?php if (!empty($shippingCodePrice)): ?>
+        var shippingCodePrice = {<?php echo implode(',',$shippingCodePrice); ?>};
+    <?php endif; ?>
+
+    $$('input[type="radio"][name="shipping_method"]').each(function(el){
+        Event.observe(el, 'click', function(){
+            if (el.checked == true) {
+                var getShippingCode = el.getValue();
+                <?php if (!empty($shippingCodePrice)): ?>
+                    var newPrice = shippingCodePrice[getShippingCode];
+                    if (!lastPrice) {
+                        lastPrice = newPrice;
+                        quoteBaseGrandTotal += newPrice;
+                    }
+                    if (newPrice != lastPrice) {
+                        quoteBaseGrandTotal += (newPrice-lastPrice);
+                        lastPrice = newPrice;
+                    }
+                <?php endif; ?>
+                checkQuoteBaseGrandTotal = quoteBaseGrandTotal;
+                return false;
+            }
+       });
+    });
+//]]>
+</script>
+<?php endif; ?>

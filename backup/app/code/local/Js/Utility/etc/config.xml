@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Utility>
+            <version>0.1.0</version>
+        </Js_Utility>
+    </modules>
+    <global>
+        <helpers>
+            <js_utility>
+                <class>Js_Utility_Helper</class>
+            </js_utility>
+        </helpers>
+    </global>
+</config>

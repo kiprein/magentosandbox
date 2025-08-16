@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kip_BotLimiter>
+            <version>0.1.0</version>
+        </Kip_BotLimiter>
+    </modules>
+    <global>
+        <models>
+            <botlimiter>
+                <class>Kip_BotLimiter_Model</class>
+            </botlimiter>
+        </models>
+        <events>
+            <controller_front_init_before>
+                <observers>
+                    <kip_botlimiter>
+                        <type>singleton</type>
+                        <class>botlimiter/observer</class>
+                        <method>blockAbusiveBots</method>
+                    </kip_botlimiter>
+                </observers>
+            </controller_front_init_before>
+        </events>
+    </global>
+</config>

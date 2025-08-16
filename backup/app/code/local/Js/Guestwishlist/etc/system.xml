@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<config>
+    <sections>
+        <wishlist>
+            <groups>
+                <general>
+                    <fields>
+                        <bcc_wishlist translate="">
+                            <label>Bcc Wishlist</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Comma separated list of who should receive a wishlist after sent. Make sure there are NO spaces between the email addresses.  If left blank nothing is sent</comment>
+                        </bcc_wishlist>
+                        <wishlist_share_message>
+                            <label>Default Wishlist Share Message</label>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>200</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </wishlist_share_message>
+                        <delete_wishlist_after_send>
+                            <label>Delete Wishlist Items?</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>100</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>If set to yes items will be removed from the wishlist after it's sent.  Added for debugging</comment>
+                        </delete_wishlist_after_send>
+                    </fields>
+                </general>
+            </groups>
+        </wishlist>
+    </sections>
+</config>

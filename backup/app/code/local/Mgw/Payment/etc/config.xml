@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Mgw_Payment>
+            <version>0.1.0</version>
+        </Mgw_Payment>
+    </modules>
+    <global>
+        <models>
+            <mgw_payment>
+                <class>Mgw_Payment_Model</class>
+            </mgw_payment>
+        </models>
+        <helpers>
+            <mgw_payment>
+                <class>Mgw_Payment_Helper</class>
+            </mgw_payment>
+        </helpers>
+    </global>
+    <default>
+        <payment>
+            <terms>
+                <model>mgw_payment/standard</model>
+                <active>1</active>
+                <order_status>pending</order_status>
+                <title>Crystal D Terms</title>
+                <payment_action>sale</payment_action>
+                <sort_order>100</sort_order>
+            </terms>
+        </payment>
+    </default>
+</config>

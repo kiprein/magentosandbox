@@ -1,0 +1,86 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Create account form template
+ *
+ * @see app/design/frontend/base/default/template/customer/form/register.phtml
+ */
+/** @var $this Mage_Customer_Block_Form_Register */
+?>
+
+<div class="container page-center category-block">
+    <div class="page-title">
+        <h1><?php echo $this->__('Create an Account') ?></h1>
+    </div>
+    <div class="form-wrapper">
+        <?php
+        echo $this->getLayout()->createBlock('webforms/webforms', 'custom_form_1', array
+        (
+            'webform_id' => 1,
+            'template' => 'webforms/default.phtml',
+        ))->toHtml();
+        ?>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var frmwrap = jQuery('.form-wrapper'),
+        frmbtn = jQuery("form[id*='webform'] button");
+
+	jQuery( document ).ready(function() {
+		var listItems = jQuery(".form-list li");
+		listItems.each(function(idx, li) {
+			jQuery(li).addClass('row');
+		});
+	});
+
+    frmbtn.on("click", function() {
+        
+        var aoIfrm = document.createElement("iframe");
+        aoIfrm.setAttribute("id", "ifrm");
+        aoIfrm.style.backgroundColor = "transparent";
+        aoIfrm.style.border = "none";
+        aoIfrm.style.width = "1px";
+        aoIfrm.style.height = "1px";
+        aoFormData = jQuery(".webforms-create_customer").serialize();
+
+        var blob = new Blob([aoFormData], { type: 'text/plain' });
+        var aoExternalPostURL = URL.createObjectURL(blob);
+
+        aoIfrm.src = aoExternalPostURL;
+        document.body.appendChild(aoIfrm);
+
+        setTimeout(function(){
+            var pw = jQuery('.please-wait');
+            pw.remove();
+
+            frmwrap.append('<div class="thanks" style="padding:32px 0"><p style="margin:0 0 16px">Thank you for registering with Crystal D! One of our Memory Makers will be in touch with you today so we can get you access to our dealer tools.</p><p style="margin:0 0 0">A friendly reminder: we do not sell direct! If you are a corporate buyer, we will help you get in touch with one of our exclusive dealers!</p></div>');
+        }, 3000);
+    });
+
+</script>

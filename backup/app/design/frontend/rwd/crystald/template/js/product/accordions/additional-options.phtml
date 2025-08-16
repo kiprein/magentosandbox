@@ -1,0 +1,262 @@
+<?php $product = $this->getProduct(); ?>
+<?php $productHelper = $this->helper( 'js_product' ); ?>
+<?php $loggedIn = Mage::getSingleton('customer/session')->isLoggedIn(); ?>
+<div class="panel panel-default col-xs-12 additional-options-wrapper">
+	<div class="panel-heading center">
+		<h4 class="panel-title light-blue" data-toggle="collapse" data-target="#additional-panel">
+            <span class="accordion-toggle">+</span>Additional Customization Options
+		</h4>
+	</div>
+
+	<div id="additional-panel" class="panel-collapse collapse in">
+        <div class="panel-body">
+            <div class="">
+                <div class="panel-static-block">
+	                <?php list($optionalServices, $optionalServiceCount) =
+                        $productHelper->getOptionalServicesRows($product->getOptionalServices(), $loggedIn); ?>
+	                <?php if ($optionalServiceCount): ?>
+                        <table class="optional-services" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    <th class="red"><strong>Optional Services</strong></th>
+                                    <th class="red align-right"><strong>Retail Price</strong></th>
+                                    <?php if($loggedIn): ?>
+                                        <th class="red align-right"><strong>Net Price</strong></th>
+                                    <?php endif; ?>
+                                </tr>
+			                    <?php echo $optionalServices; ?>
+                            </tbody>
+                        </table>
+                        <p class="price-tag">3(R)</p>
+	                <?php endif; ?>
+                </div> <!--End of optional services -->
+
+                <!--Start of colors -->
+                <div class="colorfill-container">
+	                <?php $translucentColors = $productHelper->getTranslucentColors( $product ); ?>
+	                <?php $opaqueColors = $productHelper->getOpaqueColors( $product ); ?>
+	                <?php $colorUrl = Mage::getBaseUrl( 'media' , true ) . 'images/color-swatches/'; ?>
+
+	                <?php if ( count( $translucentColors ) > 0 || count( $opaqueColors ) > 0 ): ?>
+                        <div class="header mb-10">
+                            <span>Colorfill</span> <em>You can add one or more colors to your deep etch imprint. Each color is an additional cost.</em>
+                        </div>
+		                <?php if ( count( $translucentColors ) > 0 ): ?>
+                        <div class="">
+                            <span class="color-label dark-grey">Translucent:</span>
+                            <ul class="color-list">
+                                <?php foreach ( $translucentColors as $label => $colorImage ): ?>
+                                    <?php if ( ! empty( $colorImage ) ): ?>
+                                        <li class="color-swatch center">
+                                            <img alt="<?php echo $this->escapeHtml($label); ?>" src="<?php echo $colorUrl . $colorImage; ?>"/>
+                                            <p class="dark-grey"><?php echo $label; ?></p>
+                                        </li>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+		                <?php endif; ?>
+                        <?php if ( count( $opaqueColors ) > 0 ): ?>
+                            <div class="">
+                                <span class="color-label dark-grey">Opaque:</span>
+                                <ul class="color-list">
+                                    <?php foreach ( $opaqueColors as $label => $colorImage ): ?>
+                                        <?php if ( ! empty( $colorImage ) ): ?>
+                                            <li class="color-swatch center">
+                                                <img alt="<?php echo $this->escapeHtml($label); ?>" src="<?php echo $colorUrl . $colorImage; ?>"/>
+                                                <p class="dark-grey"><?php echo $label; ?></p>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+	                <?php endif; ?>
+                </div>
+                <!--End of colors -->
+<!---->
+                <!-- Goal setter for additional block -->
+	            <?php list( $goalSetterCards, $goalCount ) = $productHelper->formatCards( $product->getAdditionalGoalSetter() ); ?>
+	            <?php if ( $goalSetterCards ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Goal-Setter Blocks</span>
+                    </div>
+                    <div class="">
+                        <div id="additional-goal-slides" class="accordion-slides">
+                            <?php echo $goalSetterCards;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Additional goal setter block-->
+
+                <!--  For Panels -->
+	            <?php list( $panelCards, $panelCount ) = $productHelper->formatCards( $product->getOptionalPanels() ); ?>
+	            <?php if ( $panelCards ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Colored Panels</span>
+                    </div>
+                    <div class="">
+                        <div id="additional-goal-slides" class="accordion-slides">
+                            <?php echo $panelCards;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Panel -->
+
+                <!-- For Accent -->
+	            <?php list( $accentProducts, $accentCount ) = $productHelper->formatCards( $product->getAccentProduct() ); ?>
+	            <?php if ( $accentProducts ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Accent</span>
+                    </div>
+                    <div class="">
+                        <div id="accent-slides" class="accordion-slides">
+                            <?php echo $accentProducts;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Accent -->
+
+                <!-- For Base -->
+	            <?php list( $optionalBase, $baseCount ) = $productHelper->formatCards( $product->getOptionalBase() ); ?>
+	            <?php if ( $optionalBase ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Optional Bases</span>
+                    </div>
+                    <div class="">
+                        <div id="base-slides" class="accordion-slides">
+                            <?php echo $optionalBase;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Base -->
+
+                <!-- For Optional Name Plates -->
+	            <?php list( $optionalPlates, $optionalPlateCount ) = $productHelper->formatCards( $product->getOptionalPlates() ); ?>
+	            <?php if ( $optionalPlates ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Optional Name Plates</span>
+                    </div>
+                    <div class="">
+                        <div id="optional-plate-slides" class="accordion-slides">
+                            <?php echo $optionalPlates;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Optional Name Plates -->
+
+                <!-- For Easle -->
+	            <?php list( $easels, $easelCount ) = $productHelper->formatCards( $product->getEasels() ); ?>
+	            <?php if ( $easels ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Easels</span>
+                    </div>
+                    <div class="">
+                        <div id="easel-slides" class="accordion-slides">
+                            <?php echo $easels;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Easle-->
+
+                <!-- For Certificate -->
+	            <?php list( $certificates, $certCount ) = $productHelper->formatCards( $product->getCertificatePaper() ); ?>
+	            <?php if ( $certificates ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>>Certificate Paper</span>
+                    </div>
+                    <div class="">
+                        <div id="cert-slides" class="accordion-slides">
+                            <?php echo $certificates;  ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End Certificate-->
+
+                <!-- For battery Pack -->
+	            <?php list( $batteryPacks, $batteryPackCount ) = $productHelper->formatCards( $product->getBatteryPackOptional() ); ?>
+	            <?php if ( $batteryPacks ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Battery Packs</span>
+                    </div>
+                    <div class="">
+                        <div id="battery-slides-optional" class="accordion-slides">
+                            <?php echo $batteryPacks; ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End battery pack block -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    <?php $sliderOptions = $this->getSliderOptions(); ?>
+    //Hide the pager based on the amount
+    jQuery('#additional-goal-slides').bxSlider({
+		<?php if(count( $goalCount ) > 2): ?>
+      pager: true,
+		<?php else: ?>
+      pager: false,
+		<?php endif; ?>
+        <?php echo $sliderOptions; ?>
+
+    });
+
+    jQuery('#accent-slides').bxSlider({
+	    <?php if($accentCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+    });
+
+    jQuery('#base-slides').bxSlider({
+	    <?php if($baseCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+
+    });
+
+    jQuery('#optional-plate-slides').bxSlider({
+	    <?php if($optionalPlateCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+    });
+
+    jQuery('#easel-slides').bxSlider({
+	    <?php if($easelCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+    });
+
+    jQuery('#cert-slides').bxSlider({
+	    <?php if($certCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+    });
+
+    jQuery('#battery-slides-optional').bxSlider({
+	    <?php if($batteryPackCount > 2): ?>
+      pager: true,
+	    <?php else: ?>
+      pager: false,
+	    <?php endif; ?>
+	    <?php echo $sliderOptions; ?>
+    });
+</script>

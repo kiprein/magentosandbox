@@ -1,0 +1,336 @@
+<?php
+/**
+ * Final order review. Onepage step #5
+ *  #usedOnepageTemplate
+ */
+?>
+<?php
+/**
+ * Shopping cart template
+ *
+ * @var $this Mage_Checkout_Block_Cart
+ */
+$customerSession = Mage::getSingleton('customer/session');
+$customerId = $customerSession->getCustomer()->getId();
+$taxVat = Mage::getSingleton('customer/customer')->load($customerId)->getData('taxvat');
+$productHelper = Mage::helper('catalog/product_configuration');
+$priceHelper = Mage::helper('mgw_modalcart');
+$cartQty = Mage::helper('checkout/cart')->getItemsCount();
+$checkout = Mage::getSingleton('checkout/session');
+$totals = $checkout->getQuote()->getTotals();
+$discount = isset($totals['discount'])? $totals['discount']->getValue() : 0;
+$realSubtotal = $totals['subtotal']->getValue() + $discount; 
+?>
+<style>
+    .cartReview-container{
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .cartReview-product-img{
+        max-width: 150px;
+        float: left;
+    }
+    .cartReview-product-container{
+        color: #7987a0;
+    }
+    .cartReview-productDetails-container{
+        height: 150px;
+        display: flex;
+        flex-direction: column;
+        padding: 15px 10px;
+        justify-content: space-between;
+    }
+    .cartReview-product-qtyInput{
+        display: inline-block !important;
+        width: 100px !important;
+    }
+    .cartReview-productDetails-optionImage{
+        max-width: 65px;
+    }
+    #orderReview-notes{
+        width: 100%;
+        height: 102px;
+    }
+    .table-p{
+        color: #7987a0;
+        width: 280px;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0;
+    }
+    .cr-remove-button{
+        padding: 7px;
+    }
+</style>
+
+<div class="cartReview-container text-gray" style="font-size: 16px;">
+    <div class="page-title title-buttons">
+        <h1><?php echo $this->__('Place Your Order') ?></h1>
+    </div>
+    <?php echo $this->getMessagesBlock()->toHtml() ?>
+    <?php echo $this->getChildHtml('form_before') ?>
+    <?php foreach($this->getItems() as $key => $quoteItem): ?>
+        <?php
+            $product = Mage::getSingleton('catalog/product')->load($quoteItem->getProductId());
+            $options = $productHelper->getCustomOptions($quoteItem);
+            $orderQty = $quoteItem->getQty();
+        ?>
+        <div class="cartReview-product-container container" id="cr-product-container-<?php echo $key; ?>">
+            <div class="row">
+                <div class="col-sm-8">
+                    <img src="https://image.crystal-d.com/img/u494-y/jpg/<?php echo $product->getMainProductImage(); ?>" 
+                        alt="<?php echo $product->getImageAlt(); ?>" class="cartReview-product-img">
+                    <div class="cartReview-productDetails-container">
+                        <h4 style="color: lightslategray; font-weight: 600;">
+                            <?php echo "#" . $product->getSku() . " " . $product->getMetaTitle(); ?>
+                        </h4>
+                        <?php if(isset($options) && count($options) > 0): ?>
+                            <ul style="list-style: circle; color: lightslategray; padding: 0 20px; padding: 0;">
+                                <?php foreach($options as $option): ?>
+                                <li style="list-style-type: none;">
+                                    <?php echo Mage::helper('mgw_modalcart')->getOptionHtml( $option ); ?>
+                                </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <br><br>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="padding-top: 26px;">
+                    <p><strong class="mwCart-prd-subtotalStandard-<?php echo $key; ?>"></strong></p>
+                    <p class="mwCart-prd-priceEach-container-<?php echo $key; ?>">
+                        <i><span class="mwCart-prd-price-<?php echo $key; ?>"></span> Each</i>
+                    </p>
+                    <p>Qty: <strong><?php echo $orderQty; ?></strong></p>
+                </div>
+                <div></div>
+            </div>
+            <?php if($key < $cartQty - 1): ?>
+                <hr>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+
+
+    <?php echo $this->getChildHtml('shopping.cart.table.after'); ?>
+    <div class="cart-totals-wrapper text-right">
+    <label for="orderReview-notes" style="float: left; margin-top: 15px; color: #7987a0;">Additional Order Notes</label>
+    <form id="co-review-form">
+        <textarea name="custom[comments]" id="orderReview-notes"><?php echo Mage::getModel('mgw_modalcart/checkout_onepage')->getAdditionalNotes(); ?></textarea>
+    </form>
+        <?php /* ?>
+        //Get cart coupon form. If this is used, need to add the JS that goes with it and somehow send the user back to the review state.
+        <div class="custom-coupan">
+            <?php echo $this->getLayout()->createBlock('checkout/cart_coupon')
+        ->setTemplate('checkout/cart/coupon.phtml')->toHtml(); ?>
+        </div>
+        //Vanilla way of getting the totals. I used this for reference only.
+        <?php echo $this->getChildHtml('totals'); ?>
+        <?php */ ?>
+        <div class="cart-totals">
+
+            <div class="">
+                <p class="table-p">
+                    <span><strong>Product Total:</strong></span>
+                    <span><strong class="mwCart-subtotalStd"></strong></span>
+                </p>
+            </div>
+
+            <div class="mwCart-eqpDiscount-container">
+                <p class="table-p">
+                    <span>EQP Discount:</span>
+                    <span class="mwCart-eqpDiscount"></span>
+                </p>
+            </div>
+            
+            <div class="mwCart-eppDiscount-container">
+                <p class="table-p">
+                    <span>Additional <span class="mwCart-eppDiscountVerbiage"></span> Savings:</span>
+                    <span class="mwCart-eppDiscount"></span>
+                </p>
+            </div>
+
+            <!--#tariffSurcharge--><!--
+            <div class="mwCart-tariffSurcharge-container">
+                <p class="table-p">
+                    <span>Tariff Surcharge:</span>
+                    <span class="mwCart-tariffSurcharge"></span>
+                </p>
+            </div>-->
+            <?php if( isset($totals['discount'])): ?>
+                <p class="table-p">
+                    <span>
+                        <?php echo $totals['discount']->getTitle(); ?>
+                    </span>
+                    <span>
+                        <?php echo number_format($totals['discount']->getValue(), 2); ?>
+                    </span>
+                </p>
+            <?php endif; ?>
+            <div class="mwCart-grandSubtotal-container">
+                <p class="table-p">
+                    <span><strong>SUBTOTAL:</strong></span>
+                    <span><strong>
+                        $<?php echo number_format($realSubtotal, 2); ?>
+                    </strong></span>
+                </p>
+            </div>
+
+            <div style="height: 20px;"></div><!--spacer-->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8 text-left">
+                        <h1>Shipping Information</h1>
+                        <?php if ($checkout->getStepData('shipping', 'complete')): ?>
+                        <div class="col-md-6">
+                            <dd class="complete">
+                                <?php if ($checkout->getStepData('shipping', 'complete')): ?>
+                                <address><?php echo $checkout->getQuote()->getShippingAddress()->format('html') ?></address>
+                                <?php endif; ?>
+                            </dd>
+                            <dd class="complete">
+                                <a href="#payment"
+                                    onclick="checkout.changeSection('opc-shipping'); document.fire('mgw:adjustHeightToDiv');return false;">
+                                    <?php echo $this->__('Change Address') ?>
+                                </a>
+                            </dd>
+                        </div>
+                        <div class="col-md-6">
+                            <?php if ($checkout->getStepData('shipping_method', 'complete')): ?>
+                            <dd class="complete">
+                                <?php $shippingCode = $checkout->getQuote()->getShippingAddress()->getShippingMethod(); ?>
+                                <?php echo $checkout->getQuote()->getShippingAddress()->getShippingDescription(); ?>
+                                <?php //echo $shippingCode; ?>
+                                <?php if( $shippingCode == 'mgw_modalcart_fedex_3rdparty'): ?>
+                                    <?php $thirPartyInfo = unserialize( $checkout->getQuote()->getData('3rdpartyFedex')); ?>
+                                    <div><?php echo $thirPartyInfo['acc']; ?></div>
+                                    <div><?php echo $thirPartyInfo['carrier']; ?></div>
+                                    <div><?php echo $thirPartyInfo['company']; ?></div>
+                                    <div><?php echo $thirPartyInfo['add1']; ?></div>
+                                    <div><?php echo $thirPartyInfo['add2']; ?></div>
+                                    <div><?php echo $thirPartyInfo['city'] . " " . $thirPartyInfo['state'] . " " . $thirPartyInfo['zip']; ?></div>
+                                    <div><?php echo $thirPartyInfo['country']; ?></div>
+                                <?php endif; ?>
+                            </dd>
+                            <dd class="complete">
+                                <a href="#shipping_method"
+                                    onclick="checkout.changeSection('opc-shipping_method'); document.fire('mgw:adjustHeightToDiv'); return false;">
+                                    <?php echo $this->__('Change Shipping Method') ?>
+                                </a>
+                            </dd>
+                            <?php else: ?>
+                            <dt>
+                                <?php echo $this->__('No shipping method selected!') ?>
+                            </dt>
+                            <?php endif; ?>
+                        </div>
+                        <?php else: ?>
+                        <dt>
+                            <?php echo $this->__('No Shipping Information!') ?>
+                        </dt>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-4 text-left">
+                        <h1>Billing Information</h1>
+                        <?php if ($checkout->getStepData('billing', 'complete')): ?>
+                        <dd class="complete">
+                            <address>
+                            <?php echo $checkout->getQuote()->getBillingAddress()->format('html') ?>
+                            <br>
+                            PO#: <?php echo $checkout->getQuote()->getData('ponumber'); ?>
+                            </address>
+                        </dd>
+                        <dd class="complete">
+                            <a href="#billing"
+                                onclick="checkout.changeSection('opc-billing'); document.fire('mgw:adjustHeightToDiv'); return false;">
+                                <?php echo $this->__('Change Address') ?>
+                            </a>
+                        </dd>
+                        <?php else: ?>
+                        <dt>
+                            <?php echo $this->__('No Billing Information!') ?>
+                        </dt>
+                        <?php endif; ?>
+                    </div>
+                </div><!--End of first row-->
+                <div class="row">
+                    <div class="col-md-8 text-left">
+                        <h1>Payment Information</h1>
+                        <?php if ($checkout->getStepData('payment', 'complete')): ?>
+                        <dd class="complete">
+                            <?php echo $checkout->getQuote()->getPayment()->getMethodInstance()->getTitle(); ?>
+                        </dd>
+                        <dd class="complete">
+                            <a href="#payment"
+                                onclick="checkout.changeSection('opc-payment'); document.fire('mgw:adjustHeightToDiv'); return false;">
+                                <?php echo $this->__('Change Payment Method') ?>
+                            </a>
+                        </dd>
+                        <?php else: ?>
+                        <dt>
+                            <?php echo $this->__('No Payment Method!') ?>
+                        </dt>
+                        <?php endif; ?>
+                    </div>
+                    <div class="col-md-4 text-left">
+                        <h1>Payment Total</h1>
+                        <div>
+                            <p class="table-p">
+                                <span><strong>GRAND SUBTOTAL:</strong></span>
+                                <span><strong>
+                                    $<?php echo number_format($realSubtotal, 2); ?>
+                                </strong></span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="table-p">
+                                <span>Shipping:</span>
+                                <span>$<?php echo number_format($totals['shipping']->getValue(), 2); ?></span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="table-p">
+                                <span><strong>GRAND TOTAL:</strong></span>
+                                <span><strong>$<?php echo number_format($totals['grand_total']->getValue(), 2); ?></strong></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+<div id="checkout-review-submit">
+    <?php echo $this->getChildHtml('agreements') ?>
+    <div class="buttons-set" id="review-buttons-container">
+        <?php echo $this->getChildHtml('button') ?>
+        <span class="please-wait" id="review-please-wait" style="display:none;">
+            <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" 
+                alt="<?php echo Mage::helper('core')->quoteEscape($this->__('Submitting order information...')) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Submitting order information...')) ?>" 
+                class="v-middle" /> <?php echo $this->__('Submitting order information...') ?>
+        </span>
+        <p class="f-left"><?php echo $this->__('Forgot an Item?') ?>
+            <a href="<?php echo $this->getUrl('checkout/cart') ?>"
+                onclick="return confirm('<?php echo Mage::helper('core')->jsQuoteEscape($this->__('Are you sure you want to leave this page? You will need to go through the checkout steps again.')); ?>')">
+                <?php echo $this->__('Edit Your Cart') ?>
+            </a>
+        </p>
+    </div>
+    <script type="text/javascript">
+    //<![CDATA[
+        review = new Review('<?php echo $this->getUrl('checkout/onepage/saveOrder', 
+            array('form_key' => Mage::getSingleton('core/session')->getFormKey())) ?>', 
+            '<?php echo $this->getUrl('checkout/onepage/success') ?>', 
+            $('checkout-agreements'),
+            $('co-review-form'));
+        mwCart_calcAndDisplayTotals();
+        console.log("testing 111");
+    //]]>
+    </script>
+</div>
+

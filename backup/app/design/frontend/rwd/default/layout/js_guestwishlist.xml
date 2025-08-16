@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<layout version="0.1.0">
+    <js_guestwishlist_view_index>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/2columns-right.phtml</template>
+            </action>
+        </reference>
+        <reference name="head">
+            <action method="setTitle" translate="title"><title>My Wishlist</title></action>
+        </reference>
+        <reference name="right">
+            <remove name="right.reports.product.viewed" />
+            <block type="reports/product_viewed" template="js/wishlist/recently_viewed.phtml" />
+            <block type="cms/block" name="wishlist_promo_1">
+                <action method="setBlockId">
+                    <block_id>wishlist-promo-1</block_id>
+                </action>
+            </block>
+            <block type="cms/block" name="wishlist_promo_2">
+                <action method="setBlockId">
+                    <block_id>wishlist-promo-2</block_id>
+                </action>
+            </block>
+        </reference>
+        <reference name="content">
+            <block type="js_guestwishlist/guestwishlist" name="guest.wishlist" template="js/guestwishlist/view.phtml">
+                <block type="core/template" name="wishlist.forms" as="wishlist_forms" template="js/wishlist/forms.phtml" />
+            </block>
+        </reference>
+    </js_guestwishlist_view_index>
+    <js_guestwishlist_share_index>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="js_guestwishlist/guestwishlist" name="guest.wishlist.share" template="js/guestwishlist/share.phtml" />
+        </reference>
+        <reference name="right">
+            <action method="unsetChild"><name>wishlist_customer_sidebar</name></action>
+        </reference>
+    </js_guestwishlist_share_index>
+</layout>

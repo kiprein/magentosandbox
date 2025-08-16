@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<config>
+	  <tabs>
+		<ravi translate="label" module="testimonials">
+            <label>Ravi's</label>
+            <sort_order>0</sort_order>
+        </ravi>
+	  </tabs>
+	  <sections>
+		<testimonial  translate="label" module="testimonials">                    
+		<label>Testimonials</label>
+		<tab>ravi</tab>
+		<frontend_type>text</frontend_type>
+		<sort_order>0</sort_order>
+		<show_in_default>1</show_in_default>
+		<show_in_website>1</show_in_website>
+		<show_in_store>1</show_in_store>            
+					<groups>
+				      <couponcode translate="label"> 
+					  <label>Coupon Code</label>
+					  <frontend_type>text</frontend_type>
+					  <sort_order>0</sort_order>
+					  <show_in_default>1</show_in_default>
+					  <show_in_website>1</show_in_website>
+					  <show_in_store>1</show_in_store>
+				       <fields>
+					   <activecoupon translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>Enable/Disable</comment>
+                          </activecoupon>
+                          <addcoupon translate="label">
+                            <label>Add Coupon Code for Discount</label>
+							<frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>Add your coupon code which you had created in Promotional discounts</comment>
+                          </addcoupon>
+                          <template1 translate="label" module="testimonials">
+                            <label>Email Template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_email_template</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>Choose your Email Template</comment>
+                           </template1>
+                           
+                           <sendername translate="label">
+                            <label>Sender Name</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Sender Name in Email</comment>
+                          </sendername>
+                           
+                           <senderemail translate="label">
+                            <label>Sender Email Id</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Sender Email Id in Email</comment>
+                          </senderemail>
+                           
+                           <emailsubject translate="label">
+                            <label>Email Subject</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Email Subject</comment>
+                          </emailsubject>
+
+
+                           
+
+					   </fields>
+					   </couponcode>
+				      <display translate="label"> 
+					  <label>Display in Left or Right Column</label>
+					  <frontend_type>text</frontend_type>
+					  <sort_order>0</sort_order>
+					  <show_in_default>1</show_in_default>
+					  <show_in_website>1</show_in_website>
+					  <show_in_store>1</show_in_store>
+				       <fields>
+                          <leftorright translate="label">
+                            <label>Left Column or Right Column</label>
+                            <frontend_type>radios</frontend_type>
+                            <source_model>adminhtml/system_config_source_Diyoptions13590061872</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>Display in Left or Right</comment>
+                          </leftorright>
+					   </fields>
+					   </display>
+				      <!--<effects translate="label"> 
+					  <label>Effects</label>
+					  <frontend_type>text</frontend_type>
+					  <sort_order>0</sort_order>
+					  <show_in_default>1</show_in_default>
+					  <show_in_website>1</show_in_website>
+					  <show_in_store>1</show_in_store>
+				       <fields>
+                          <effectsontestimonial translate="label">
+                            <label>Effects on Testimonials</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_Diyoptions13590061871</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>Effects</comment>
+                          </effectsontestimonial>
+					   </fields>
+					   </effects>-->
+				      <status translate="label"> 
+					  <label>Status</label>
+					  <frontend_type>text</frontend_type>
+					  <sort_order>0</sort_order>
+					  <show_in_default>1</show_in_default>
+					  <show_in_website>1</show_in_website>
+					  <show_in_store>1</show_in_store>
+				       <fields>
+                          <enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>Enable/Disable</comment>
+                          </enabled>
+                          <homepage translate="label">
+                            <label>Number Of Slides on Home Page</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>Add number of slides which you wants to display on home page slider.</comment>
+                          </homepage>
+                          
+                          
+                          
+                          <!--<website translate="label">
+                            <label>Websites</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <source_model>adminhtml/system_config_source_store</source_model>
+                            <sort_order>0</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+							<comment>display in stores</comment>
+                          </website>-->
+					   </fields>
+					   </status>
+					</groups>
+		</testimonial>
+	  </sections>
+</config>

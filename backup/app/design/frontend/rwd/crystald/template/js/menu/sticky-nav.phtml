@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @var Js_Menu_Block_Menu
+ */
+$stickyMenuItems = $this->getParentMenu('sticky-nav');
+$stickyMenuCount = 0;
+
+$_wishlistCount = $this->helper('js_guestwishlist')->getWishlistCount();
+$wishlistViewUrl = $this->helper('js_guestwishlist')->wishlistViewUrl();
+?>
+
+<nav id="nav">
+	<ol id="main-nav-menu-wrapper" class="nav-primary">
+        <li class="stick-logo level0">
+            <a href="<?php echo $this->getUrl( '' ) ?>">
+                <?php echo $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'sticky_logo' )->toHtml(); ?>
+            </a>
+        </li>
+		<?php foreach ($stickyMenuItems as $stickyMenuItem): ?>
+			<?php echo $this->renderParentMenu($stickyMenuItem, $stickyMenuCount); ?>
+		<?php  $stickyMenuCount++; endforeach; ?>
+        <?php if ( Mage::helper( 'customer' )->isLoggedIn() ): ?>
+            <li class="level0"><a class="red" href="<?php echo Mage::helper( 'customer' )->getLogoutUrl(); ?>">Log Out</a></li>
+        <?php else: ?>
+            <li class="level0"> <a class="red" href="<?php echo Mage::helper( 'customer' )->getLoginUrl(); ?>">Login</a></li>
+        <?php endif;?>
+        <li class="search-icon level0"></li>
+	</ol>
+    <div id="sticky-search" class="hidden">
+        <?php echo $this->getSearch(); ?>
+    </div>
+</nav>

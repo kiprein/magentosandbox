@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Customer>
+            <version>0.1.0</version>
+        </Js_Customer>
+    </modules>
+    <global>
+        <helpers>
+            <js_customer>
+                <class>Js_Customer_Helper</class>
+            </js_customer>
+        </helpers>
+        <models>
+            <js_customer>
+                <class>Js_Customer_Model</class>
+            </js_customer>
+            <customer>
+                <rewrite>
+                    <session>Js_Customer_Model_Session</session>
+                </rewrite>
+            </customer>
+        </models>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <js_account_redirect>
+                        <type>singleton</type>
+                        <method>accountRedirect</method>
+                        <class>Js_Customer_Model_Observer</class>
+                    </js_account_redirect>
+                </observers>
+            </controller_action_predispatch>
+        </events>
+    </global>
+    <frontend>
+        <routers>
+            <customer>
+                <args>
+                    <modules>
+                        <js_customer before="Mage_Customer">Js_Customer</js_customer>
+                    </modules>
+                </args>
+            </customer>
+        </routers>
+    </frontend>
+</config>

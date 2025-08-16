@@ -1,0 +1,32 @@
+<?php
+if (!Mage::getSingleton('customer/session')->isLoggedIn()) {
+	$calloutLink = $this->getUrl('customer/account/create/');
+} else {
+	$calloutLink = $this->getUrl('dashboard');
+}
+?>
+
+<div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-12 col-md-5 callout-card first">
+        <img src="<?php echo $this->getSkinUrl('images/hi-there.jpg', array('_secure' => true)); ?>" alt="For Our Dealers"/>
+        <p class="callout-header light-grey">For Distributors:</p>
+        <p class="callout-text dark-grey">
+            As a Promotional Products Consultant, you have exclusive access to our website! It's
+            simple, easy, and fast to access special pricing, online order tracking, and selling
+            tools.
+        </p>
+        <a href="<?php echo $calloutLink; ?>" class="btn btn-register">Register</a>
+    </div>
+
+    <div class="col-xs-12 col-md-5 callout-card">
+        <img src="<?php echo $this->getSkinUrl('images/eagle-showroom.jpg', array('_secure' => true)); ?>" alt="For Our Trophy Retailers"/>
+        <p class="callout-header light-grey">For Trophy Retailers:</p>
+        <p class="callout-text dark-grey">
+            Looking for simple, easy, and fast? Register as a Crystal D dealer for access to
+            exclusive pricing, online order tracking, and cutting-edge sales tools.
+        </p>
+        <a href="<?php echo $calloutLink; ?>" class="btn btn-register">Register</a>
+    </div>
+    <div class="col-xs-1"></div>
+</div>

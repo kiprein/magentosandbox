@@ -1,0 +1,142 @@
+<?php
+/**
+ * @var Js_Product_Block_Product_View
+ */
+$product         = $this->getProduct();
+$relatedProducts = $product->getRelatedProductCollection($this->displayFields());
+$coreHelper      = Mage::helper('core');
+$groupId         = Mage::getSingleton('customer/session')->getCustomerGroupId();
+$priceRowHeader  = $this->formatPriceRowHeader($product, $groupId);
+$loggedIn        = Mage::getSingleton('customer/session')->isLoggedIn();
+
+$relatedCount = $relatedProducts->count();
+
+$displayNone = '';
+if (!$loggedIn) {
+	$displayNone = 'hidden';
+}
+
+//Not really sure what to label these as.  Each group can only see certain price tabs
+//Distributors get net and retail tabs; trophy and employees get all three tabs.
+$priceGroup1 = array(4, 5, 6);
+$priceGroup2 = array(4, 6);
+$trophyOk = $product->getBTrophyOk() == 1? true : false;
+?>
+<div class="row">
+    <ul class="nav nav-tabs mb-20 col-xs-12 <?php echo $displayNone; ?>" role="tablist">
+        <?php if(in_array($groupId, $priceGroup1)): ?>
+            <li class="<?php echo $this->getActivePrice($loggedIn, 'net', $groupId, $trophyOk); ?> mobile-ml-20">
+                <a href="#net-price-tab" role="tab" data-toggle="tab" class="">Net Price</a>
+            </li>
+		<?php endif; ?>
+
+	    <?php if(in_array($groupId, $priceGroup2) && $trophyOk): ?>
+            <li class="<?php echo $this->getActivePrice($loggedIn, 'trophy', $groupId, $trophyOk); ?>">
+                <a href="#blank-price-tab" id="mwCart-trophy-tab" role="tab" data-toggle="tab" class="">Blank Price</a>
+            </li>
+		<?php endif; ?>
+
+        <li class="<?php echo $this->getActivePrice($loggedIn, 'retail', $groupId); ?>">
+            <a href="#retail-price-tab" role="tab" data-toggle="tab" class="">Retail Price</a>
+        </li>
+    </ul>
+</div>
+
+<div class="row tab-content product-block-right">
+    <!-- Net Price-->
+	<?php if (in_array($groupId, $priceGroup1)): ?>
+        <div role="tabpanel" 
+            class="tab-pane <?php echo $this->getActivePrice($loggedIn, 'net', $groupId, $trophyOk); ?> col-xs-12" id="net-price-tab">
+            <table class=" price-table">
+                <tr class=" price-row-header">
+					<?php echo $priceRowHeader; ?>
+                </tr>
+                <tr class=" price-row product-price-row">
+					<?php echo $this->formatPriceRow($product, 'product', 'Net', $groupId, $loggedIn); ?>
+                </tr>
+
+				<?php if ($relatedCount > 0): ?>
+                    <tr>
+						<?php echo $this->getRelatedTitle($groupId); ?>
+                    </tr>
+					<?php foreach ($relatedProducts as $relatedProduct): ?>
+                        <tr class=" price-row related-price-row">
+							<?php echo $this->formatPriceRow($relatedProduct, 'related', 'Net', $groupId, $loggedIn); ?>
+                        </tr>
+                        <tr class="spacer">
+                            <td></td>
+                        </tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
+            </table>
+            <div class="row">
+                <div class="col-md-12 right">
+                    <p class="price-tag">3(R)</p>
+                </div>
+            </div>
+        </div>
+	<?php endif; ?>
+    <!-- Trophy Price-->
+	<?php if (in_array($groupId, $priceGroup2)): ?>
+        <div role="tabpanel" 
+            class="tab-pane <?php echo $this->getActivePrice($loggedIn, 'trophy', $groupId, $trophyOk); ?> col-xs-12" id="blank-price-tab">
+            <table class=" price-table">
+                <tr class=" price-row-header">
+					<?php echo $priceRowHeader; ?>
+                </tr>
+                <tr class=" price-row product-price-row">
+					<?php echo $this->formatPriceRow($product, 'product', 'Trophyblank', $groupId, $loggedIn); ?>
+                </tr>
+				<?php if ($relatedCount > 0): ?>
+                    <tr>
+						<?php echo $this->getRelatedTitle($groupId); ?>
+                    </tr>
+					<?php foreach ($relatedProducts as $relatedProduct): ?>
+                        <tr class=" price-row related-price-row">
+							<?php echo $this->formatPriceRow($relatedProduct, 'related', 'Trophyblank', $groupId, $loggedIn); ?>
+                        </tr>
+                        <tr class="spacer">
+                            <td></td>
+                        </tr>
+					<?php endforeach; ?>
+				<?php endif; ?>
+            </table>
+            <div class="row">
+                <div class="col-md-12 right">
+                    <p class="price-tag"></p>
+                </div>
+            </div>
+        </div>
+	<?php endif; ?>
+    <!-- Retail Price-->
+    <div role="tabpanel"
+         class="tab-pane <?php echo $this->getActivePrice($loggedIn, 'retail', $groupId); ?> col-xs-12"
+         id="retail-price-tab">
+        <table class=" price-table">
+            <tr class="price-row-header">
+				<?php echo $priceRowHeader; ?>
+            </tr>
+            <tr class="price-row product-price-row">
+				<?php echo $this->formatPriceRow($product, 'product', 'Retail', $groupId, $loggedIn); ?>
+            </tr>
+			<?php if ($relatedCount > 0): ?>
+                <tr>
+					<?php echo $this->getRelatedTitle($groupId); ?>
+                </tr>
+				<?php foreach ($relatedProducts as $relatedProduct): ?>
+                    <tr class="price-row related-price-row">
+						<?php echo $this->formatPriceRow($relatedProduct, 'related', 'Retail', $groupId, $loggedIn); ?>
+                    </tr>
+                    <tr class="spacer">
+                        <td></td>
+                    </tr>
+				<?php endforeach; ?>
+			<?php endif; ?>
+        </table>
+        <div class="row">
+            <div class="col-md-12 right">
+                <p class="price-tag">3(R)</p>
+            </div>
+        </div>
+    </div>
+</div>

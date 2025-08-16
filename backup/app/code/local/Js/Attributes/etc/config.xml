@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Attributes>
+            <version>0.1.2</version>
+        </Js_Attributes>
+    </modules>
+    <global>
+        <resources>
+            <js_attributes_setup>
+                <setup>
+                    <module>Js_Attributes</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+            </js_attributes_setup>
+        </resources>
+    </global>
+</config>

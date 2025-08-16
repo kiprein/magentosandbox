@@ -1,0 +1,55 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/* @var $this Mage_Reports_Block_Product_Viewed */
+?>
+<?php if ( $_products = $this->getRecentlyViewedProducts() ): ?>
+	<div class="product-list recent-view wishlist-recently-view">
+		<div class="row row-title">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h3 class="dark-blue mb-15"><?php echo $this->__( 'Recently Viewed Items:' ) ?></h3>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div id="recent-viewed-container">
+				<?php foreach ( $_products as $_item ): ?>
+				<div class="col-md-6 col-sm-6 col-xs-6 product-container zero-padding-mobile item">
+					<a href="<?php echo $_item->getProductUrl() ?>">
+						<img src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $_item->getMainProductImage(); ?>">
+					</a>
+
+					<div class="main-price medium mt-10">
+						<a href="<?php echo $_item->getProductUrl() ?>" class="dark-grey">
+							<?php echo $_item->getShortDescription(); ?>
+						</a>
+						<div class="items light-grey">Item <span>#<?php echo $_item->getSku(); ?></span></div>
+						<div class="list-price light-grey"><?php echo $this->helper('js_product')->getRetailPriceRange($_item); ?></div>
+					</div>
+				</div>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</div>
+<?php endif; ?>   

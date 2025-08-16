@@ -1,0 +1,344 @@
+<?php /** Custom cart implimentation by Mark Wickline 6/6/19 
+ * This cart has now been obsoleted. The teem decided
+ * it's going to use Magento for payment and link it into 
+ * our existing world pay account. This means I will have to rebuild
+ * the cart and hook it into the Magento cart
+ * Look for mwCartRebuild.phtml*/ ?>
+<?php $customerSession = Mage::getSingleton('customer/session'); ?>
+<?php if($customerSession->isLoggedIn()): ?>
+<?php if(in_array($customerSession->getCustomerGroupId(), Array(4, 6))): ?>
+
+	<button id="mwCart-trigger">
+        <div><i class="fas fa-shopping-cart"></i></div>
+        <div id="mwCart-count"></div>
+    </button>
+	<div id="mwCart">
+        <h2 id="mwCart-header">Cart</h2><span id="mwCart-close">×</span>
+		<div id="mwCart-products-wrp"></div>
+        <div id="mwCart-footer-wrp">
+            <p style="margin-bottom: 0;">Subtotal: <b id="mwCart-subTotal" style="float: right;"></b></p>
+            <div id="mwCart-blerb">Shipping and discounts are added at checkout.</div>
+            <button id="mwCart-checkout-btn" onclick="mwCart_checkout()" style="width: 100%;">CHECKOUT</button>
+        </div>
+	</div>
+
+    <script src="https://sdks.shopifycdn.com/js-buy-sdk/2.2.4/index.umd.min.js"></script>
+    <script src="https://kit.fontawesome.com/105d7ae403.js"></script>
+    <?php echo $this->helper('adminhtml/js')->includeScript('lib/slidereveal.min.js') ?>
+
+	<?php
+		$customerId = $customerSession->getCustomer()->getId();
+        $taxVat = Mage::getSingleton('customer/customer')->load($customerId)->getData('taxvat');
+        if(isset($_COOKIE['mw_cart_prods'])){
+            //echo $_COOKIE['mw_cart_prods'];
+			$cartProducts = json_decode($_COOKIE['mw_cart_prods']);
+			$resource = Mage::getSingleton('core/resource');
+			$readConnection = $resource->getConnection('core_read');
+            $spliceIndexes = []; //items to be removed
+            foreach($cartProducts as $index => &$cartProduct){
+				/** Due to the limitations of cookies, I have to bring up each product from 
+				 * id and load the other product information again.*/
+                if(isset($cartProduct->id)){
+                    $product = Mage::getModel('catalog/product')->load($cartProduct->id);
+
+                    $qry  = "
+                        SELECT n_column_1_id,
+                            n_column_2_id,
+                            n_column_3_id
+                        FROM shopify_variants
+                        WHERE k_magento_id = {$cartProduct->id}
+                    ";
+                    $priceRow = $readConnection->fetchAll($qry)[0];
+                    $cartProduct->descrip = "#" . $product->getSku() . " " . $product->getMetaTitle();
+                    $cartProduct->link = $product->getUrlKey();
+                    $cartProduct->img_url = $product->getMainProductImage();
+                    $cartProduct->tr_price1 = $product->getTrophyblankprice1();
+                    $cartProduct->tr_price2 = $product->getTrophyblankprice2();
+                    $cartProduct->tr_price3 = $product->getTrophyblankprice3();
+                    $cartProduct->tr_qty2 = $product->getProductquantity2();
+                    $cartProduct->tr_qty3 = $product->getProductquantity3();
+                    $cartProduct->tr_id1 = $priceRow['n_column_1_id'];
+                    $cartProduct->tr_id2 = $priceRow['n_column_2_id'];
+                    $cartProduct->tr_id3 = $priceRow['n_column_3_id'];
+                    $cartProduct->avail = $product->getStockItem()->getQty();
+                    //echo json_encode($cartProduct) . "<br/>";
+                } else {
+                    //Products removed from cart will be stored as {}, remove them
+                    $spliceIndexes[] = $index;
+                }
+            }
+            //Have to splice indexes backwards
+            for($x = (count($spliceIndexes) - 1); $x >= 0; $x -- ){
+                array_splice($cartProducts, $spliceIndexes[$x], 1);
+            }
+            $cartProducts = json_encode($cartProducts);
+        } else {
+			$cartProducts = '[]';
+		}
+    ?>
+    <script>
+    //IE polyfill for assign
+    if (typeof Object.assign != 'function') {
+    Object.assign = function(target) {
+        'use strict';
+        if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        target = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+        var source = arguments[index];
+        if (source != null) {
+            for (var key in source) {
+            if (Object.prototype.hasOwnProperty.call(source, key)) {
+                target[key] = source[key];
+            }
+            }
+        }
+        }
+        return target;
+    };
+    }
+    //IE polyfill for findIndex
+    if (!Array.prototype.findIndex) {
+    Object.defineProperty(Array.prototype, 'findIndex', {
+        value: function(predicate) {
+        if (this == null) {
+            throw new TypeError('"this" is null or not defined');
+        }
+        var o = Object(this);
+        var len = o.length >>> 0;
+        if (typeof predicate !== 'function') {
+            throw new TypeError('predicate must be a function');
+        }
+        var thisArg = arguments[1];
+        var k = 0;
+        while (k < len) {
+            var kValue = o[k];
+            if (predicate.call(thisArg, kValue, k, o)) {
+            return k;
+            }
+            k++;
+        }
+        return -1;
+        },
+        configurable: true,
+        writable: true
+    });
+    }
+	//get products and EQP code, append products to the side panel
+	var cartProducts = <?php echo $cartProducts; ?> ? <?php echo $cartProducts; ?> : [];
+    var taxVat = '<?php echo $taxVat; ?>' ? +'<?php echo $taxVat; ?>' : 0;
+    var cusEmail = '<?php echo $customerSession->getCustomer()->getEmail(); ?>';
+    var mwCart, mwCartTrigger;
+	
+	jQuery(document).ready(function(){
+        mwCartTrigger = jQuery('#mwCart-trigger');
+		//Init side panel
+		mwCart = jQuery('#mwCart').slideReveal({
+			trigger: mwCartTrigger,
+			push: false,
+			width: 330,
+			overlay: true,
+			zIndex: 2000,
+			position: 'left'
+		});
+		if(cartProducts.length > 0){
+            mwCartTrigger.css('visibility', 'visible');
+            jQuery('#mwCart-header-btn-wrp').show();
+			for(var x = 0; x < cartProducts.length;  x++){
+                cartProducts[x].avail = parseInt(cartProducts[x].avail);
+                cartProducts[x].tr_price1 = parseFloat(cartProducts[x].tr_price1);
+                cartProducts[x].tr_price2 = parseFloat(cartProducts[x].tr_price2);
+                cartProducts[x].tr_price3 = parseFloat(cartProducts[x].tr_price3);
+                cartProducts[x].tr_qty2 = parseInt(cartProducts[x].tr_qty2);
+                cartProducts[x].tr_qty3 = parseInt(cartProducts[x].tr_qty3);
+                if(cartProducts[x].uq > cartProducts[x].avail)
+                    cartProducts[x].uq = cartProducts[x].avail;
+				mwCart_addProductToDiv(x, cartProducts[x], cartProducts[x].link);
+			}
+        }
+        mwCart_calcAndDisplayTotals();
+        jQuery('#mwCart-close').click(function(){ mwCart.slideReveal("hide") });
+        jQuery('#mwCart-header-btn').click(function(){ mwCart.slideReveal("show") });
+        jQuery('#mwCart-products-wrp').css('maxHeight', jQuery(window).height() - 200);
+	});
+	
+
+    function mwCart_addProduct(product, prodLink){
+        mwCart.slideReveal("show");
+        mwCartTrigger.css('visibility', 'visible');
+        //See if product exists in cart already
+        if(cartProducts.length > 0){
+            if(cartProducts.findIndex( function(iter){ return iter.id == product.id; } ) !== -1)
+                return;
+        }
+		product.avail = parseInt(product.avail);
+		product.tr_price1 = parseFloat(product.tr_price1);
+		product.tr_price2 = parseFloat(product.tr_price2);
+		product.tr_price3 = parseFloat(product.tr_price3);
+		product.tr_qty2 = parseInt(product.tr_qty2);
+        product.tr_qty3 = parseInt(product.tr_qty3);
+        mwCartTrigger.css('visibility', 'visible');
+        jQuery('#mwCart-header-btn-wrp').show();
+        
+		if(taxVat == 1 || taxVat == 2){
+			product['uv'] = '3';
+		} else {
+			product['uv'] = '1';
+		}
+		product['uq'] = 1;
+
+        mwCart_addProductToDiv( cartProducts.push(product) - 1, product, prodLink );
+        mwCart_calcAndDisplayTotals();
+        mwCart_saveProductsToCookie();
+    }
+
+	function mwCart_saveProductsToCookie(){
+        var cartCookie = [];
+        var date = new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).toUTCString();
+		for(var x = 0; x < cartProducts.length;  x++){
+			cartCookie.push(
+				{ 
+					id: cartProducts[x].id, 
+					uq: cartProducts[x].uq,
+					uv: cartProducts[x].uv  
+				}
+			);
+		}
+		if(cartCookie.length > 0){
+			cartCookie = JSON.stringify(cartCookie);
+            document.cookie = 'mw_cart_prods=' + cartCookie + ';expires=' + date + ';';
+		} else {
+            //Effectively deletes the cookie.
+            date = new Date(new Date().getTime() - (24 * 60 * 60 * 1000)).toUTCString()
+            document.cookie = 'mw_cart_prods= ; expires=' + date + ';';
+        }
+	}
+
+	function mwCart_addProductToDiv(i, product, prodLink){
+        var template = "<div class='mwCart-product-wrp' id='mwCart-product-" + i + "'>" + 
+                "<a href='" + prodLink + "'>" + 
+                    "<img class='mwCart-img' src='https://image.crystal-d.com/img/u494-y/jpg/" + product.img_url + ".jpg'/>" +
+                "</a>" + 
+                "<div class='mwCart-prd-info-wrp'>" + 
+                    "<div><a class='mwCart-prd-descrip' href='" + prodLink + "'>" + product.descrip + "</a></div>" + 
+                    "<b class='text-right'>" + 
+                        "<button class='mwCart-dec-btn' onclick='mwCart_qtyDecrease(" + i + ")'>-</button>" + 
+                        "<input class='mwCart-qty-input' type='text'" + 
+                            "onchange='mwCart_validateAndUpdate(" + i + ", this.value)' id='cart_qty_" + i + "' value=" + product.uq + " />" + 
+                        "<button class='mwCart-inc-btn' onclick='mwCart_qtyIncrease(" + i + ")'>+</button>" + 
+                        "<b id='mwCart-prd-subtotal-" + i + "' class='mwCart-prd-subtotal'></b>" +
+                    "</b>" + 
+                    "<p class='mwCart-prd-avail'><b style='color: #7987a0;'>" + product.avail + "</b> Available</p>" +
+                "</div>" +
+			"</div>";
+		jQuery('#mwCart-products-wrp').append(template);
+	}
+
+	function mwCart_qtyIncrease(i){
+		mwCart_validateAndUpdate(i, cartProducts[i].uq + 1);
+	}
+
+	function mwCart_qtyDecrease(i){
+		mwCart_validateAndUpdate(i, cartProducts[i].uq - 1);
+	}
+
+	function mwCart_validateAndUpdate(i, value){
+        value = Math.abs(Math.round(+value));
+        if(isNaN(value)){
+            jQuery('#cart_qty_' + i).val(cartProducts[i].uq);
+            return;
+        }
+		if(value > cartProducts[i].avail){
+			value = +cartProducts[i].avail;
+		}
+		if(value == 0){
+			mwCart_removeProduct(i);
+		} else {
+            cartProducts[i].uq = value;
+            jQuery('#cart_qty_' + i).val(value);
+        }
+        mwCart_calcAndDisplayTotals();
+        mwCart_saveProductsToCookie();
+    }
+
+    function mwCart_calcAndDisplayTotals(){
+        var subTotal = 0;
+        var productCount = 0;
+        for(var x = 0; x < cartProducts.length;  x++){
+            var product = cartProducts[x];
+            var productSubTotal = 0;
+            if(product.id){
+                if(product.uq >= product.tr_qty3 || taxVat == 1 || taxVat == 2){
+                    productSubTotal = product.uq * product.tr_price3;
+                    product.uv = '3';
+                } else if(product.uq >= product.tr_qty2){
+                    productSubTotal = product.uq * product.tr_price2;
+                    product.uv = '2';
+                } else {
+                    productSubTotal = product.uq * product.tr_price1;
+                    product.uv = '1';
+                }
+                subTotal += productSubTotal;
+                productCount += product.uq;
+                jQuery('#mwCart-prd-subtotal-' + x).html("$" + productSubTotal.toFixed(2));
+            }
+        }
+        jQuery('#mwCart-subTotal').html("$" + subTotal.toFixed(2));
+        jQuery('#mwCart-count').html(productCount);
+    }
+    
+    function mwCart_removeProduct(i){
+        cartProducts[i] = {}; //Can't mess up the order off the array. Will be removed on refresh
+        jQuery('#mwCart-product-' + i).remove();
+    }
+
+	function mwCart_checkout(){
+		var buildLineItems = [];
+		for(var x = 0; x < cartProducts.length;  x++){
+            var userVariation = cartProducts[x].uv;
+            console.log("uv " + userVariation);
+            var prodId = cartProducts[x]['tr_id' + userVariation];
+            console.log("id " + prodId );
+            if(cartProducts[x].id && prodId){
+                if(prodId == 0){
+                    console.log("Variant Id not found");
+                    continue;
+                }
+                buildLineItems.push(
+                    {
+                        variantId: btoa('gid://shopify/ProductVariant/' + prodId),
+                        quantity: cartProducts[x].uq
+                    }
+                );
+            }
+        }
+		const client = ShopifyBuy.buildClient({
+			domain: 'crystal-d-blanks.myshopify.com',
+			storefrontAccessToken: '7f03b0b3f2c2704f25512d43656281b2'
+        });
+		client.checkout.create({ lineItems: buildLineItems, email: cusEmail }).then(function(checkout){
+            if(taxVat == 2)
+                window.setTimeout(function(){
+                        client.checkout.addDiscount( checkout.id, 'EPP(15%OFF)').then(function(checkout){
+                            window.open(checkout.webUrl, null, "fullscreen=no,toolbar=no,height=800,width=1100");
+                        });
+                }, 500);
+            else
+			    window.open(checkout.webUrl, null, "fullscreen=no,toolbar=no,height=800,width=1100");
+            //remove products from cart, hide side panel, hide cart button
+            for(var x = 0; x < cartProducts.length;  x++){
+                mwCart_removeProduct(x);
+            }
+            cartProducts = [];
+            mwCartTrigger.css('visibility', 'hidden');
+            mwCart.slideReveal("hide");
+            mwCart_calcAndDisplayTotals();
+            mwCart_saveProductsToCookie(); 
+        });
+	}
+
+    </script>
+<?php endif; ?>
+<?php endif; ?>

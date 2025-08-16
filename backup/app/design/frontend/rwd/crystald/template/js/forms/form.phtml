@@ -1,0 +1,20 @@
+<?php
+/**
+ * Currently this is used to display the different flyer request forms but could be used anywhere the form_id
+ * var is passed in
+ */
+?>
+<?php $formId = Mage::app()->getRequest()->getParam('form_id'); ?>
+<?php if($formId): ?>
+	<div class="webform-wrapper">
+		<?php
+		echo $this->getLayout()->createBlock('webforms/webforms', 'custom_form_'.$formId, array
+		(
+			'webform_id' => $formId,
+			'template' => 'webforms/default.phtml',
+		))->toHtml();
+		?>
+	</div>
+<?php endif; ?>
+
+

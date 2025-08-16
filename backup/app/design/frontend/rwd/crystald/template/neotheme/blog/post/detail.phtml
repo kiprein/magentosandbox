@@ -1,0 +1,452 @@
+<?php
+/**
+ * NeoTheme Austrlia (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com.au/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com.au so we can send you a copy immediately.
+ *
+ * This software comes with no warrenty of any kind. By Using this software, the user agrees to hold 
+ * Neo Industries Pty Ltd harmless of any damage it may cause.
+ *
+ * @category    modules
+ * @module      NeoTheme_ImageRotator
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com.au)
+ * @license     http://www.neotheme.com.au/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+/**
+ * @see NeoTheme_Blog_Block_Post
+ */
+
+ $formatType = Mage::getStoreConfig(NeoTheme_Blog_Helper_Data::XPATH_CONFIG_DATETIME_FORMAT_TYPE);
+ $format = ($formatType != 'custom')?
+    Mage::app()->getLocale()->getDateTimeFormat($formatType): 
+    Mage::getStoreConfig(NeoTheme_Blog_Helper_Data::XPATH_CONFIG_DATETIME_CUSTOM_FORMAT);
+	
+	$date_arr=explode(" ",$this->getPost()->getPostDate());
+	//echo $date_arr['0'];
+	$media_url=Mage::getBaseUrl('media');
+	$blog_title=$this->getPost()->getTitle();
+	$blog_url=$this->getPost()->getReadMoreUrl();
+	$image_name= $this->getPost()->getBlogImage();
+	$newImageUrl = Mage::getBaseUrl('media').$image_name;
+	
+	$home_url = Mage::helper('core/url')->getHomeUrl();
+?>
+
+<div class="blog blog-detail">
+    <article class="post">
+    	<div class="page-title post-title"><h1 class="h1"><?php echo $this->getPost()->getTitle(); ?></h1></div>
+        
+        <div class="post-metadata">
+            <ul>
+                <li class="post-time">
+                    <?php echo $this->__('Posted On: ');?> 
+                    <?php $date = ($this->getPost()->getPostDate() != NULL)? $this->getPost()->getPostDate()  : $this->getPost()->getCreatedAt() ; ?>
+                    <?php  //echo  Mage::app()->getLocale()->date($date)->toString($format); ?>
+					<?php echo date("F j, Y",strtotime($this->getPost()->getPostDate())); ?>
+					 <?php if ($this->getPost()->getAuthor()): ?>&nbsp;
+					<?php echo $this->__('by'); ?> <?php echo $this->getPost()->getAuthor(); ?>
+					<br><br>
+					<?php endif;?>
+                </li>
+               
+                
+                
+            </ul>
+            
+        </div>
+          <div class="post-content-media">
+          
+          
+          <ul class="share-single type-single five">
+<li>
+
+<a class="facebook hooked" href="javascript:popWin('https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($blog_url); ?>&t=<?php echo urlencode($blog_url); ?>', 'facebook', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Share on Facebook') ?>">Facebook</a>
+</li>
+<li>
+
+<a class="twitter hooked" href="javascript:popWin('http://twitter.com/home/?status=<?php echo urlencode($blog_title . ' (' . $blog_url . ')'); ?>', 'twitter', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Share on Twitter') ?>">Twitter</a>
+</li>
+<li>
+
+<a class="email hooked" href="javascript:popWin('mailto:?subject=<?php echo $blog_title; ?>&body=<?php echo urlencode($blog_url); ?>',  'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Message') ?>">Message</a>
+</li>
+<li>
+<a class="linkedin hooked" href="https://www.linkedin.com/company/crystal-d" title="<?php echo $this->__('Linked In') ?>" target="_blank">Linked In</a>
+</li>
+<li>
+
+<a class="gplus hooked" href="javascript:popWin('https://plus.google.com/share?url=<?php echo urlencode($blog_url); ?>', 'google', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Google Plus') ?>">Google Plus</a>
+</li>
+</ul>
+          
+          
+          </div>
+        
+        <div class="post-content">
+            <?php echo $this->getPost()->getContentHtml();?>
+        </div>
+        
+        <div class="post-info">
+            <?php if ( (int) $this->getPost()->getStatus() == NeoTheme_Blog_Model_Post::STATUS_DRAFT) : ?>
+                <h3 style="color:red;"><?php echo $this->__('[Draft] (not visible publicly)');?></h3>
+            <?php endif; ?>
+            <?php if ( $this->getPost()->getCategories()->count()) : ?>
+            <ul class="post-categories">
+                <?php echo $this->__('Posted In: ');?>
+                <?php $i = 0; ?>
+                <?php foreach($this->getPost()->getCategories() as $category):?>
+                    <?php $catName .=  ($i > 0)? '<li><a href="'.$category->getListUrl().'">,&nbsp;' . $category->getName().'</a></li>' : '<li><a href="'.$category->getListUrl().'">' . $category->getName().'</a></li>'; ?>
+                   <?php $i++; ?>
+                <?php endforeach; ?>
+				<?php echo $catName;?>
+            </ul>
+            <?php endif;?>
+            <?php if ( Mage::helper('neotheme_blog')->isDefaultCommentingEnabled()) : ?>
+            <?php 
+                $commentCount = $this->getPost()->getComments()->count();
+                $commentText =  ($commentCount == 1) ? $this->__("comment"):$this->__("comments");
+            ?>
+            <ul>
+                <li class="post-comments"><?php echo $commentCount; ?> <?php echo $commentText;?></li>
+            </ul>
+            <?php endif;?>
+        </div>
+        
+        <div class="clr"></div>
+    </article>
+    
+    <div class="comments-list">
+		<?php echo $this->getChildHtml('blog.post.comment.list');?>
+    </div>
+    
+	<div class="comment-form">
+		<?php echo $this->getChildHtml('blog.post.comment.form');?>
+    </div>
+
+</div>
+<div style="clear:both"></div>
+
+<ul class="custom-blog" >
+<?php
+
+$entityid=$this->getPost()->getEntity_id();
+///// For Recent post article
+$resource = Mage::getSingleton('core/resource');
+$readConnection = $resource->getConnection('core_read');
+$query_blog = "SELECT * FROM `neotheme_blog_post` WHERE `status`=1 and entity_id!=".$entityid." order by post_date DESC";
+$results_blog = $readConnection->fetchAll($query_blog);
+foreach($results_blog as $blog_data){
+	//print_r($blog_data);
+	$image_name= $blog_data['blog_image'];
+	$newImageUrl = Mage::getBaseUrl('media').$image_name;
+	$blog_url=$blog_data['comments'];
+	$post_url=$home_url."blog/".$blog_data['cms_identifier']."/";
+	$blog_title=$blog_data['title'];
+	?>
+	 <li>
+<ul class="share-single type-single five">
+<li>
+
+<a class="facebook hooked" href="javascript:popWin('https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode($blog_url); ?>&t=<?php echo urlencode($blog_url); ?>', 'facebook', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Share on Facebook') ?>">Facebook</a>
+</li>
+<li>
+
+<a class="twitter hooked" href="javascript:popWin('http://twitter.com/home/?status=<?php echo urlencode($blog_title . ' (' . $blog_url . ')'); ?>', 'twitter', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Share on Twitter') ?>">Twitter</a>
+</li>
+<li>
+
+<a class="email hooked" href="javascript:popWin('mailto:?subject=<?php echo $blog_title; ?>&body=<?php echo urlencode($blog_url); ?>',  'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Message') ?>">Message</a>
+</li>
+<li>
+<a class="linkedin hooked" href="https://www.linkedin.com/company/crystal-d" title="<?php echo $this->__('Linked In') ?>" target="_blank">Linked In</a>
+</li>
+<li>
+
+<a class="gplus hooked" href="javascript:popWin('https://plus.google.com/share?url=<?php echo urlencode($blog_url); ?>', 'google', 'width=640,height=480,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes');" title="<?php echo $this->__('Google Plus') ?>">Google Plus</a>
+</li>
+</ul>
+	 
+	 
+       <div class="blog-image"><a href="<?php echo $post_url; ?>"><img src="<?php echo $newImageUrl;?>" alt="blog_image" /></a></div>
+<div class="blog-title"><h2><a href="<?php echo $post_url?>"><?php echo $blog_data['title']?></a></h2></div>
+<div class="blog-readmore"><a href="<?php echo $post_url; ?>">Read More</a>
+<span class="post_date"><?php echo $blogdates;?></span></div>
+    </li>
+	<?php
+}
+?>
+</ul>
+<script>
+
+jQuery('.breadcrumb li:last a').removeAttr('href');
+if(jQuery('.breadcrumb li:nth-child(3) a').text() == 'Blog') {
+ jQuery('.breadcrumb li:nth-child(3) a').text('Crystal D Blog');
+}
+
+</script>
+<?php     Zend_Date::setOptions(array('format_type' => 'iso'));     ?>
+
+<style>
+.validation-advice{
+	display:none;
+}
+ ul.custom-blog {
+  float: none;
+  list-style: outside none none;
+  margin: 20px auto 0;
+  max-width: 1080px;
+  padding: 0;
+  width: 100%;
+}
+ul.custom-blog li {
+  background: #fff none repeat scroll 0 0;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  float: left;
+  height: 330px;
+  line-height: 1.5em;
+  margin: 0 1% 20px;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 23%;
+}
+.blog-image img {
+  height: auto;
+  width: 100%;
+}
+.blog-image a {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+    background: #ccc none repeat scroll 0 0;
+  width: 100%;
+}
+.first-block .blog-image a {
+  align-content: center;
+  align-items: center;
+
+  display: flex;
+  height: 300px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  width: 100%;
+}
+.post_date {
+  float: right;
+  font-size: 11px;
+}
+.blog-title {
+  padding: 15px;
+}
+.custom-blog h2 {
+  margin: 0;
+}
+.custom-blog h2 a {
+  color: #000;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 18px;
+  font-size-adjust: none;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  text-decoration: none;
+}
+.custom-blog .blog-readmore {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #ddd;
+  bottom: 0;
+  left: 0;
+  padding: 5px 15px;
+  position: absolute;
+  width: 100%;
+  z-index: 9;
+}
+
+.custom-blog .blog-readmore a {
+  text-decoration:none;
+  color:#003a5d;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+}
+
+.custom-blog .first-block {
+  height: 680px;
+  width: 48%;
+}
+.custom-blog .first-block h2 a {
+  font-size: 50px;
+  line-height: 58px;
+
+}
+/*//////*/
+.share-single {
+  background-color: rgba(255, 255, 255, 0.9);
+  bottom: 55px !important;
+  box-sizing: border-box;
+  display: block;
+  height: 40px !important;
+  margin: 0 6% !important;
+  opacity: 0;
+  padding: 0 !important;
+  position: absolute !important;
+  transition: opacity 0.15s linear 0s;
+  width: 88% !important;
+  list-style:none;
+}
+.post-content-media .share-single {
+  background-color: rgba(255, 255, 255, 0.9);
+  bottom: 55px !important;
+  box-sizing: border-box;
+  display: block;
+  height: 40px !important;
+  list-style: outside none none;
+  margin: 0 0 20px !important;
+  max-width: 271px;
+  opacity: 1;
+  padding: 0 !important;
+  position: static !important;
+  transition: opacity 0.15s linear 0s;
+  width: 100% !important;
+}
+.share-single, .share-item.type-single {
+  z-index: 7;
+}
+.share-single li {
+  background: #fff none repeat scroll 0 0 !important;
+  border-color: #eee #eee #eee white !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  box-shadow: none !important;
+  box-sizing: border-box;
+  display: block !important;
+  float: left !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-indent: -9999px !important;
+  width: 20% !important;
+}
+.share-single li:first-child {
+  border-left: 1px solid #eee !important;
+}
+.share-single li:last-child {
+  border-right: 1px solid #eee !important;
+}
+.share-single li a {
+  display: block !important;
+  height: 100% !important;
+  text-indent: -9999px !important;
+}
+.share-single li a.facebook {
+  background: rgba(0, 0, 0, 0) url("<?php echo $media_url?>/social/button-facebook.png") no-repeat scroll center 0;
+}
+.share-single li a.twitter {
+  background: rgba(0, 0, 0, 0) url("<?php echo $media_url?>/social/button-twitter.png") no-repeat scroll center 0;
+}
+.share-single li a.email {
+  background: rgba(0, 0, 0, 0) url("<?php echo $media_url?>/social/button-email.png?v=c23476a88282") no-repeat scroll center 0;
+}
+.share-single li a.linkedin {
+  background: rgba(0, 0, 0, 0) url("<?php echo $media_url?>/social/button-linkedin.png?v=b0dd1d95b619") no-repeat scroll center 0;
+}
+.share-single li a.gplus {
+  background: rgba(0, 0, 0, 0) url("<?php echo $media_url?>/social/button-gplus.png?v=99e69d55b485") no-repeat scroll center 0;
+}
+.share-single li a.facebook:hover {
+  background-position: center -40px;
+}
+.share-single li a.twitter:hover {
+  background-position: center -40px;
+}
+.share-single li a.email:hover {
+  background-position: center -40px;
+}
+.share-single li a.linkedin:hover {
+  background-position: center -40px;
+}
+.share-single li a.gplus:hover {
+  background-position: center -40px;
+}
+ul.custom-blog  li:hover .share-single {
+  opacity: 1;
+}
+.custom-blog .blog-readmore::after {
+  background: transparent url("<?php echo $media_url?>/social/sprite-1x.png") no-repeat scroll left top;
+  content: "";
+  display: block;
+  height: 16px;
+  position: absolute;
+  right: 17px;
+  top: 13px;
+  width: 16px;
+}
+ul.custom-blog  li:hover .blog-readmore::after{
+  background-position: -16px 0;
+}
+.blog-readmore > a {
+  display: block;
+}
+/*//////*/
+@media (max-width:991px){
+.custom-blog 	.first-block {
+  height: 330px;
+  margin: 0 1% 20px;
+  width: 23%;
+}
+.custom-blog .first-block h2 a {
+  color: #000;
+  font-family: "Open Sans",gillsansmt,Helvetica Neue,Arial,Helvetica,Geneva,sans-serif;
+  font-size: 18px;
+  font-size-adjust: none;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  text-decoration: none;
+}
+.first-block .blog-image a,
+.blog-image a {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  height: 150px;
+  justify-content: center;
+  overflow: hidden;
+  vertical-align: middle;
+  width: 100%;
+}
+}
+@media (max-width:800px){
+		.custom-blog .first-block ,
+	ul.custom-blog li {
+  height: 330px;
+  margin: 0 1% 20px;
+  width: 48%;
+}
+@media (max-width:500px){
+	.custom-blog	.first-block ,
+	ul.custom-blog li {
+  height: auto;
+  margin: 0 0% 20px;
+  width: 100%;
+}
+ .custom-blog .blog-title {
+  margin-bottom: 44px;
+  padding: 15px;
+}
+}
+</style>

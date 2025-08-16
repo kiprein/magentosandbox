@@ -1,0 +1,282 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category layered navigation
+ *
+ * @see Mage_Catalog_Block_Layer_View
+ */
+$groupId = Mage::getSingleton('customer/session')->getCustomerGroupId();
+/**
+ * Group ID list
+ * 5 = distributor
+ * 6 = employee
+ * 1 = general
+ * 0 = not logged in
+ * 4 = trophy retailer
+ */
+$loggedIn = Mage::getSingleton('customer/session')->isLoggedIn();
+$hiddenAttributes = array('Net Price', 'Trophy Blank Price');
+$hiddenAttributesAcceptions = [
+    'Net Price' => [5, 4], //distrubutor and TR
+    'Trophy Blank Price' => [4] // trophy retailer
+];
+$toggleAttributes = array('Net Price', 'Trophy Blank Price', 'Shapes And Styles', 'Material Type', 'Functionality', 'Imprint Processes');
+$_productHelper = $this->helper('js_product');
+//This is a list of filters that should be hidden on the base product category page
+$categoryFilters = array('Shapes And Styles', 'Material Type', 'Functionality', 'Imprint Processes');
+$category = $this->getRequest()->getParam('cat');
+$categoryFilterSet = false;
+$categoryFilterShown = false;
+//Need to run a check if there are any params set to trigger certain filters
+$paramsSet = false;
+$_utilityHelper = Mage::helper('js_utility');
+$params = $_utilityHelper->cleanUrlParams();
+if(!empty($params)) {
+	$paramsSet = true;
+}
+$quickShipText = $this->getLayout()->createBlock('cms/block')->setBlockId('quick-ship-text')->toHtml();
+?>
+
+<?php //This is here so the filters selected can be above the "filter" bar on mobile.  Also run check to make sure params are set ?>
+<?php if($paramsSet): ?>
+<div class="filter-list visible-sm visible-xs hidden-md hidden-lg filters-mobile">
+	<?php $appliedFilters = Mage::getSingleton( 'catalog/layer' )->getState()->getFilters(); ?>
+    <div>
+		<?php //Custom display for inventory and search fields ?>
+		<?php echo Mage::helper('js_product')->inventoryFilterDisplay(); ?>
+		<?php foreach ( $appliedFilters as $_filter ): ?>
+			<?php if(in_array($_filter->getName(), $hiddenAttributes)): ?>
+				<?php $_label = $this->helper('js_product')->labelFix($_filter->getLabel()); ?>
+			<?php else: ?>
+				<?php $_label = $_filter->getLabel(); ?>
+			<?php endif; ?>
+            <div class="filter-container">
+                <span class="filter-label"><?php echo $_filter->getName(); ?></span>
+
+				<?php //Need to show different filters if the category is being displayed ?>
+				<?php if(get_class($_filter->getFilter()) == 'Amasty_Shopby_Model_Catalog_Layer_Filter_Category'): ?>
+					<?php echo Mage::helper('js_product')->categoryFilterDisplay(); ?>
+				<?php else: ?>
+                    <li class="inline-block"><a href="<?php echo $this->helper('js_product')->getRemoveUrl($_filter->getName()); ?>" class="btn-remove" title="Remove This Item">X</a><?php echo $_label; ?></li>
+				<?php endif; ?>
+            </div>
+		<?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<?php if($this->canShowBlock()): ?>
+	<div class="block block-layered-nav<?php if (!$this->getLayer()->getState()->getFilters()): ?> block-layered-nav--no-filters<?php endif; ?>">
+		<div class="block-content toggle-content">
+			<?php echo $this->getStateHtml() ?>
+			<?php if ($this->getLayer()->getState()->getFilters()): ?>
+				<div class="clear-filter-all visible-lg visible-md hidden-sm hidden-xs">
+                    <a class="light-grey" href="<?php echo '/products'; ?>"><?php echo $this->__('Clear All') ?></a>
+                </div>
+			<?php endif; ?>
+			<?php if($this->canShowOptions()): ?>
+				<p class="block-subtitle block-subtitle--filter"><?php echo $this->__('Filter') ?></p>
+				<dl id="narrow-by-list">
+					<?php $_filters = $this->getFilters() ?>
+					<?php foreach ($_filters as $_filter): ?>
+                        <?php //echo "Filter set 2  "  . $_filter->getName() . "count ". $_filter->getItemsCount()." <br>"; ?>
+						<?php
+						/**
+						 * Need to add in class to change icon based on filter showing
+						 */
+						$filterToggle = '';
+						if(in_array($_filter->getName(), $toggleAttributes)) {
+							$filterToggle = 'amshopby-collapsed';
+							//This checks if a filter has been used or not
+							if( $_filter->getHasSelection()) {
+							    $filterToggle .= ' selected';
+							}
+						}
+						?>
+						<?php if($_filter->getItemsCount() || $_filter->getName() === 'Award Size'): ?>
+							<?php //Need to change the display of the quick ship icon and also add in a "Show All" button ?>
+							<?php if($_filter->getName() == 'Quick Ship'): ?>
+								<div class="quick-ship">
+									<div class="grid-group">
+										<a class="amshopby-attr quick-ship-checkbox <?php if($_filter->getHasSelection()) { echo 'selected'; }; ?>" href="<?php echo $_productHelper->getQuickShipUrl(); ?>">Yes</a>
+										<span class="even quick-ship-text">Quick Ship</span><img id="quick-ship-icon" src="<?php echo $this->getSkinUrl('images/quick-ship-white.png', array('_secure'=>true)); ?>" alt="Quick Ship Icon" />
+									</div>
+                                    <div class="quick-ship-hover hidden-sm hidden-xs"><?php echo $quickShipText; ?></div>
+								</div>
+
+                                <?php
+                                /**
+                                <div class="show-all-filter-button">
+                                    <div class="grid-group">
+                                        <a class="amshopby-attr" class="button" href="<?php echo '/products?cat=4&limit=all'; ?>">Show All</a>
+                                    </div>
+                                </div>
+                                */
+                                ?>
+
+								<?php //The inventory filter is custom so you need to just inject it after the very first option which is quick ship ?>
+								<?php //if($groupId == 6): ?>
+								<div class="filter-wrapper">
+                                    <dt class="<?php echo $filterToggle; ?>">
+                                        <div>
+                                            <div class="filter-icon"></div>Inventory
+                                        </div>
+                                    </dt>
+                                    <dd>
+                                        <p><a class="clear-filter" href="<?php echo $_productHelper->getRemoveUrl('inventory'); ?>">Clear Filter</a></p>
+                                        <ol class=" single-choice">
+                                            <li>&nbsp;</li>
+                                            <li id="inventory-wrapper">
+                                                <input 
+                                                    type="text" 
+                                                    id="inventory" 
+                                                    value="<?php echo $_utilityHelper->formatParam($params, 'inventory'); ?>" 
+                                                    class="inventory-fields"
+                                                    name="inventory" 
+                                                    placeholder="Minimum On Hand" 
+                                                    class="input-text">
+                                                <input 
+                                                    type="text" 
+                                                    name="available_before" 
+                                                    class="inventory-fields" 
+                                                    id="available_before" 
+                                                    placeholder="Available Before" 
+                                                    value="<?php echo $_utilityHelper->formatParam($params, 'available_before'); ?>"/>
+                                                <img style="" title="Select Date" id="inventory-field-date-icon" alt="" src="<?php echo $this->getSkinUrl("images/calendar.gif");?> "/>
+                                                <a id="inventory-link" class="button" href="<?php echo $this->helper('js_product')->getInventoryLink(); ?>">Find</a>
+                                            </li>
+
+                                        </ol>
+                                    </dd>
+                                </div>
+                                <?php //endif; ?>
+							<?php else: ?>
+
+                                <?php $filterName = $_filter->getName(); ?>
+
+								<?php //if(empty($category) && in_array($_filter->getName(), $categoryFilters) && !$paramsSet): ?>
+                                    <?php //continue; ?>
+                                <?php //endif; ?>
+
+                                <?php if(in_array($filterName, $hiddenAttributes)): ?>
+								    <?php //If the current user is not an employee or in the acceptions list skip this filter ?>
+                                    <?php if(!in_array($groupId, $hiddenAttributesAcceptions[$filterName]) && $groupId != 6): ?>
+                                        <?php continue; ?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+								<?php
+								/**
+                                 * There is the possibility that one of the $categoryFilters could not be set
+                                 * which prevents the Main category filter from displaying since there is not an easy way
+                                 * to just make it show up where you want.  Instead check if any of the current filters
+                                 * showing up belong to this array.  If so set a flag that they were found and display them
+                                 * Lastly there is a check at the very end where if the flag is still not set to show
+                                 * just the main category filters
+                                 */
+                                 if(in_array($_filter->getName(), $categoryFilters)) {
+	                                 $categoryFilterSet = true;
+                                 }
+                                 ?>
+
+								<?php if($categoryFilterSet && !$categoryFilterShown): ?>
+									<?php echo $this->getLayout()->createBlock('catalog/layer_filter_category')->setTemplate('amasty/amshopby/category.phtml')->toHtml(); ?>
+                                    <p class="category-header light-grey">Narrow Search</p>
+                                    <?php //Prevents this block from showing more then once ?>
+                                    <?php $categoryFilterShown = true; ?>
+								<?php endif; ?>
+
+
+                                <div class="filter-wrapper">
+                                    <dt class="<?php echo $filterToggle; ?>">
+                                        <div>
+                                            <div class="filter-icon"></div>
+                                            <?php echo $this->__($_filter->getName()) ?>
+                                        </div>
+                                    </dt>
+                                    <dd class="<?php if(in_array($_filter->getName(), $categoryFilters)) {  echo 'category-filter'; } ?>">
+                                        <?php echo $_filter->getHtml() ?>
+                                    </dd>
+                                </div>
+							<?php endif; ?>
+						<?php endif; ?>
+					<?php endforeach; ?>
+
+					<?php //If there were not category filters need to still display this.  Params set make sure it doesn't show in product page ?>
+					<?php if(!$categoryFilterSet && $paramsSet): ?>
+						<?php echo $this->getLayout()->createBlock('catalog/layer_filter_category')->setTemplate('amasty/amshopby/category.phtml')->toHtml(); ?>
+					<?php endif; ?>
+				</dl>
+				<script type="text/javascript">decorateDataList('narrow-by-list')</script>
+			<?php endif; ?>
+			<?php if ($this->getLayer()->getState()->getFilters()): ?>
+                <div class="clear-filter-all bottom">
+                    <a class="light-grey" href="<?php echo '/products' ?>"><?php echo $this->__('Clear All') ?></a>
+                </div>
+			<?php endif; ?>
+		</div>
+	</div>
+<?php endif; ?>
+
+<script type="text/javascript">
+	// <![CDATA[
+	jQuery(document).ready(function() {
+        if( jQuery( "#available_before" ).length ) {
+            Calendar.setup({
+                inputField : 'available_before',
+                ifFormat : '%m/%d/%Y',
+                showsTime: false,
+                button : 'inventory-field-date-icon',
+                singleClick : true,
+                disableFunc: function(date) {
+                    //disable previous day in datepicker
+                    var now= new Date();
+                    if(date.getFullYear()<now.getFullYear()) {
+                        return true;
+                    }
+                    if(date.getFullYear()==now.getFullYear()) {
+                        if(date.getMonth()<now.getMonth()) {
+                            return true;
+                        }
+                    }
+                    if(date.getMonth()==now.getMonth()) {
+                        if(date.getDate()<now.getDate()) {
+                            return true;
+                        }
+                    }
+                },
+            });
+        }
+      jQuery( ".quick-ship" ).hover(function() {
+        jQuery(this).find('.quick-ship-hover').css('visibility', 'visible');
+      }, function() {
+        jQuery(this).find('.quick-ship-hover').css('visibility', 'hidden');
+      });
+    });
+	// ]]>
+</script>

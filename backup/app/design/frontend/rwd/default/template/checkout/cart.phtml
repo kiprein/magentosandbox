@@ -1,0 +1,204 @@
+<?php
+/**
+ * Modified version of the Magento cart making it more of an order review page.
+ * the original cart can be found on cart.phtml.old
+ *  #usedOnepageTemplate
+ * 
+ * @author Mark Wickline
+ */
+?>
+<?php
+/**
+ * Shopping cart template
+ *
+ * @var $this Mage_Checkout_Block_Cart
+ */
+$customerSession = Mage::getSingleton('customer/session');
+$customerId = $customerSession->getCustomer()->getId();
+$taxVat = Mage::getSingleton('customer/customer')->load($customerId)->getData('taxvat');
+$productHelper = Mage::helper('catalog/product_configuration');
+$priceHelper = Mage::helper('mgw_modalcart');
+$cartQty = Mage::helper('checkout/cart')->getItemsCount();
+
+$subtotal = 0.0;
+$discount = 0.0;
+$eppDiscount = 0.0;
+?>
+<style>
+    .cartReview-container{
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .cartReview-product-img{
+        max-width: 185px;
+        float: left;
+    }
+    .cartReview-product-container{
+        color: #7987a0;
+    }
+    .cartReview-productDetails-container{
+        height: 185px;
+        display: flex;
+        flex-direction: column;
+        padding: 15px 10px;
+        justify-content: space-between;
+    }
+    .cartReview-product-qtyInput{
+        display: inline-block !important;
+        width: 100px !important;
+    }
+    .cartReview-productDetails-optionImage{
+        max-width: 65px;
+    }
+    #orderReview-notes{
+        width: 100%;
+        height: 102px;
+    }
+    .table-p{
+        color: #7987a0;
+        width: 340px;
+        display: inline-flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin: 0;
+    }
+    .cr-remove-button{
+        padding: 7px;
+    }
+</style>
+<?php $_priceDisplay = ($this->helper('tax')->displayCartBothPrices()) ? 'display-both-prices' : 'display-single-price'; ?>
+<div class="cart <?php echo $_priceDisplay; ?>">
+    <div class="cartReview-container">
+    <div class="page-title title-buttons">
+        <h1><?php echo $this->__('Review Your Order') ?></h1>
+        <p style="padding-bottom: 22px;">
+            Is your order below correct? Please make changes to your cart before continuing.
+        </p>
+    </div>
+    <?php echo $this->getMessagesBlock()->toHtml() ?>
+    <?php echo $this->getChildHtml('form_before') ?>
+    <?php foreach($this->getQuote()->getAllVisibleItems() as $key => $quoteItem): ?>
+        <?php
+            $product = Mage::getSingleton('catalog/product')->load($quoteItem->getProductId());
+            $options = $productHelper->getCustomOptions($quoteItem);
+            $orderQty = $quoteItem->getQty();
+            //These number will be driven from mwCartRebuild.phtml
+            // $productPriceAndDiscount = $priceHelper->getProductPriceAndDiscount($product, $orderQty, $taxVat);
+            // $discount += ($productPriceAndDiscount['discount'] * $orderQty);
+            // $subtotal += ($productPriceAndDiscount['price'] * $orderQty);
+        ?>
+        <div class="cartReview-product-container container" id="cr-product-container-<?php echo $key; ?>">
+            <div class="row">
+                <div class="col-sm-8">
+                    <a href="/<?php echo $product->getUrlKey(); ?>">
+                        <img src="https://image.crystal-d.com/img/u494-y/jpg/<?php echo $product->getMainProductImage(); ?>" 
+                        alt="<?php echo $product->getImageAlt(); ?>" class="cartReview-product-img">
+                    </a>
+                    <div class="cartReview-productDetails-container">
+                        <a href="/<?php echo $product->getUrlKey(); ?>">
+                            <h4 style="color: lightslategray; font-weight: 600;">
+                                <?php echo "#" . $product->getSku() . " " . $product->getMetaTitle(); ?>
+                            </h4>
+                        </a>
+                        <?php if(isset($options) && count($options) > 0): ?>
+                            <ul style="list-style: circle; color: lightslategray; padding: 0 20px; padding: 0;">
+                                <?php foreach($options as $option): ?>
+                                <li style="list-style-type: none;">
+                                    <?php echo Mage::helper('mgw_modalcart')->getOptionHtml( $option ); ?>
+                                </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <br><br>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="padding-top: 26px;">
+                    <div class="text-right">
+                        <button class="cr-remove-button" onclick="mwCart_validateAndUpdate(<?php echo $key; ?>, 0);">X</button>
+                    </div>
+                    <p><strong class="mwCart-prd-subtotalStandard-<?php echo $key; ?>"></strong></p>
+                    <p class="mwCart-prd-priceEach-container-<?php echo $key; ?>">
+                        <i><span class="mwCart-prd-price-<?php echo $key; ?>"></span> Each</i>
+                    </p>
+                    <button class="mwCart-dec-btn" onclick="mwCart_qtyDecrease(<?php echo $key; ?>);">-</button>
+                    <input class="mwCart-qty-input" type="text" onchange="mwCart_validateAndUpdate(<?php echo $key; ?>, this.value);"
+                        id="cr-product-qty-<?php echo $key; ?>" value="<?php echo $orderQty; ?>">
+                    <button class="mwCart-inc-btn" onclick="mwCart_qtyIncrease(<?php echo $key; ?>);">+</button>
+                </div>
+                <div></div>
+            </div>
+            <?php if($key < $cartQty - 1): ?>
+                <hr>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+    <?php echo $this->getChildHtml('coupon'); ?>
+    <?php /*
+        echo '<div>';
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        echo "Sub: getSingleton('checkout/session') " .  $quote->getSubtotal(). '<br>';
+        echo "%this->getQuote() " . $this->getQuote()->getSubtotal() . '<br>';
+        echo '</div>';
+        */
+     ?>
+
+    <?php echo $this->getChildHtml('shopping.cart.table.after'); ?>
+    <div class="cart-totals-wrapper text-right">
+    <form action="<?php echo $this->getUrl('mgw/index/saveOrderReview') ?>">
+    <label for="orderReview-notes" style="float: left; margin-top: 15px; color: #7987a0;">Additional Order Notes</label>
+    <textarea name="notes" id="orderReview-notes"><?php echo Mage::getModel('mgw_modalcart/checkout_onepage')->getAdditionalNotes(); ?></textarea>
+        <div class="cart-totals">
+
+            <div class="">
+                <p class="table-p">
+                    <span><strong>Product Total:</strong></span>
+                    <span><strong class="mwCart-subtotalStd"></strong></span>
+                </p>
+            </div>
+
+            <div class="mwCart-eqpDiscount-container">
+                <p class="table-p">
+                    <span><strong>EQP Discount:</strong></span>
+                    <span class="mwCart-eqpDiscount"></span>
+                </p>
+            </div>
+            
+            <div class="mwCart-eppDiscount-container">
+                <p class="table-p">
+                    <span><strong>Additional <span class="mwCart-eppDiscountVerbiage"></span> Savings:</strong></span>
+                    <span class="mwCart-eppDiscount"></span>
+                </p>
+            </div>
+
+            <!--#tariffSurcharge-->
+            
+            <!-- <div class="mwCart-tariffSurcharge-container">
+                <p class="table-p">
+                    <span><strong>Tariff Surcharge:</strong></span>
+                    <span><strong class="mwCart-tariffSurcharge"></strong></span>
+                </p>
+            </div> -->
+           
+
+            <div class="mwCart-grandSubtotal-container">
+                <p class="table-p">
+                    <span><strong>SUBTOTAL:</strong></span>
+                    <span><strong class="mwCart-grandSubtotal"></strong></span>
+                </p>
+            </div>
+
+
+            <?php if(!$this->hasError()): ?>
+            <!--saving-->
+            <div style="height: 20px;"></div><!--spacer-->
+            <button type="submit" title="Proceed to Checkout" class="btn btn-proceed-checkout checkoutStep-btn">
+                <span>I'm Ready to Check Out!<span>
+            </button>
+            <?php endif; ?>
+            <div style="height: 20px;"></div><!--spacer-->
+        </div>
+    </form>
+    </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+<?php
+$_category         = Mage::registry( 'current_category' );
+$currentCategoryId = $_category->getId();
+$_helper= Mage::helper('catalog/category');
+
+$childrenCategories = Mage::getModel( 'catalog/category' )->getCollection()
+                          ->addAttributeToSelect( '*' )
+                          ->addAttributeToFilter( 'is_active', '1' )
+                          ->addAttributeToFilter( 'is_anchor', '1' )
+                          ->addAttributeToFilter( 'parent_id', array( 'eq' => $currentCategoryId ) )
+                          ->addAttributeToSort( 'position', 'ASC' );
+
+$categorySize = count( $childrenCategories );
+
+//Need to figure out the size of the columns
+$column1 = ceil( ( $categorySize / 3 ) - 1 );
+$column2 = ceil( ( ( $categorySize / 3 ) * 2 ) - 1 );
+
+$_resource = Mage::getSingleton('catalog/category')->getResource();
+$_store = Mage::app()->getStore()
+?>
+<div class="col-md-4 col-2 col-sm-12 col-xs-12 strip_line">
+	<div class="more-option category-links">
+		<?php $i = 0; foreach( $childrenCategories as $childrenCategory ): ?>
+			<?php $categoryUrl = $_resource->getAttributeRawValue($childrenCategory->getId(),  'url', $_store); ?>
+			<?php $categoryName = $_resource->getAttributeRawValue($childrenCategory->getId(),  'name', $_store); ?>
+			<a href="<?php echo '../products?cat='.$childrenCategory->getId(); ?>"><?php echo $categoryName; ?> &rsaquo; </a>
+			<?php
+			//Based on column count need to close the current column and start the next.
+			//Column 2 is used to hide the row split on the last column
+			?>
+			<?php if ( $i == $column1 ): ?>
+				</div></div><div class="col-md-4 col-2 col-sm-12 col-xs-12 strip_line"><div class="more-option category-links">
+			<?php elseif($i == $column2): ?>
+			</div></div><div class="col-md-4 col-4 col-sm-12 col-xs-12 strip_line strip_line2"><div class="more-option category-links">
+			<?php endif; ?>
+		<?php $i++; endforeach; ?>
+	</div>
+</div>

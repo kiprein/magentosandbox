@@ -1,0 +1,1 @@
+ssh -o ServerAliveInterval=30 crystald@50.204.179.182

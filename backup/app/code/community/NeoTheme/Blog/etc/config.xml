@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * NeoTheme (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com so we can send you a copy immediately.
+ *
+ * This software comes with no warrenty of any kind. By Using this software, the user agrees to hold 
+ * Neo Industries Pty Ltd harmless of any damage it may cause.
+ *
+ * @category    modules
+ * @module      NeoTheme_Blog
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com)
+ * @license     http://www.neotheme.com/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+-->
+<config>
+    <modules>
+        <NeoTheme_Blog>
+            <version>1.5.2.0</version>
+        </NeoTheme_Blog>
+    </modules>
+
+    <global>
+        <helpers>
+            <neotheme_blog>
+                <class>NeoTheme_Blog_Helper</class>
+            </neotheme_blog>
+        </helpers>
+        <blocks>
+            <neotheme_blog>
+                <class>NeoTheme_Blog_Block</class>
+            </neotheme_blog>
+            <rss>
+                <rewrite>
+                    <list>NeoTheme_Blog_Block_Rss_List</list>
+                </rewrite>
+            </rss>
+        </blocks>
+        <models>
+            <neotheme_blog>
+                <class>NeoTheme_Blog_Model</class>
+                <resourceModel>neotheme_blog_resource</resourceModel>
+            </neotheme_blog>
+            <neotheme_blog_resource>
+                <class>NeoTheme_Blog_Model_Resource</class>
+                <entities>
+                    <post>
+                        <table>neotheme_blog_post</table>
+                    </post>
+                    <category>
+                        <table>neotheme_blog_category</table>
+                    </category>
+                    <tag>
+                        <table>neotheme_blog_tag</table>
+                    </tag>
+                    <comment>
+                        <table>neotheme_blog_comment</table>
+                    </comment>
+                </entities>
+            </neotheme_blog_resource>
+        </models>
+        <resources>
+            <neotheme_blog_setup>
+                <setup>
+                    <module>NeoTheme_Blog</module>
+                    <class>NeoTheme_Blog_Model_Resource_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </neotheme_blog_setup>
+        </resources>
+        <events>
+            <controller_front_init_routers>
+                <observers>
+                    <neotheme_blog>
+                        <class>NeoTheme_Blog_Controller_Router</class>
+                        <method>initControllerRouters</method>
+                    </neotheme_blog>
+                </observers>
+            </controller_front_init_routers>
+        </events>
+    </global>
+    <admin>
+        <routers>
+           <adminhtml>
+                <args>
+                    <modules>
+                        <neotheme_blog after="Mage_Adminhtml">NeoTheme_Blog_Adminhtml</neotheme_blog>
+                    </modules>
+                </args>
+           </adminhtml>
+        </routers>
+
+    </admin>
+    <frontend>
+        <routers>
+            <neotheme_blog>
+                <use>standard</use>
+                <args>
+                    <module>NeoTheme_Blog</module>
+                    <frontName>blog</frontName>
+                </args>
+            </neotheme_blog>
+           <rss>
+                <args>
+                    <modules>
+                        <neotheme_blog after="Mage_Rss">NeoTheme_Blog_Rss</neotheme_blog>
+                    </modules>
+                </args>
+           </rss>
+        </routers>
+        <layout>
+            <updates>
+                <neotheme_blog>
+                    <file>neotheme/blog.xml</file>
+                </neotheme_blog>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <NeoTheme_Blog>
+                    <files>
+                        <default>NeoTheme_Blog.csv</default>
+                    </files>
+                </NeoTheme_Blog>
+            </modules>
+        </translate>
+    </frontend>
+   <adminhtml>
+        <layout>
+            <updates>
+                <neotheme_blog>
+                    <file>neotheme/blog.xml</file>
+                </neotheme_blog>
+            </updates>
+        </layout>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <blog translate="title" module="neotheme_blog">
+                                            <title>Neotheme</title>
+                                        </blog>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+       <translate>
+           <modules>
+               <NeoTheme_Blog>
+                   <files>
+                       <default>NeoTheme_Blog.csv</default>
+                   </files>
+               </NeoTheme_Blog>
+           </modules>
+       </translate>
+    </adminhtml>
+    <default>
+        <blog>
+            <general>
+                <add_ips_on_save>1</add_ips_on_save>
+                <time_format>full</time_format>
+                <time_format_custom><![CDATA[EEEE dd MMMM]]></time_format_custom>
+                <frontend_url_key><![CDATA[blog]]></frontend_url_key>
+
+                <enable_top_menu_link>1</enable_top_menu_link>
+            </general>
+            <frontend>
+                <default_root_template>three_columns</default_root_template>
+            </frontend>
+            <comment>
+                <type_template><![CDATA[neotheme/blog/comment/form/default.phtml]]></type_template>
+                <comments_count>5</comments_count>
+            </comment>
+            <category>
+                <show_populated_only>0</show_populated_only>
+            </category>
+            <customer>
+                <enabled>0</enabled>
+            </customer>
+        </blog>
+        <rss>
+            <neotheme_blog>
+                <enabled>0</enabled>
+            </neotheme_blog>
+         </rss>
+   </default>
+</config> 

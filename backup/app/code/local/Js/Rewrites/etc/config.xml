@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Rewrites>
+            <version>0.1.0</version>
+        </Js_Rewrites>
+    </modules>
+    <global>
+        <blocks>
+            <js_rewrites>
+                <class>Js_Rewrites_Block</class>
+            </js_rewrites>
+            <webforms>
+                <rewrite>
+                    <adminhtml_results_grid>Js_Rewrites_Block_Adminhtml_Results_Grid</adminhtml_results_grid>
+                    <adminhtml_results_edit_form>Js_Rewrites_Block_Adminhtml_Results_Edit_Form</adminhtml_results_edit_form>
+                </rewrite>
+            </webforms>
+        </blocks>
+        <models>
+            <js_rewrites>
+                <class>Js_Rewrites_Model</class>
+            </js_rewrites>
+            <core>
+                <rewrite>
+                    <file_validator_image>Js_Rewrites_Model_File_Validator_Image</file_validator_image>
+                </rewrite>
+            </core>
+        </models>
+    </global>
+</config>

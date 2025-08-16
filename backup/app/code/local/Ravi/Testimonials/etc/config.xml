@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ravi_Testimonials>
+            <version>0.1.0</version>
+        </Ravi_Testimonials>
+    </modules>
+    <frontend>
+        <routers>
+            <testimonials>
+                <use>standard</use>
+                <args>
+                    <module>Ravi_Testimonials</module>
+                    <frontName>testimonials</frontName>
+                </args>
+            </testimonials>
+        </routers>
+        <layout>
+            <updates>
+                <testimonials>
+                    <file>testimonials.xml</file>
+                </testimonials>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <helpers>
+            <testimonials>
+                <class>Ravi_Testimonials_Helper</class>
+            </testimonials>
+        </helpers>
+        <blocks>
+            <testimonials>
+                <class>Ravi_Testimonials_Block</class>
+            </testimonials>
+        </blocks>
+        <models>
+            <testimonials>
+                <class>Ravi_Testimonials_Model</class>
+                <resourceModel>testimonials_mysql4</resourceModel>
+            </testimonials>
+
+
+            <testimonials_mysql4>
+                <class>Ravi_Testimonials_Model_Mysql4</class>
+                <entities>
+                    <testimonial>
+                        <table>testimonials</table>
+                    </testimonial>
+                </entities>
+                <entities>
+                    <test>
+                        <table>test</table>
+                    </test>
+                </entities>
+
+            </testimonials_mysql4>
+        </models>
+        <resources>
+
+            <testimonials_setup>
+                <setup>
+                    <module>Ravi_Testimonials</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </testimonials_setup>
+            <testimonials_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </testimonials_write>
+            <testimonials_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </testimonials_read>
+        </resources>
+
+        <events>
+            <testimonial_save_after>
+                <observers>
+                    <testimonials>
+                        <type>model</type>
+                        <class>testimonials/observer</class>
+                        <method>testimonialSaveAfter</method>
+                    </testimonials>
+                </observers>
+            </testimonial_save_after>
+
+            <testimonial_save_before>
+                <observers>
+                    <testimonials>
+                        <type>model</type>
+                        <class>testimonials/observer</class>
+                        <method>testimonialSaveBefore</method>
+                    </testimonials>
+                </observers>
+            </testimonial_save_before>
+
+
+        </events>
+        <template>
+            <email>
+                <testimonial_couponcode_template1 module="testimonials">
+                    <label>Testimonial Activation Email</label>
+                    <file>active_testimonial_template.html</file>
+                    <type>html</type>
+                </testimonial_couponcode_template1>
+            </email>
+        </template>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <testimonials before="Mage_Adminhtml">Ravi_Testimonials_Adminhtml</testimonials>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <testimonials module="testimonials">
+                <title>Testimonials</title>
+                <sort_order>100</sort_order>
+                <children>
+                    <testimonial module="testimonials">
+                        <title>Manage Testimonial</title>
+                        <sort_order>0</sort_order>
+                        <action>adminhtml/testimonials_testimonial</action>
+                    </testimonial>
+                </children>
+            </testimonials>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <testimonials translate="title" module="testimonials">
+                            <title>Testimonials</title>
+                            <sort_order>1000</sort_order>
+                            <children>
+                                <testimonialsbackend translate="title">
+                                    <title>Backend Page Title</title>
+                                </testimonialsbackend>
+                                <testimonial translate="title">
+                                    <title>Manage Testimonial</title>
+                                    <sort_order>0</sort_order>
+                                </testimonial>
+                            </children>
+                        </testimonials>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <testimonials>
+                    <file>testimonials.xml</file>
+                </testimonials>
+            </updates>
+        </layout>
+    </adminhtml>
+</config> 

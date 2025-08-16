@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<layout>
+  <default>
+
+    <reference name="head">
+
+      <block type="core/text" name="splide-js-cdn">
+        <action method="setText">
+          <text><![CDATA[
+            <link rel="stylesheet" href="/skin/frontend/rwd/crystald/css/default-carousel.css">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+            <script src="/skin/frontend/rwd/crystald/js/videomodal.js"></script>
+          ]]></text>
+        </action>
+      </block>
+    </reference>
+  </default>
+</layout>

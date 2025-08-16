@@ -1,0 +1,235 @@
+<?php $product = $this->getProduct(); ?>
+<?php $productHelper = $this->helper( 'js_product' ); ?>
+<div class="panel panel-default product-included-wrapper col-xs-12">
+    <div class="panel-heading center">
+        <h4 class="panel-title light-blue" data-toggle="collapse" data-target="#whats-included-panel">
+            <span class="accordion-toggle">+</span>Pricing and Imprint Information
+        </h4>
+    </div>
+    <div id="whats-included-panel" class="panel-collapse collapse in">
+        <div class="panel-body">
+            <div class="">
+                <div class="panel-static-block">
+	                <?php $includedNotes = $productHelper->separator($product->getWhatIncludeSnotes()); ?>
+	                <?php if (count($includedNotes) > 0): ?>
+                        <ul class="included-notes">
+                            <?php foreach ($includedNotes as $includedNote): ?>
+                                <li class="dark-grey"><?php echo $includedNote; ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+	                <?php endif; ?>
+	                <?php list($imprintServicesList, $imprintServicesCount) =
+                        $productHelper->getImprintServicesList($product->getImprintProcessServices()); ?>
+	                <?php if (count($imprintServicesCount) > 0): ?>
+                        <div class="accordion-title imprint-process-title mb-20 dark-grey">
+                            <span>Imprint Process Options:</span> <?php echo $imprintServicesList; ?>
+                        </div>
+	                <?php endif; ?>
+
+                </div>
+
+				<?php if ( $product->getColorfillIncluded() == 1 ): ?>
+                    <div class="colorfill-container">
+						<?php $translucentColors = $productHelper->getTranslucentColors( $product ); ?>
+						<?php $opaqueColors = $productHelper->getOpaqueColors( $product ); ?>
+						<?php $colorUrl = Mage::getBaseUrl( 'media', true ) . 'images/color-swatches/'; ?>
+						<?php if ( count( $translucentColors ) > 0 || count( $opaqueColors ) > 0 ): ?>
+                            <div class="header mb-10">
+                                <span>Colorfill</span> <em class="dark-grey">You can add one or more colors to your deep etch imprint.
+                                    One Colorfill is included. Choose from the following Colors:</em>
+                            </div>
+							<?php if ( count( $translucentColors ) > 0 ): ?>
+                                <div class="">
+                                    <span class="color-label dark-grey">Translucent:</span>
+                                    <ul class="color-list">
+										<?php foreach ( $translucentColors as $label => $colorImage ): ?>
+											<?php if ( ! empty( $colorImage ) ): ?>
+                                                <li class="color-swatch center">
+                                                    <img alt="<?php echo $this->escapeHtml($label); ?>" src="<?php echo $colorUrl . $colorImage; ?>"/>
+                                                    <p class="dark-grey"><?php echo $label; ?></p>
+                                                </li>
+											<?php endif; ?>
+										<?php endforeach; ?>
+                                    </ul>
+                                </div>
+							<?php endif; ?>
+							<?php if ( count( $opaqueColors ) > 0 ): ?>
+                                <div class="">
+                                    <span class="color-label dark-grey">Opaque:</span>
+                                    <ul class="color-list">
+										<?php foreach ( $opaqueColors as $label => $colorImage ): ?>
+											<?php if ( ! empty( $colorImage ) ): ?>
+                                                <li class="color-swatch center">
+                                                    <img alt="<?php echo $this->escapeHtml($label); ?>" src="<?php echo $colorUrl . $colorImage; ?>"/>
+                                                    <p class="dark-grey"><?php echo $label; ?></p>
+                                                </li>
+											<?php endif; ?>
+										<?php endforeach; ?>
+                                    </ul>
+                                </div>
+							<?php endif; ?>
+						<?php endif; ?>
+                    </div>
+				<?php endif; ?>
+
+                <!-- For inspir -->
+				<?php list( $inspirationCards, $inspirationCount ) = $productHelper->formatCards( $product->getInspirationCard() ); ?>
+				<?php if ( $inspirationCards ): ?>
+                <div class="row">
+                    <div class="col-xs-12">
+                    <div class="header mt-20 mb-15">
+                        <span>Inspiration card</span>
+                        <em class="dark-grey"> One Inspiration card is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="inspiration-slides" class="accordion-slides">
+							<?php echo $inspirationCards; ?>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+				<?php endif; ?>
+                <!-- End inspir -->
+
+                <!-- For included_plate -->
+				<?php list( $includePlates, $plateCount ) = $productHelper->formatCards( $product->getIncludedPlate() ); ?>
+				<?php if ( $includePlates ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Engraved Plates</span>
+                        <em class="dark-grey"> One Engraved Plate is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="plate-slides" class="accordion-slides">
+                            <?php echo $includePlates; ?>
+                        </div>
+                    </div>
+				<?php endif; ?>
+                <!-- End included_plate -->
+
+                <!-- INCLUDED ACCENT, #MGW ADDED 2/28/19-->
+				<?php list( $includeAccents, $accentCount ) = $productHelper->formatCards( $product->getIncludedAccent() ); ?>
+				<?php if ( $includeAccents ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Accents</span>
+                        <em class="dark-grey"> One Accent is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="plate-slides" class="accordion-slides">
+                            <?php echo $includeAccents; ?>
+                        </div>
+                    </div>
+				<?php endif; ?>
+                <!-- END OF INCLUDED ACCENT -->
+
+                <!-- For goal_setter_block -->
+				<?php list( $goalSetterBlocks, $goalCount ) = $productHelper->formatCards( $product->getGoalSetterBlock() ); ?>
+				<?php if ( $goalSetterBlocks ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Goal-Setter Blocks</span>
+                        <em class="dark-grey"> One Goal-Setter Block is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="goal-setter-slides" class="accordion-slides">
+                            <?php echo $goalSetterBlocks; ?>
+                        </div>
+                    </div>
+				<?php endif; ?>
+                <!-- End goal_setter_block -->
+
+                <!-- For panels -->
+				<?php list( $panelCards, $panelCount ) = $productHelper->formatCards( $product->getIncludedPanels() ); ?>
+				<?php if ( $panelCards ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Colored Panels</span>
+                        <em class="dark-grey">One colored panel is included in the price. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="goal-setter-slides" class="accordion-slides">
+                            <?php echo $panelCards; ?>
+                        </div>
+                    </div>
+				<?php endif; ?>
+                <!-- End panels -->
+
+                <!-- For color shaped block -->
+				<?php list( $coloredSpheres, $sphereCount ) = $productHelper->formatCards( $product->getColoredSpheres() ); ?>
+				<?php if ( $coloredSpheres ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Colored Spheres</span>
+                        <em class="dark-grey"> One Colored Sphere is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="sphere-slides">
+                            <?php echo $coloredSpheres; ?>
+                        </div>
+                    </div>
+				<?php endif; ?>
+                <!-- End color shaped block -->
+
+                <!-- For battery Pack -->
+	            <?php list( $batteryPacks, $batteryPackCount ) = $productHelper->formatCards( $product->getBatteryPackIncluded() ); ?>
+	            <?php if ( $batteryPacks ): ?>
+                    <div class="header mt-20 mb-15">
+                        <span>Battery Packs</span>
+                        <em class="dark-grey"> One Battery Pack is included. Choose from the following options:</em>
+                    </div>
+                    <div class="">
+                        <div id="battery-slides">
+                            <?php echo $batteryPacks; ?>
+                        </div>
+                    </div>
+	            <?php endif; ?>
+                <!-- End battery pack block -->
+
+                <!-- End Right side content-->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	<?php $sliderOptions = $this->getSliderOptions(); ?>
+  //Hide the pager based on the amount
+  jQuery('#inspiration-slides').bxSlider({
+	  <?php if($inspirationCount <= 2): ?> pager: false, <?php endif; ?>
+    <?php echo$sliderOptions; ?>
+
+  });
+
+  jQuery('#plate-slides').bxSlider({
+	  <?php if( $plateCount > 2): ?>
+    pager: true,
+	  <?php else: ?>
+    pager: false,
+	  <?php endif; ?>
+	  <?php echo $sliderOptions; ?>
+  });
+
+  jQuery('#goal-setter-slides').bxSlider({
+	  <?php if($goalCount > 2): ?>
+    pager: true,
+	  <?php else: ?>
+    pager: false,
+	  <?php endif; ?>
+	  <?php echo $sliderOptions; ?>
+  });
+
+  jQuery('#sphere-slides').bxSlider({
+	  <?php if($sphereCount > 2): ?>
+    pager: true,
+	  <?php else: ?>
+    pager: false,
+	  <?php endif; ?>
+	  <?php echo $sliderOptions; ?>
+  });
+
+  jQuery('#battery-slides').bxSlider({
+	  <?php if($batteryPackCount > 2): ?>
+    pager: true,
+	  <?php else: ?>
+    pager: false,
+	  <?php endif; ?>
+	  <?php echo $sliderOptions; ?>
+  });
+</script>

@@ -1,0 +1,21 @@
+<div class='webforms-calendar'>
+	<input id='<?php echo $this->getFieldId()?>'
+           type='text'
+           name='<?php echo $this->getFieldName()?>'
+           class='<?php echo $this->getFieldClass()?>'
+           style='<?php echo $this->getFieldStyle()?>'
+           value='<?php echo $this->getCustomerValue()?>'
+           <?php if($this->getField()->getRequired()){ ?>readonly='readonly'<?php } ?>
+    />
+</div>
+
+<script type='text/javascript'>
+Calendar.setup({
+	inputField: '<?php echo $this->getFieldId()?>',
+	ifFormat: '<?php echo str_replace('\'','\\\'',$this->getField()->getDateStrFormat())?>',
+	showsTime: <?php echo $this->getShowTime()?>,
+	button: '<?php echo $this->getFieldId()?>',
+	align: 'Bl',
+	singleClick: true
+});
+</script>

@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @var Js_Menu_Block_Menu
+ */
+$topMenuItems = $this->getParentMenu('top');
+$menuCount = 0;
+/**
+ * The id element of nav runs the whole show nav id="nav".  If there is ever a conflict with having
+ * two nav id="nav" on the page, one for each menu.  Major work will have to be done.
+ *
+ * Work left
+ * -Get all of the classes working and rendering
+ *
+ */
+?>
+
+<nav id="nav">
+	<ol id="top-menu-wrapper" class="nav-primary">
+		<?php foreach ($topMenuItems as $topMenuItem): ?>
+			<?php echo $this->renderParentMenu($topMenuItem, $menuCount); ?>
+		<?php  $menuCount++; endforeach; ?>
+	</ol>
+</nav>

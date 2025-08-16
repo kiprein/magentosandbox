@@ -1,0 +1,47 @@
+<?php $_product = $this->getProduct(); ?>
+<?php $productForms = array( 51, 47, 48 ); ?>
+<?php foreach ( $productForms as $productForm ): ?>
+    <div style="display: none;">
+		<?php if ($productForm == 51): ?>
+			<?php $formTitle = 'Request a Quote or Virtual'; ?>
+			<?php $formTrigger = 'quote-form'; ?>
+		<?php elseif ($productForm == 47): ?>
+			<?php $formTitle = 'Request a Sample'; ?>
+			<?php $formTrigger = 'sample-form'; ?>
+		<?php elseif ($productForm == 48): ?>
+			<?php $formTitle = 'Email a Friend'; ?>
+			<?php $formTrigger = 'email-friend-form'; ?>
+		<?php endif; ?>
+
+        <div class="popup-form col-md-12 zero-padding-mobile <?php echo $formTrigger; ?>">
+            <div class="popup-form-box">
+                <div class="popup-header">
+					<?php echo $formTitle; ?>
+                </div>
+                <div class="hide_dealer_message">
+                    <div class="row ps-15 zero-padding-mobile mb-20">
+                        <div class="col-md-2 col-sm-12 col-xs-12 center-mobile">
+                            <?php $alt = htmlspecialchars($_product->getShortDescription()); ?>
+                            <img class="form-img" alt="<?php echo $alt; ?>" src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $_product->getMainProductImage(); ?>.jpg" />
+                        </div>
+                        <div class="col-md-10 col-sm-12 col-xs-12 padding-left-15 form-info">
+                            <div class="form-title dark-grey"><?php echo $_product->getShortDescription(); ?></div>
+                            <div class="form-sku dark-grey">Item #<?php echo $_product->getSku(); ?></div>
+                            <div class="form-desc dark-grey"><?php echo $_product->getDescription(); ?></div>
+                        </div>
+                    </div>
+
+                    <div class="row ps-15 form-wrapper">
+						<?php
+						echo $this->getLayout()->createBlock( 'webforms/webforms', 'custom_form_' . $productForm, array
+						(
+							'webform_id' => $productForm,
+							'template'   => 'webforms/default.phtml',
+						) )->toHtml();
+						?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; ?>

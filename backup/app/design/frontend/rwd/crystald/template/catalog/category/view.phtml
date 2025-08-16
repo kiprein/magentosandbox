@@ -1,0 +1,98 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category view template
+ *
+ * @see Mage_Catalog_Block_Category_View
+ */
+?>
+<?php
+$_helper   = $this->helper( 'catalog/output' );
+$_category = $this->getCurrentCategory();
+
+$selectedCategories = explode(',',$this->getRequest()->getParam('cat'));
+$_resource = Mage::getSingleton('catalog/category')->getResource();
+$_store = Mage::app()->getStore();
+$priceAttributes = array('Net Price', 'Trophy Blank Price');
+$params = Mage::helper('js_utility')->cleanUrlParams();
+?>
+<div class="page-title category-title">
+	<?php //Makes sure if the user only drills down by one category to display some additional information ?>
+	<?php if(count($selectedCategories) == 1 && count($params) == 1): ?>
+		<?php $_categoryName = $_resource->getAttributeRawValue($selectedCategories[0],  'name', $_store); ?>
+		<?php $_categoryDescription = $_resource->getAttributeRawValue($selectedCategories[0],  'description', $_store); ?>
+		<h1 class="h1 header-title-pro light-grey"><?php echo $_categoryName ?></h1>
+		<p class="more expander text-title-pro dark-grey" style="padding: 16px 0"><?php echo $_categoryDescription ?></p>
+	<?php endif; ?>
+</div>
+
+<!-- For Topbar serach query-->
+<div class="filter-list visible-lg visible-md hidden-sm hidden-xs col-s">
+	<?php $appliedFilters = Mage::getSingleton( 'catalog/layer' )->getState()->getFilters(); ?>
+	<div>
+		<?php //Custom display for inventory and search fields ?>
+		<?php echo Mage::helper('js_product')->inventoryFilterDisplay(); ?>
+		<?php foreach ( $appliedFilters as $_filter ): ?>
+			<?php if(in_array($_filter->getName(), $priceAttributes)): ?>
+				<?php $_label = $this->helper('js_product')->labelFix($_filter->getLabel()); ?>
+			<?php else: ?>
+				<?php $_label = $_filter->getLabel(); ?>
+			<?php endif; ?>
+            <div class="filter-container">
+                <span class="filter-label"><?php echo $_filter->getName(); ?></span>
+
+                <?php //Need to show different filters if the category is being displayed ?>
+                <?php if(get_class($_filter->getFilter()) == 'Amasty_Shopby_Model_Catalog_Layer_Filter_Category'): ?>
+                    <?php echo Mage::helper('js_product')->categoryFilterDisplay(); ?>
+                <?php else: ?>
+                <li class="inline-block"><a href="<?php echo $this->helper('js_product')->getRemoveUrl($_filter->getName()); ?>" class="btn-remove" title="Remove This Item">X</a><?php echo $_label; ?></li>
+                <?php endif; ?>
+            </div>
+		<?php endforeach; ?>
+	</div>
+</div>
+<?php if ( $this->isContentMode() ): ?>
+<div class="container page-center category-block">
+
+	<?php echo $this->getCmsBlockHtml() ?>
+</div>
+<?php elseif ( $this->isMixedMode() ): ?>
+	<?php echo $this->getCmsBlockHtml() ?>
+	<?php echo $this->getProductListHtml() ?>
+
+<?php else: ?>
+	<?php echo $this->getProductListHtml() ?>
+<?php endif; ?>
+
+<!-- <script type="text/javascript">
+  // <![CDATA[
+  jQuery(document).ready(function() {
+    //Show more / show less
+    jQuery('.more.expander').expander({slicePoint: 250});
+  })
+</script> -->

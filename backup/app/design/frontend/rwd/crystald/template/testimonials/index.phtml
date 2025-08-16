@@ -1,0 +1,125 @@
+<form action="<?php echo $this->getAddtestimonialUrl() ?>" method="post" id="add-testimonial" enctype="multipart/form-data">
+
+<script type="text/javascript">
+    var a = Math.ceil(Math.random() * 10);
+    var b = Math.ceil(Math.random() * 10);       
+    var c = a + b
+    function DrawBotBoot()
+    {
+        document.write("What is "+ a + " + " + b +"? ");
+       
+    }    
+    function ValidBotBoot(){
+        var d = document.getElementById('BotBootInput').value;
+        if (d == c) return true;        
+        return false;
+        
+    }
+    </script>
+
+
+  <?php $session = Mage::getSingleton('customer/session'); ?>
+  <?php //$email = Mage::getSingleton('customer/session')->getCustomer()->getEmail(); echo $email; ?>
+  <div class="fieldset">
+    <h2 class="legend"><?php echo $this->__('Add Testimonial') ?></h2>
+    <ul class="form-list">
+      <li class="fields">
+        <div class="field">
+          <label for="firstname" class="required"><em>*</em><?php echo $this->__('First Name') ?></label>
+          <div class="input-box">
+            <input type="text" name="firstname" id="firstname" title="<?php echo $this->__('First Name') ?>" class="input-text required-entry" value="<?php if ($session->isLoggedIn()){ echo $session->getCustomer()->getFirstname(); } ?>" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="lastname" class="required"><em>*</em><?php echo $this->__('Last Name') ?></label>
+          <div class="input-box">
+            <input type="text" name="lastname" id="lastname" title="<?php echo $this->__('Last Name') ?>" class="input-text required-entry"  value="<?php if ($session->isLoggedIn()){ echo $session->getCustomer()->getLastname(); } ?>"/>
+          </div>
+        </div>
+      </li>
+      <li class="fields">
+        <div class="field">
+          <label for="email" class="required"><em>*</em><?php echo $this->__('Email Id') ?></label>
+          <div class="input-box">
+            <input type="text" name="email" id="email" title="<?php echo $this->__('Email Id') ?>" class="input-text validate-email required-entry" value="<?php if ($session->isLoggedIn()){ echo $session->getCustomer()->getEmail(); } ?>" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="phonenumber"><?php echo $this->__('Phone Number') ?></label>
+          <div class="input-box">
+            <input type="text" name="phonenumber" id="phonenumber" title="<?php echo $this->__('Phone Number') ?>" class="input-text" />
+          </div>
+        </div>
+      </li>
+      <li class="fields"> &nbsp; </li>
+      <li class="fields">
+        <div class="field">
+          <label for="rating"><?php echo $this->__('Review') ?></label>
+          <div class="input-box">
+            <select name="rating" id="rating">
+              <option value="0">Good</option>
+              <option value="1">Very Good</option>
+              <option value="2">Bad</option>
+            </select>
+          </div>
+        </div>
+      </li>
+      <li class="fields"> &nbsp; </li>
+      <li class="fields">
+        <div class="field">
+          <label for="photo"><?php echo $this->__('Photo') ?></label>
+          <div class="input-box">
+            <input type="file" name="photo" id="photo" />
+          </div>
+        </div>
+      </li>
+      <li class="fields">
+        <div class="field">
+          <label for="video"><?php echo $this->__('Video Script (e.g youtube, vimio etc...)') ?></label>
+          <div class="input-box">
+            <textarea name="video" id="video" title="<?php echo $this->__('Video') ?>" class="input-text" cols="8" rows="3"></textarea>
+          </div>
+        </div>
+      </li>
+      <li class="fields">
+        <div class="field">
+          <label for="comments" class="required"><em>*</em><?php echo $this->__('Comments') ?></label>
+          <div class="input-box">
+            <textarea name="comments" id="comments" title="<?php echo $this->__('Comments') ?>" class="input-text required-entry" cols="5" rows="3"></textarea>
+          </div>
+        </div>
+      </li>
+      
+      <li>
+
+      <div class="field">
+
+       <label for="CAPTCHA" class="required"> <em>*</em><?php echo $this->__('Are you human?') ?></label> <br>
+      
+      
+
+<script type="text/javascript">DrawBotBoot()</script>
+  
+     
+      
+    <input id='BotBootInput' type='text' maxlength='2' size='2' onblur="alert(ValidBotBoot());" class="input-text required-entry" />   
+    </div>
+      </li>
+      
+    </ul>
+  </div>
+
+	
+
+
+  <div class="buttons-set">
+    <p class="required"><?php echo Mage::helper('contacts')->__('* Required Fields') ?></p>
+    <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+    <button type="submit" title="<?php echo $this->__('Subscribe') ?>" class="button"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+  </div>
+</form>
+<script type="text/javascript">
+    //<![CDATA[
+        var addtestimonial = new VarienForm('add-testimonial');
+    //]]>
+    </script> 

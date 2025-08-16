@@ -1,0 +1,68 @@
+<?php
+/**
+ * @var $this Js_Category_Block_Category_Landing
+ */
+$_category = Mage::registry('current_category');
+$_categoryMediaUrl =Mage::getBaseUrl('media'). 'catalog/category/';
+$_subCategories = $this->getLandingPageCategories($_category->getId());
+?>
+<div class="container" id="landing-page">
+	<div class="row">
+		<div class="col-md-12 zero-padding-mobile margin-top-mobile-15">
+			<img alt="<?php echo $this->escapeHtml($_category->getName()); ?>" src="<?php echo $_categoryMediaUrl.$_category->getCategoryLandingImage() ?>" />
+		</div>
+	</div>
+
+    <div class="mt-15 mb-15">
+        <?php echo $_category->getDescription(); ?>
+    </div>
+
+    <?php
+    /**
+     * Due to time constraints just do a whole separate layout based on the count of the sub category
+     */
+    $i = 1;
+    ?>
+    <?php if($_subCategories->count() <= 6): ?>
+	    <?php foreach($_subCategories as $_subCategory): ?>
+		    <?php if(Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+            <div class="col-md-6 landing-box">
+                <a class="red" href="<?php echo '/products?cat=' . $_subCategory->getId() ?>">
+                    <?php echo $_subCategory->getName(); ?> >
+                </a>
+            </div>
+            <?php else: ?>
+                <div class="col-md-6 landing-box">
+                    <a href="<?php echo '/products?cat=' . $_subCategory->getId() ?>">
+					    <?php echo $this->getLandingImage($_subCategory, $_categoryMediaUrl); ?>
+                    </a>
+                </div>
+            <?php endif; ?>
+        <?php $i++; endforeach; ?>
+    <?php else: ?>
+	    <?php foreach($_subCategories as $_subCategory): ?>
+	        <?php if(Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+                <div class="col-md-6 landing-box">
+                    <a class="red" href="<?php echo '/products?cat=' . $_subCategory->getId() ?>">
+					    <?php echo $_subCategory->getName(); ?> >
+                    </a>
+                </div>
+	        <?php else: ?>
+			    <?php if($i <= 4): ?>
+                    <div class="col-md-6 landing-box">
+                        <a href="<?php echo '/products?cat=' . $_subCategory->getId() ?>">
+						    <?php echo $this->getLandingImage($_subCategory, $_categoryMediaUrl); ?>
+                        </a>
+                    </div>
+			    <?php else: ?>
+                    <div class="col-md-3 landing-box col-sm-6 col-xs-6">
+                        <a href="<?php echo '/products?cat=' . $_subCategory->getId() ?>">
+						    <?php echo $this->getLandingImage($_subCategory, $_categoryMediaUrl); ?>
+                        </a>
+                    </div>
+			    <?php endif; ?>
+	        <?php endif; ?>
+
+        <?php $i++; endforeach; ?>
+    <?php endif; ?>
+</div>

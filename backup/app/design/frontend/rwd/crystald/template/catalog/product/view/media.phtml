@@ -1,0 +1,326 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product media data template
+ *
+ * @see Mage_Catalog_Block_Product_View_Media
+ */
+
+/* @var $this Mage_Catalog_Block_Product_View_Media */
+?>
+<?php
+$product       = $this->getProduct();
+$_helper        = $this->helper( 'catalog/output' );
+$productHelper = $this->helper( 'js_product' );
+$productImages = $productHelper->getImages( $product );
+$groupId        = Mage::getSingleton( 'customer/session' )->getCustomerGroupId();
+
+$_resource      = Mage::getSingleton( 'catalog/product' )->getResource();
+$newItem        = $_resource->getAttributeRawValue( $product->getId(), 'b_new_item', Mage::app()->getStore() );
+$givebackItem        = $_resource->getAttributeRawValue( $product->getId(), 'is_giveback', Mage::app()->getStore() );
+$quickShip      = $_resource->getAttributeRawValue( $product->getId(), 'quick_ship', Mage::app()->getStore() );
+$quickShipText = $this->getLayout()->createBlock('cms/block')->setBlockId('quick-ship-text')->toHtml();
+?>
+<div class="product-image product-image-zoom">
+    <div id="product-image-check" class="product-image-gallery">
+        <div class="overlay-icons">
+            <?php if($product->getIsGiveback()){ ?>
+                <img class="quick-ship-overlay" alt="Giveback Icon" src="<?php echo Mage::getDesign()->getSkinUrl("images/icon--giveback.png", array("_secure"=>true)); ?>" />
+            <?php } ?>
+            <?php if($product->getBNewItem() || $product->getBNewItemFuture()){ ?>
+                <img class="new-item-overlay" alt="New Item Ribbon" src="<?php echo Mage::getDesign()->getSkinUrl( 'images/new-ribbon-icon.png', array( '_secure' => true ) ); ?>"/>
+            <?php } ?>
+			<?php if ( $product->getQuickShip() == 397 ): ?>
+                <img class="quick-ship-overlay" alt="Quick Ship Icon"
+                     src="<?php echo Mage::getDesign()->getSkinUrl( 'images/quick_ship_icon--ribbon.png', array( '_secure' => true ) ); ?>"/>
+			<?php endif; ?>
+        </div>
+
+        <div style="display: none">
+            <div id="main-product-image" class="popup-image col-md-12 col-sm-12 col-xs-12" style="text-align: center;"></div>
+        </div>
+
+        <?php //Main Image Slider ?>
+        <ul class="slides">
+			<?php foreach ( $productImages as $_image ): ?>
+                <li class="gallery-img">
+                    <div class="img-wrapper">
+					<?php echo $_image; ?>
+                    </div>
+                </li>
+			<?php endforeach; ?>
+        </ul>
+
+        <?php //"View in 360" button & Download Hi-Res Image button ?>
+        <div class="row">
+            <div class="special-images col-xs-12 mb-10">
+                <?php if ($product->getThreeSixttyImage() && !$product->getData('three_sixty_video_1')): ?>
+                    <a id="three-sixty-image" class="red fs-14 pointer">
+                        <img class="special-image" alt="360 Image Button"
+                                    src="<?php echo $this->getSkinUrl('images/icons/view-in-360.png', array('_secure' => true)); ?>"/>
+                        View in 360°
+                    </a>
+                <?php endif; ?>
+
+                <?php $tiffImage = $productHelper->separator($product->getTiffImg()); ?>
+                <?php if (!empty($tiffImage['0'])): ?>
+                    <a id="high-res" class="red fs-14 right pointer"
+                       href="https://image.crystal-d.com/images/proddb/current/<?php echo $tiffImage['0'] ?>">
+                        <img class="special-image" alt="High Res Button"
+                             src="<?php echo $this->getSkinUrl('images/icons/download-high-res-image.png', array('_secure' => true)); ?>"/>
+                        Download Hi-Res Image
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php //Image thumbnail wrapper ?>
+		<?php if ( count( $productImages ) > 1 ): ?>
+        <div class="row">
+            <div class="thumbnail col-xs-12">
+                <div id="bx-pager" class="product-image-thumbs">
+					<?php $i = 0; foreach ( $productImages as $_image ): ?>
+                        <a class="thumb-link" href="#" title="" data-slide-index="<?php echo $i; ?>">
+                            <span class="image-wrapper">
+                                <?php echo $_image; ?>
+                            </span>
+                        </a>
+                    <?php $i ++; endforeach; ?>
+                </div>
+            </div>
+        </div>
+		<?php endif; ?>
+
+        <?php //4 Buttons below the thumbnails ?>
+        <div class="row">
+            <div class="media-icons-wrapper">
+                <ul class="media-icon-list center">
+			<?php //php if($groupId == 6): ?>
+                <?php //Public Inventory Trigger ?>
+                    <li>
+                        <a class="public-inventory-trigger pointer">
+                            <img class="media-icon" alt="Check Inventory Icon"
+                             src="<?php echo $this->getSkinUrl('images/icons/check-inventory.png', array('_secure' => true)); ?>"/>
+                             <span>Check Inventory</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="sample-form-trigger pointer">
+                            <img class="media-icon" alt="Request A Sample Icon"
+                                 src="<?php echo $this->getSkinUrl('images/icons/request-a-sample.png', array('_secure' => true)); ?>"/>
+                            <span>Request a Sample</span>
+                        </a>
+                    </li>
+                    <?php if (!empty($product->getProductTemplate())): ?>
+                        <li>
+                            <a target="_blank"
+                               href="https://image.crystal-d.com/images/proddb/current/<?php echo $product->getProductTemplate() ?>">
+                                <img class="media-icon" alt="Product Template Icon"
+                                     src="<?php echo $this->getSkinUrl('images/icons/product-template.png', array('_secure' => true)); ?>"/>
+                                <span>Product Template</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <li>
+                        <a class="pointer friend-form-trigger">
+                        <img class="media-icon" alt="Email To A Friend Icon"
+                             src="<?php echo $this->getSkinUrl('images/icons/email-to-a-friend.png', array('_secure' => true)); ?>"/>
+                        <span>Email to a Friend</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div>
+	<?php if ( $product->getThreeSixttyImage() ): ?>
+        <!-- Hide the three sixty rotator -->
+        <div style="display: none">
+			<?php $threeSixtyImages = $this->helper( 'js_utility' )->separator( $product->getThreeSixttyImage() ); ?>
+			<?php if ( $threeSixtyImages ): ?>
+				<?php $dimensions = array_pop( $threeSixtyImages ); ?>
+				<?php $dimensions = $this->helper( 'js_utility' )->separator( $dimensions, 'x' ); ?>
+			<?php endif; ?>
+			<?php
+			/**
+			 * The dimensions of the three sixty images can be different making it hard to get the slides correct. Instead I am
+			 * including the dimensions in the three sixty query from the import.  The dimensions are at the end and separated by x
+			 * 0 => i_box_width and controls iframe width,
+			 * 1 => i_box_height and controls iframe height,
+			 * 2 => i_colorbox_width and controls colorbox width,
+			 * 3 => i_colorbox_height and controls colorbox height
+			 */
+			?>
+            <div id="three-sixty-popup">
+                <div class="popup-slider">
+					<?php $j = 0;
+					foreach ( $threeSixtyImages as $threeSixtyImage ): ?>
+                        <div class="popup-image-wrapper">
+							<?php $imageSrc = "https://image.crystal-d.com/360/$threeSixtyImage"; ?>
+                            <iframe class="" src="<?php echo $imageSrc; ?>"
+                                    style="height: <?php echo $dimensions['1']; ?>px; width: <?php echo $dimensions['0']; ?>px;"></iframe>
+                            <div class="image-description">
+                                <div><strong><?php echo $product->getShortDescription(); ?></strong></div>
+								<?php if ( $groupId == 6 ): ?>
+                                    <div>Image src: <?php echo $imageSrc; ?></div>
+								<?php endif; ?>
+                            </div>
+                        </div>
+						<?php $j ++; endforeach; ?>
+                </div>
+            </div>
+        </div>
+	<?php endif; ?>
+</div>
+<?php echo $this->getChildHtml( 'after' ); ?>
+
+<?php //Not ideal but need this here to have dynamic height and width since colorbox overrides when trying to do it inline ?>
+<?php if ( $product->getThreeSixttyImage() ): ?>
+    <style>
+        .popup-image-wrapper {
+            height: <?php echo $dimensions['3']; ?>px;
+            width: <?php echo $dimensions['2']; ?>px !important;
+        }
+    </style>
+<?php endif; ?>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		/**
+		 * This has become a little more complicated since you need to show the large image on desktop with different
+		 * dimensions and a scaled down on on mobile
+		 */
+		jQuery(".product-image-gallery ul li.gallery-img img, .product-image-gallery ul li.gallery-img video").click(function () {
+			var imageSrc = '';
+			var cboxOptions = {};
+            var html = '';
+
+			imageSrc = jQuery(this).data("big");
+
+            let isVideo = false;
+            if(jQuery(this).data("big-backup")){
+                isVideo = true;
+                html = '<video id="colorbox_video" style="max-width: 100%; position: relative;" controls autoplay loop muted>';
+                html += '<source src="' + imageSrc + '"></source>';
+                html += '<source src="' + jQuery(this).data("big-backup") + '"></source>';
+                html += 'Your browser does not support the video tag';
+                html += '</video>';
+                html += '<img src="' + '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA)?>' +'images/CopyrightNotice.png"';
+                html += ' style="position: absolute; bottom: 0; left: 3px; top: auto; max-width: 13%; height: auto;">';
+            } else {
+                html = '<img id="colorbox_image" src="' + imageSrc +'">';
+            }
+			jQuery("#main-product-image").html(html);
+
+            // Load image in colorbox function
+            let loadImageColorbox = function () {
+                jQuery.colorbox({
+                    inline: true,
+                    href: '#main-product-image',
+                    width: '95%',
+                    maxWidth: '960px',
+                    close: 'X'
+                });
+            };
+
+            if(isVideo){
+                //If we have a video set colorbox right away
+                // setTimeout(loadImageColorbox(),200);
+                jQuery('#colorbox_video').on("loadeddata", function(){
+                    loadImageColorbox();
+                });
+            } else {
+                //If we have a regular image it could take a while for the
+                //image script to get the image so lets wait for the image to load first.
+                console.log("loading colorbox");
+                jQuery('#colorbox_image').on("load", function(){
+                    console.log("loading colorbox 2");
+                    loadImageColorbox();
+                });
+            }
+		});
+
+		var screenWidth = screen.width;
+		var slideWidth = 494;
+		var maxSlides = 4;
+		if(screenWidth < 494) {
+			slideWidth = 275;
+			maxSlides = 2;
+        } else if(screenWidth > 494 && screenWidth < 600) {
+			slideWidth = 350;
+        }
+
+		<?php //Control the main image slider ?>
+		jQuery('.product-image-gallery .slides').bxSlider({
+			controls: true,
+			prevText: '<',
+			nextText: '>',
+			auto: false,
+			pagerCustom: '#bx-pager',
+			slideWidth: slideWidth,
+			<?php if ( count($productImages) == 1 ): ?>
+			    touchEnabled: false,
+			<?php endif; ?>
+		});
+
+		var thumbWidth = jQuery('#bx-pager').width() / 5;
+		jQuery('#bx-pager').bxSlider({
+			pager: false,
+			auto: false,
+			minSlides: 1,
+			maxSlides: maxSlides,
+			slideWidth: 90,
+			slideMargin: 10,
+			prevText: '<',
+		    nextText: '>'
+		});
+
+		jQuery("#three-sixty-image").click(function () {
+			jQuery.colorbox({
+				inline: true,
+				href: '#three-sixty-popup',
+                close: 'X',
+                scroll: false,
+			});
+		});
+		<?php //If there is more than one three sixty image need to have an image slider ?>
+		<?php if(isset($threeSixtyImages) && count($threeSixtyImages) > 1): ?>
+		jQuery('.popup-slider').bxSlider({
+			controls: true,
+			auto: false,
+			prevText: '<',
+			nextText: '>',
+			slideWidth: '<?php echo $dimensions['2']; ?>'
+		});
+		<?php endif; ?>
+	});
+</script>
+

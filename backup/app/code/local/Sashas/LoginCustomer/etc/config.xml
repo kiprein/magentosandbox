@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+ <!-- 
+/**
+ * @author		Sashas
+ * @category    Sashas
+ * @package     Sashas_LoginCustomer
+ * @copyright   Copyright (c) 2015 Sashas IT Support Inc. (http://www.sashas.org)
+ * @license     http://opensource.org/licenses/GPL-3.0  GNU General Public License, version 3 (GPL-3.0)
+ */
+ -->
+<config>
+	<modules>
+		<Sashas_LoginCustomer>
+			<version>1.0.1</version>
+		</Sashas_LoginCustomer>
+	</modules>
+	<global>
+		<helpers>
+			<logincustomer>
+				<class>Sashas_LoginCustomer_Helper</class>
+			</logincustomer>
+		</helpers>
+		<blocks>
+			<logincustomer>
+				<class>Sashas_LoginCustomer_Block</class>
+			</logincustomer> 
+			<adminhtml>
+				<rewrite>
+					<customer_edit>Sashas_LoginCustomer_Block_Adminhtml_Customer_Edit</customer_edit>
+				</rewrite>
+			</adminhtml>
+		</blocks> 
+	  	<models>
+			<logincustomer>
+				<class>Sashas_LoginCustomer_Model</class>
+				<resourceModel>logincustomer_resource</resourceModel>			
+			</logincustomer>
+			<logincustomer_resource>
+                <class>Sashas_LoginCustomer_Model_Resource</class>
+                <entities>
+                    <log>
+                        <table>logincustomer_log</table>
+                    </log>
+                </entities>
+            </logincustomer_resource>			 
+		</models>    		 
+		<resources>
+			<logincustomer_setup>
+				<setup>
+					<module>Sashas_LoginCustomer</module>
+				</setup>
+				<connection>
+					<use>core_setup</use>
+				</connection>
+			</logincustomer_setup>
+			<logincustomer_write>
+				<connection>
+					<use>core_write</use>
+				</connection>
+			</logincustomer_write>
+			<logincustomer_read>
+				<connection>
+					<use>core_read</use>
+				</connection>
+			</logincustomer_read>
+		</resources> 		
+	</global>
+    <admin>
+        <routers>
+            <adminhtml>                 
+                <args>
+                    <modules> 
+                    	<Sashas_LoginCustomer before="Mage_Adminhtml">Sashas_LoginCustomer_Adminhtml</Sashas_LoginCustomer>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>    
+    <frontend>  
+        <routers>
+            <logincustomer>
+                <use>standard</use>
+                <args>
+                    <module>Sashas_LoginCustomer</module>
+                    <frontName>logincustomer</frontName>
+                </args>
+            </logincustomer>
+        </routers>             
+    </frontend>	  
+	<crontab>
+	        <jobs>
+	            <logincustomer_cleanlog>
+	                <schedule><cron_expr>0 1 * * *</cron_expr></schedule>
+	                <run><model>logincustomer_cleanlog/observer::cleanLog</model></run>
+	            </logincustomer_cleanlog>
+	        </jobs>
+	</crontab>           
+  	<default>
+        <logincustomer>
+        	<logincustomer_group>        		 
+        		<enable_extension><![CDATA[1]]></enable_extension>              		            		         
+        		<save_log><![CDATA[1]]></save_log>
+        	</logincustomer_group>           	   	     
+        </logincustomer>  		
+    </default>	   
+</config>

@@ -1,0 +1,9 @@
+<?php
+$_helper = $this->helper('googletagmanager');
+$_containerId = trim($_helper->getContainerId());
+if ($_helper->getIsEnable()):
+?>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?php echo $_containerId ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<?php endif; ?>

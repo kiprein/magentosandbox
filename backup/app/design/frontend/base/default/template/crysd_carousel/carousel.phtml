@@ -1,0 +1,35 @@
+<?php
+  $cData = $this->getCarousel();
+  $cSlides = $this->getSlides();
+  $cHL = $cData->getHeadline();
+  $cSHL = $cData->getSubheadline();
+  $cBod = $cData->getBody();
+  $cStyle = $cData->getStyle();
+  $cTheme = $cData->getTheme();
+  $cNum = $cData->getVisibleImages();
+  $cLink = $cData->getCarouselLink();
+  $cCta = $cData->getCarouselCta();
+  $cVideo = $cData->getVideo();
+?>
+
+<?php
+
+  if($cData){
+
+    include __DIR__ . '/style/style.phtml'; ?>
+
+    <section class="cd-car <?php echo 'cd-car--'.$cTheme . ' ' . 'cd-car--'.$cStyle  ?>">
+
+      <?php
+        if(strpos($cStyle, 'split_') === 0){
+          include __DIR__ . '/splitlayout.phtml';
+        }else{
+          include __DIR__ . '/stackedlayout.phtml';
+        }
+      ?>
+      
+    </section>
+
+  <?php }
+
+?>

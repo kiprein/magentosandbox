@@ -1,0 +1,25 @@
+<?php $product = $this->getProduct(); ?>
+<div class="panel panel-default col-xs-12 product-detail-wrapper">
+    <div class="panel-heading center">
+        <h4 class="panel-title light-blue" data-toggle="collapse" data-target="#product-details-panel">
+            <span class="accordion-toggle">+</span>Product Details
+        </h4>
+    </div>
+
+    <div id="product-details-panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <div class="">
+                <div class="panel-static-block">
+					<ul class="detail-list">
+                        <?php echo $this->getProductDetails($product); ?>
+                    </ul>
+                    <p class="product-description mt-10 light-grey"><?php echo $product->getDescription(); ?></p>
+                    <p class="faq-link mt-10 light-blue">
+                        <a class="light-blue" target="_blank" href="<?php echo $this->getUrl('faq'); ?>">Click here</a>
+                        for general information on all of our products.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,49 @@
+<?php
+/* @var $this Js_Guestwishlist_Block_Guestwishlist */
+?>
+
+<?php $wishlistKey = Mage::getSingleton( 'core/session' )->getWishlistKey(); ?>
+<?php $wishlistItems = $this->getGuestWishlist(); ?>
+<?php $_searchUrl = $this->helper('js_guestwishlist')->getSearchUrl(); ?>
+
+<div class="wishlist my-wishlist">
+	<div class="page-title title-buttons">
+		<div class="row">
+			<div class="col-md-6">
+				<h1>My Award Idea List</h1>
+			</div>
+			<div class="col-md-6">
+				<a class="search-results" href="<?php echo $_searchUrl; ?>">Back To Search</a>
+			</div>
+		</div>
+	</div>
+	<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php if(!$wishlistItems || !$wishlistItems->count()): ?>
+	<p>You have no items in your Award Idea List.</p>
+<?php else: ?>
+<div class="container">
+	<ul class="wishlist-list row">
+	<?php foreach($wishlistItems as $wishlistItem): ?>
+		<?php $_product = Mage::getModel('catalog/product')->load($wishlistItem->getProductId()); ?>
+		<li class="col-md-3 col-sm-6 col-xs-6 product-container item ps-10">
+			<a class="product-image" href="<?php echo $this->getUrl($_product->getUrlPath()); ?>" title="<?php echo $this->escapeHtml($_product->getName()) ?>">
+				<img src="https://image.crystal-d.com/img/u245-y/jpg/<?php echo $_product->getMainProductImage();?>">
+			</a>
+            <div class="main-price medium mt-10">
+
+                <a href="<?php echo $_product->getProductUrl() ?>" class="list-name dark-grey"><?php echo html_entity_decode($_product->getShortDescription());?></a>
+                <div class="items light-grey">Item <span>#<?php echo $_product->getSku();?></span></div>
+                <div class="list-price light-grey"><?php echo $this->helper('js_product')->getRetailPriceRange($_product); ?></div>
+            </div>
+			<div class="actions">
+				<a href="<?php echo $this->getUrl('guest-wishlist/index/removeGuest', array('product_id' => $_product->getId())); ?>" title="Remove Item" class="btn-wishlist-remove_link"><span>Remove</span></a>
+			</div>
+		</li>
+	<?php endforeach; ?>
+	</ul>
+</div>
+	<div class="buttons-set buttons-set2">
+		<div><?php echo $this->getChildHtml('wishlist_forms'); ?></div>
+	</div>
+<?php endif; ?>
+</div>

@@ -1,0 +1,78 @@
+<?php
+/**
+ *  #usedOnepageTemplate
+ */
+?>
+<?php
+$customerId = Mage::getSingleton('customer/session')->getCustomer()->getId();
+$hasTerms = Mage::getSingleton('customer/customer')->load($customerId)->getData('has_terms'); 
+?>
+<h1>Payment Information</h1>
+<script type="text/javascript">
+//<![CDATA[
+    var quoteBaseGrandTotal = <?php echo (float)$this->getQuoteBaseGrandTotal(); ?>;
+    var checkQuoteBaseGrandTotal = quoteBaseGrandTotal;
+    var quoteGrandTotalClean = quoteBaseGrandTotal;
+    var payment = new Payment('co-payment-form', '<?php echo $this->getUrl('checkout/onepage/savePayment') ?>');
+    var lastPrice;
+//]]>
+</script>
+<form action="" id="co-payment-form">
+    <div class="fieldset">
+        <?php echo $this->getChildChildHtml('methods_additional', '', true, true) ?>
+        <?php echo $this->getChildHtml('methods') ?>
+    </div>
+   
+    <?php echo $this->getBlockHtml('formkey') ?>
+</form>
+<!-- <?php if( $hasTerms == 'no'): ?>
+    <div>
+        <button class="btn checkoutStep-btn">Apply for Terms With Crystal D.</button>
+    </div>
+<?php endif; ?> -->
+<div class="tool-tip" id="payment-tool-tip" style="display:none;">
+    <div class="btn-close"><a href="#" id="payment-tool-tip-close" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Close')) ?>"><?php echo $this->__('Close') ?></a></div>
+    <div class="tool-tip-content"><img src="<?php echo $this->getSkinUrl('images/cvv.gif') ?>" alt="<?php echo Mage::helper('core')->quoteEscape($this->__('Card Verification Number Visual Reference')) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Card Verification Number Visual Reference')) ?>" /></div>
+</div>
+<?php echo $this->getChildChildHtml('additional') ?>
+<div class="buttons-set" id="payment-buttons-container">
+    <?php // Moved to CC form ?>
+    <?php /* <p class="required"><?php echo $this->__('* Required Fields') ?></p> */ ?>
+    <p class="back-link"><a href="#" onclick="checkout.back(); return false;"><small>&laquo; </small><?php echo $this->__('Back') ?></a></p>
+    <button type="button" class="btn checkoutStep-btn" onclick="payment.save()">
+        <span><span><?php echo $this->__("Continue") ?></span></span>
+    </button>
+    <span class="please-wait" id="payment-please-wait" style="display:none;">
+        <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo Mage::helper('core')->quoteEscape($this->__('Loading next step...')) ?>" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Loading next step...')) ?>" class="v-middle" /> <?php echo $this->__('Loading next step...') ?>
+    </span>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+    function toggleToolTip(event){
+        if($('payment-tool-tip')){
+            $('payment-tool-tip').setStyle({
+                top: (Event.pointerY(event)-560)+'px'//,
+                //left: (Event.pointerX(event)+100)+'px'
+            })
+            $('payment-tool-tip').toggle();
+        }
+        Event.stop(event);
+    }
+    
+    document.addEventListener("DOMContentLoaded", function(){
+        if($('payment-tool-tip-close')){
+            Event.observe($('payment-tool-tip-close'), 'click', toggleToolTip);
+        }
+        if($('authorizenet_cc_type')){
+            Event.observe($('authorizenet_cc_type'), 'click', function(){
+                document.fire('mgw:adjustHeightToDiv');
+            });
+        }
+    });
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+    payment.currentMethod = "<?php echo $this->getChild('methods')->getSelectedMethodCode() ?>";
+//]]>
+</script>

@@ -1,0 +1,211 @@
+<?php
+/**
+ * see shipping.phtml.old for magento core file.
+ * 
+ * This was heavily modified by Mark Wickline 9/11/19 to fit the new style of checkout.
+ * 
+ *  #usedOnepageTemplate
+ */
+?>
+<h1>Shipping Information</h1>
+<p class="required">* Required Fields</p>
+<form action="" id="co-shipping-form">
+
+    <div class="flex-twoColumn">
+        <input type="hidden" name="shipping[address_id]" value="<?php echo $this->getAddress()->getId() ?>" id="shipping:address_id" />
+
+        <!-- First Name -->
+        <div class="text-left">
+            <label for="shipping:firstname" class="required">
+                <em>*</em><?php echo $this->__('First Name') ?>
+            </label>
+            <input type="text" 
+                id="shipping:firstname" 
+                name="shipping[firstname]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getFirstname()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('First Name')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('firstname') ?>" 
+                />
+        </div>
+
+        <!-- Middle Name -->
+        <div class="text-left">
+            <label for="shipping:middlename">
+                <?php echo $this->__('Middle Name/Initial') ?>
+            </label>
+            <input type="text"
+                id="shipping:middlename"
+                name="shipping[middlename]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getMiddlename()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Middle Name/Initial')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('middlename') ?>" 
+                />
+        </div>
+
+        <!-- Last Name -->
+        <div class="text-left">
+            <label for="shipping:lastname" class="required">
+                <em>*</em><?php echo $this->__('Last Name') ?>
+            </label>
+            <input type="text"
+                id="shipping:lastname"
+                name="shipping[lastname]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getLastname()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Last Name')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('lastname') ?>" 
+                />
+        </div>
+
+        <!-- Company -->
+        <div class="text-left">
+            <label for="shipping:company">
+                <?php echo $this->__('Company') ?>
+            </label>
+            <input type="text" 
+                id="shipping:company" 
+                name="shipping[company]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getCompany()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Company')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('company') ?>" 
+                />
+        </div>
+
+        <!--Address line 1-->
+        <?php $_streetValidationClass = $this->helper('customer/address')->getAttributeValidationClass('street'); ?>
+        <div class="text-left">
+            <label for="shipping:street1" class="required">
+                <em>*</em><?php echo $this->__('Address') ?>
+            </label>
+            <input type="text" 
+                id="shipping:street1" 
+                name="shipping[street][]"
+                value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(1)) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Street Address')) ?>" 
+                class="input-text <?php echo $_streetValidationClass; ?>" 
+                />
+        </div>
+
+        <!-- Address Line 2 -->
+        <?php $_streetValidationClass = trim(str_replace('required-entry', '', $_streetValidationClass)); ?>
+        <div class="text-left">
+            <label for="billing:street2">
+                <?php echo $this->__('Address 2') ?>
+            </label>
+            <input type="text" 
+                id="shipping:street2"
+                name="shipping[street][]"
+                value="<?php echo $this->escapeHtml($this->getAddress()->getStreet(2)) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Street Address 2')) ?>" 
+                class="input-text <?php echo $_streetValidationClass ?>" 
+                />
+        </div>
+
+        <!-- City -->
+        <div class="text-left">
+            <label for="shipping:city" class="required">
+                <em>*</em><?php echo $this->__('City') ?>
+            </label>
+            <input type="text" 
+                id="shipping:city" 
+                name="shipping[city]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getCity()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('City')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('city') ?>" 
+                />
+        </div>
+
+        <!-- State/ Province -->
+        <div class="text-left">
+            <label for="shipping:region" class="required">
+                <em>*</em><?php echo $this->__('State/Province') ?>
+            </label>
+            <select id="shipping:region_id" 
+                name="shipping[region_id]" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('State/Province')) ?>" 
+                class="validate-select" 
+                style="display:none;">
+                <option value=""><?php echo $this->__('Please select region, state or province') ?></option>
+            </select>
+            <script type="text/javascript">
+            //<![CDATA[
+                $('shipping:region_id').setAttribute('defaultValue',  "<?php echo $this->getAddress()->getRegionId() ?>");
+            //]]>
+            </script>
+            <input type="text" 
+                id="shipping:region" 
+                name="shipping[region]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getRegion()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('State/Province')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('region') ?>" 
+                style="display:none;" />
+        </div>
+
+        <!-- zip/Postal Code-->
+        <div class="text-left">
+        <label for="shipping:postcode" class="required">
+            <em>*</em><?php echo $this->__('Zip/Postal Code') ?>
+        </label>
+        <input type="text" 
+            id="shipping:postcode" 
+            name="shipping[postcode]" 
+            value="<?php echo $this->escapeHtml($this->getAddress()->getPostcode()) ?>" 
+            title="<?php echo Mage::helper('core')->quoteEscape($this->__('Zip/Postal Code')) ?>" 
+            class="input-text validate-zip-international <?php echo $this->helper('customer/address')->getAttributeValidationClass('postcode') ?>" 
+            />
+        </div>
+
+        <!-- Country -->
+        <div class="text-left">
+            <label for="shipping:country_id" class="required">
+                <em>*</em><?php echo $this->__('Country') ?>
+            </label>
+            <?php echo $this->getCountryHtmlSelect('shipping') ?>
+        </div>
+        
+        <!-- Telephone -->
+        <div class="text-left">
+            <label for="shipping:telephone" class="required">
+                <em>*</em><?php echo $this->__('Telephone') ?>
+            </label>
+            <input type="tel" 
+                id="shipping:telephone" 
+                name="shipping[telephone]" 
+                value="<?php echo $this->escapeHtml($this->getAddress()->getTelephone()) ?>" 
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Telephone')) ?>" 
+                class="input-text <?php echo $this->helper('customer/address')->getAttributeValidationClass('telephone') ?>" 
+                />
+        </div>
+    </div><!-- End of flex-twoColumn-->
+     
+    <div class="buttons-set" id="shipping-buttons-container">
+        <div style="text-align: left;">
+            <label for="shipping:same_as_billing"><?php echo $this->__('Use this address as my billing address.') ?></label>
+            <input type="checkbox" 
+                id="shipping-useForBilling"
+                title="<?php echo Mage::helper('core')->quoteEscape($this->__('Use As Billing Address')) ?>" 
+                class="checkbox" />
+        </div>
+        <div>
+            <button type="button" class="btn checkoutStep-btn" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Continue')) ?>" 
+                onclick="shipping.save()">
+                <span><?php echo $this->__('Continue') ?></span>
+            </button>
+            <span id="shipping-please-wait" class="please-wait" style="display: none;">
+                <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" 
+                    alt="<?php echo Mage::helper('core')->quoteEscape($this->__('Loading next step...')) ?>" 
+                    title="<?php echo Mage::helper('core')->quoteEscape($this->__('Loading next step...')) ?>" 
+                    class="v-middle" /> <?php echo $this->__('Loading next step...') ?>
+            </span>
+        </div>
+    </div>
+    <?php echo $this->getBlockHtml('formkey') ?>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+    var shipping = new Shipping('co-shipping-form', '<?php echo $this->getUrl('checkout/onepage/getAddress') ?>address/', '<?php echo $this->getUrl('checkout/onepage/saveShipping') ?>',
+        '<?php echo $this->getUrl('checkout/onepage/shippingMethod') ?>');
+    var shippingForm = new VarienForm('co-shipping-form');
+    shippingForm.extraChildParams = ' onchange="shipping.setSameAsBilling(false);"';
+    var shippingRegionUpdater = new RegionUpdater('shipping:country_id', 'shipping:region', 'shipping:region_id', <?php echo $this->helper('directory')->getRegionJson() ?>, undefined, 'shipping:postcode');
+//]]>
+</script>

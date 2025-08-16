@@ -1,0 +1,17 @@
+<!--@subject Welcome email@-->
+
+{{template config_path="design/email/header"}}
+{{inlinecss file="email-inline.css"}}
+<table cellpadding="0" cellspacing="0" border="0">
+	<tr>
+		<td class="action-content">
+		  <p>Dear {{var fname}}<br>
+		  This is your first visit to our web site. Your login information is given below:</p>
+		  <p><strong>Username:</strong> {{var emailid}} <br>
+<strong>Password:</strong> {{var password}}<br>
+</p>
+	   
+</td>
+</tr>
+</table>
+{{template config_path="design/email/footer"}}

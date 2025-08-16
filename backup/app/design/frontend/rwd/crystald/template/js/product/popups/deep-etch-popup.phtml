@@ -1,0 +1,41 @@
+<div class="container deep-etch-container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="popup-title">
+                Deep Etch & Colorfill Pop Up
+            </div>
+            <div class="row mt-20">
+                <?php //For mobile ?>
+	            <?php if (Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+                    <div class="col-xs-12 center fs-14">
+                        <p class="lh-initial">For over 25 years, Crystal D's imprint specialty has
+                            been deep etch. This is created when the smooth surface of the crystal is
+                            sandblasted to create a recess. This recess then becomes a
+                            frosty-looking imprint and brings forth a beautiful design.
+                            <br><br>
+                            Take a look!</p>
+                        <br>
+                        <iframe style="display: block; margin-left: auto; margin-right: auto; float: left;" src="https://www.youtube.com/embed/XHmcgVA9sLM"></iframe>
+                    </div>
+                <?php else: ?>
+                    <div class="col-xs-3"></div>
+                    <div class="col-xs-6 center fs-14">
+                        <p class="lh-initial">For over 25 years, Crystal D's imprint specialty has been
+                            deep etch. This is created when the smooth surface of the crystal is
+                            sandblasted to create a recess. This recess then becomes a
+                            frosty-looking imprint and brings forth a beautiful design.
+                            <br><br>
+                            Take a look!</p>
+                        <br>
+                        <iframe src="https://www.youtube.com/embed/XHmcgVA9sLM"></iframe>
+                    </div>
+                    <div class="col-xs-3"></div>
+                <?php endif; ?>
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>

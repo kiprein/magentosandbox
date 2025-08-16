@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @var Js_Menu_Block_Menu
+ */
+?>
+
+<?php
+$mainNavMenuItems = $this->getParentMenu('main-nav');
+$navMenuCount = 0;
+?>
+
+<nav id="nav">
+	<ol id="main-nav-menu-wrapper" class="nav-primary">
+		<?php foreach ($mainNavMenuItems as $mainNavMenuItem): ?>
+			<?php echo $this->renderParentMenu($mainNavMenuItem, $navMenuCount); ?>
+		<?php  $navMenuCount++; endforeach; ?>
+	</ol>
+</nav>

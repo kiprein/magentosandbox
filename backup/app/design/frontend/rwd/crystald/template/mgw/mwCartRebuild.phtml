@@ -1,0 +1,722 @@
+<?php 
+/**
+ * Build by Mark Wickline 6/20/19
+ * This cart will work the same as the old cart built for Shopify
+ * only now being synonymouse with Magento's cart and checkout process
+ * See mwCart.pthml for old Shopify cart.
+ * 
+ * This new cart will use AJAX functions to update the magento cart.
+ * Upon reload it will load the old products from the cart.
+ * 
+ * @var mgw_Modalcart_Block_Modalcart
+ */
+?>
+
+<?php $customerSession = Mage::getSingleton('customer/session'); ?>
+<?php if($customerSession->isLoggedIn()): ?>
+<?php if(in_array($customerSession->getCustomerGroupId(), Array(4, 6))): ?>
+
+    <?php
+        $customerId = $customerSession->getCustomer()->getId();
+        $taxVat = Mage::getSingleton('customer/customer')->load($customerId)->getData('taxvat');
+        $cartProducts = json_encode($this->getCartProducts());
+    ?>
+
+	<button id="mwCart-trigger">
+        <div><i class="fas fa-shopping-cart"></i></div>
+        <div class="mwCart-count"></div>
+    </button>
+    <!--SIDE PANEL CART-->
+	<div id="mwCart">
+        <h2 id="mwCart-header">Cart</h2><span id="mwCart-close">×</span>
+		<div id="mwCart-products-wrp"></div>
+        <div id="mwCart-footer-wrp">
+
+            <!-- <div class="mwCart-tariffSurcharge-container" style="display: none;">
+                <p>Tariff Surcharge: <b class="mwCart-tariffSurcharge" style="float: right;"></b></p>
+            </div> -->
+
+            <p style="margin-bottom: 0;">Subtotal: <b class="mwCart-grandSubtotal" style="float: right;"></b></p>
+            <div id="mwCart-blerb">Shipping and discounts are added at checkout.</div>
+            <a id="mwCart-checkout-btn" class="btn" href="<?php echo $this->getUrl('checkout/cart'); ?>" 
+                style="width: 100%; border: 1px solid gray;">CHECKOUT</a>
+        </div>
+
+        <input type="hidden" id="mwCart-form-key" value="<?php echo Mage::getSingleton('core/session')->getFormKey(); ?>"/>
+        <input type="hidden" id="mwCart-update-url" value="<?php echo $this->getAjaxUpdateUrl(); ?>"/>
+        <input type="hidden" id="mwCart-add-url" value="<?php echo $this->getAjaxAddUrl(); ?>"/>
+        <input type="hidden" id="mwCart-option-url" value="<?php echo $this->getAjaxOptionUrl(); ?>"/>
+
+	</div>
+    <!--MODALS-->
+    <div class="hidden">
+        <!--option select modal-->
+        <div id='mwCart_optionModal_wrapper' class="text-center">
+            <h2 class="text-center" 
+                style="font-size: 22px; font-weight: 700; margin-top: 13px;">Customize Your Award!</h2>
+            <hr>
+            <div id="mwCart_optionModal_productSelectWrapper"></div>
+        </div>
+        <!--assembly with no option modal-->
+        <div id='mwCart_assemblyModal' class="text-center">
+            <h2 class="text-center mwCart_assemblyTitle" style="font-size: 22px; font-weight: 700;"></h2>
+            <hr>
+            <p class="mwCart_assemblyParagraph"></p>
+            <a class="btn checkoutStep-btn" style="margin: 6px 0;" onclick="mwCart_addProduct()">I Understand</a>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/105d7ae403.js"></script>
+    <?php echo $this->helper('adminhtml/js')->includeScript('lib/slidereveal.min.js') ?>
+
+	
+
+    <script>
+    //get products and EQP code, append products to the side panel
+    var taxVat = '<?php echo $taxVat; ?>' ? +'<?php echo $taxVat; ?>' : 0;
+	var cartProducts = <?php echo $cartProducts; ?> ? <?php echo $cartProducts; ?> : [];
+    var mwCart, mwCartTrigger, selectColorbox;
+    var baseImageUrl = 'https://image.crystal-d.com/img/u494-y/jpg/';
+	
+	jQuery(document).ready(function(){
+        mwCartTrigger = jQuery('#mwCart-trigger');
+		//Init side panel
+		mwCart = jQuery('#mwCart').slideReveal({
+			trigger: mwCartTrigger,
+			push: false,
+			width: 330,
+			overlay: true,
+			zIndex: 2000,
+			position: 'left'
+		});
+		if(cartProducts.length > 0){
+            mwCartTrigger.css('visibility', 'visible');
+            jQuery('#mwCart-header-btn-wrp').show();
+			for(var x = 0; x < cartProducts.length;  x++){
+                cartProducts[x].avail = parseInt(cartProducts[x].avail);
+                cartProducts[x].qty = parseInt(cartProducts[x].qty);
+                cartProducts[x].itemId = parseInt(cartProducts[x].itemId);
+                cartProducts[x].productId = parseInt(cartProducts[x].productId);
+                cartProducts[x].tr_price1 = parseFloat(cartProducts[x].tr_price1);
+                cartProducts[x].tr_price2 = parseFloat(cartProducts[x].tr_price2);
+                cartProducts[x].tr_price3 = parseFloat(cartProducts[x].tr_price3);
+                cartProducts[x].tr_qty2 = parseInt(cartProducts[x].tr_qty2);
+                cartProducts[x].tr_qty3 = parseInt(cartProducts[x].tr_qty3);
+                if(cartProducts[x].qty > cartProducts[x].avail){
+                    cartProducts[x].qty = cartProducts[x].avail;
+                    mwCart_ajax('update', cartProducts[x].itemId, cartProducts[x].qty);
+                }
+				mwCart_addProductToDiv(x);
+			}
+        }
+        mwCart_calcAndDisplayTotals();
+        jQuery('#mwCart-close').click(function(){ mwCart.slideReveal("hide") });
+        jQuery('#mwCart-header-btn').click(function(){ mwCart.slideReveal("show") });
+        jQuery('#mwCart-products-wrp').css('maxHeight', jQuery(window).height() - 200);
+    });
+    
+    /**
+     * "Private" legacy function to replace the foreach functionality of ES6
+     * Searches an array and returns found id
+     */
+    function getLabelIndex(needle, haystack){
+        for(var x = 0; x < haystack.length; x++){
+            if(haystack[x].label == needle) return x;
+        }
+    }
+
+    /**
+     * Accepts mwCart_tempProduct and brings up a modal to select options if neccessary
+     * otherwise adds the product to the cart.
+     * 
+     * This is the entry point into the cart from view.phtml
+     */
+    function mwCart_selectProductOptions(product){
+
+        /** Assembly is set up to be a selectable product option though Marketing
+            didn't want to use this feature. I'll leave the bones in, in case they want 
+            this feature in the future. */
+            //product.selectedOptions.push({ label: 'assembly', value: true });
+        
+        var displayOptionModal = false; //If any modal should be shown.
+        var displayAssembly = false;    //Should show some sort of assembly information.
+        var modalElement = '';          //Which modal to show.
+        var assemblyVerbiage = {        //If displayAssembly, this is the text to be shown.
+            title: '',
+            paragraph: ''
+        };
+        product.selectedOptions = [];
+
+        if(product.options){
+            displayOptionModal = true;
+            /*Make a call to Mgw_Modalcart_IndexController formatOptionalProductsAction
+            and insert results into mwCart_optionModal_productSelect in the option modal*/
+            mwCart_ajax('formatOptions', JSON.stringify(product.options), function(response){
+                jQuery('#mwCart_optionModal_productSelectWrapper').html(response);
+            });
+        }
+
+        if(product.needs_assembly == 1 || product.needs_trophy_assembly == 1){
+            displayAssembly = true;
+        }
+
+        if(product.needs_assembly == 1 && product.needs_trophy_assembly == 1){
+            assemblyVerbiage.title = 'Partly Assembled';
+            assemblyVerbiage.paragraph = 'This award will be shipped partly assembled. Please allow 1-3 days for this award to arrive.';
+        } else if(product.needs_assembly == 1){
+            assemblyVerbiage.title = 'Assembly Required';
+            assemblyVerbiage.paragraph = 'This award needs to be assembled. Please allow an additional 1-3 days for assembly prior to shipping.';
+        } else if ( product.needs_trophy_assembly == 1 ){
+            assemblyVerbiage.title = 'Unassembled Award';
+            assemblyVerbiage.paragraph = 'This award will be shipped unassembled. You will be unable to etch this award if we sent it pre-assembled.';
+        }
+
+        if( displayOptionModal ){
+            modalElement = '#mwCart_optionModal_wrapper';
+            if( displayAssembly ){
+                jQuery('.mwCart_assembly_container').show();
+            } else {
+                jQuery('.mwCart_assembly_container').hide();
+            }
+        } else if( displayAssembly ){
+            modalElement = '#mwCart_assemblyModal';
+        }
+
+
+        if(modalElement){
+            setClassInnerHtml('mwCart_assemblyTitle', assemblyVerbiage.title);
+            setClassInnerHtml('mwCart_assemblyParagraph', assemblyVerbiage.paragraph);
+            jQuery.colorbox({
+                inline: true,
+                href: modalElement,
+                width: '95%',
+                maxWidth: '1080px',
+                close: "X",
+                scrolling: false,
+                onComplete: function(){
+                    setTimeout(function(){
+                        jQuery.colorbox.resize();
+                    }, 100)
+                }
+            });
+        } else {
+            mwCart_addProduct();
+        }
+        
+    }
+
+
+    /**
+     * Changes options on the product and calls AJAX to Modules Index controller to 
+     * add the product to Magento's cart
+     * 
+     * @param object mwCart_tempProduct
+     * assumes mwCart_tempProduct is in global space
+     */
+    function mwCart_addProduct(){
+        
+        if(!mwCart_tempProduct){
+            console.log("Temp product is not in global space.");
+            return;
+        }
+        var product = mwCart_tempProduct;
+        //See if product exists in cart already
+        if(cartProducts.length > 0){
+            if(cartProducts.findIndex( function(iter){ return iter.productId == product.productId; } ) !== -1
+             && !product.options){
+                alert('Product already exists in cart, updates its quantity.');
+                jQuery.colorbox.close();
+                return;
+            }
+        }
+        
+        //Check if customer wants pre assembled or not
+        //Not using anymore, this is a separate modal for the customer.
+        // if(product.needs_assembly == '1' 
+        //     && !product.needs_trophy_assembly == '0' 
+        //     && !jQuery('#mwCart_assembled').is(':checked')) {
+        //     product.selectedOptions[getLabelIndex('assembly', product.selectedOptions)].value = false;
+        // }
+
+        var toAdd = []; //A list of product that will need to be added.
+
+        if(product.options){
+            product.selectedOptions = [];
+            var mainQty = parseInt(document.getElementById('mwCart_optionModal_mainQty').value);
+            var optionSelected = false; //Track whether an option was actually selected.
+            if(mainQty === 0){
+                alert('Please enter a valid product Quantity!');
+                return;
+            }
+            for(var x = 0; x < product.options.length; x++){
+
+                var option = product.options[x];
+                var skus = option.list.split('|');
+                var qtyCountdown = mainQty; //Keep track of how many main products we have left
+
+                for( var z = 0; z < skus.length; z++){
+
+                    var sku = skus[z];
+                    var input = document.getElementById('mwCart_optionModal_option_' + sku);
+                    var optionInstance = JSON.parse(document.getElementById('mwCart_optionModal_option_' + sku +'_data').value);
+
+                    if(option.label == 'goal_setter'){
+
+                        var inputQty = parseInt(input.value);
+                        if(inputQty == 0) continue; //Skip options with zero qty.
+
+                        optionSelected = true;
+                        var qtyDifference = qtyCountdown - inputQty; //Calculate how many products to add.
+
+                        //We have more goal setters than products! Add the goal setter blocks now.
+                        if(qtyDifference < 0){
+                            optionInstance.qty = Math.abs(qtyDifference);
+                            toAdd.push(optionInstance);
+                        }
+
+                        //Now add main instances with the goal setter option if applicable.
+                        if(qtyCountdown > 0){
+                            var singleInstance = JSON.parse(JSON.stringify(product));
+                            singleInstance.qty = Math.min(qtyCountdown, inputQty);
+                            singleInstance.selectedOptions.push({label : option.label, value: sku, url: optionInstance.url});
+                            toAdd.push(singleInstance);
+                        }
+
+                        //Coalesc subtract inputQty from the qtyCountdown.
+                        qtyCountdown = Math.max(qtyDifference, 0);
+
+                    } else {
+                        if(input.checked){
+                            optionSelected = true;
+                            qtyCountdown = 0;
+                            var singleInstance = JSON.parse(JSON.stringify(product));
+                            singleInstance.qty = mainQty;
+                            singleInstance.selectedOptions.push({ label: option.label, value: sku, url: optionInstance.url});
+                            toAdd.push(singleInstance);
+                            break;
+                        }
+                    }
+                }
+                if(qtyCountdown > 0 ){
+                    alert('You\'ve selected more awards than blocks. \nOne block is included in the price of the award. \nPlease select another block.');
+                    return;
+                }
+            }
+            if(!optionSelected){
+                alert('Please select an option to add this product to your cart!');
+                return;
+            }
+        } else {
+            var singleInstance = JSON.parse(JSON.stringify(product));
+            singleInstance.qty = 1;
+            toAdd.push(singleInstance);
+        }
+
+        //Iterate through the products, add them to everything.
+        for(var y = 0; y < toAdd.length; y++){
+            var toAddProd = toAdd[y];
+
+            //Add product to cartProducts, when ajax is returned we need to use the index
+            //To refer to the instance.
+            toAddProd['index'] = cartProducts.push(toAddProd) - 1;
+            //Add product to Magento's cart.
+            mwCart_ajax('add', toAddProd, function(response){
+                if (response.success == 0) {
+                    // 1) Inform the user
+                    alert(response.error || 'Sorry, this item is out of stock and cannot be added.');
+
+                    // 2) Remove the placeholder entry from our array and the UI
+                    cartProducts.splice(response.index, 1);
+                    jQuery('#mwCart-product-' + response.index).remove();
+
+                    return;
+                }
+
+                // On success, update itemId and avail, then render
+                cartProducts[response.index].itemId = parseInt(response.itemId);
+                if (typeof response.avail !== 'undefined') {
+                    cartProducts[response.index].avail = parseInt(response.avail);
+                }
+                mwCart_addProductToDiv(response.index);
+                mwCart_calcAndDisplayTotals();
+            });       
+        }
+
+        //Cleanup.
+        jQuery('#mwCart-header-btn-wrp').show();
+        mwCartTrigger.css('visibility', 'visible');
+        mwCart.slideReveal("show");
+        jQuery.colorbox.close();
+        
+    }
+
+    /**
+     * Call Magento's cart with ajax to perform tasks
+     * and run the carts in parallel.
+     * 
+     * @param string method
+     * @param object|string|int data
+     * @param function success
+     */
+    function  mwCart_ajax(method, data, success = function(){}){
+        var formData = new FormData();
+        formData.append('form_key', jQuery('#mwCart-form-key').val());
+        var url = '';
+        switch(method){
+            case 'update' :
+                formData.append('id', data.id);
+                formData.append('qty', data.qty);
+                url = jQuery('#mwCart-update-url').val();
+                break;
+            case 'add' :
+                if(data.qty){
+                    formData.append('qty', data.qty);
+                }
+                formData.append('index', data.index);
+                formData.append('id', data.productId);
+                formData.append('options', JSON.stringify(data.selectedOptions));
+                url = jQuery('#mwCart-add-url').val();
+                break;
+            case 'formatOptions' :
+                formData.append('list', data);
+                url = jQuery('#mwCart-option-url').val();
+                break;
+            default :
+                console.log("mwCart_ajax, no method selected");
+                break;
+        }
+
+        var spinner = '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" style="width:100%;shape-rendering: auto; display: block; background: rgba(0, 0, 0, 0);"><style>@keyframes spin{0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)}} .asdf1234{transform-origin:center;animation:spin 2s linear infinite}</style><circle class="asdf1234" stroke-dasharray="164.93361431346415 56.97787143782138" r="35" stroke-width="10" stroke="#999999" fill="none" cy="50" cx="50"></circle></svg>';
+
+        jQuery.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            beforeSend: function() {
+                // Before sending the data, add some user feedback to let them know something is processing.
+
+                jQuery('#mwCart-checkout-btn')
+                .empty()
+                .html('UPDATING CART')
+                .css({'opacity' : '0.5', 'pointer-events' : 'none'});
+
+                jQuery('.mwCart-inc-btn, .mwCart-dec-btn')
+                .empty()
+                .html(spinner)
+                .css({'pointer-events' : 'none'});
+
+                console.log('Processing request...');
+            },
+            success: function(response) {
+                console.log('Success:', response);
+                success(response);
+            },
+            error: function (request, status, error) {
+                console.error('AJAX Error:', status, error);
+            },
+            complete: function() {
+                // Once everything is complete, reset everything back to its normal state
+ 
+                jQuery('#mwCart-checkout-btn')
+                .empty()
+                .html('CHECKOUT')
+                .css({'opacity' : '1', 'pointer-events' : 'all'});
+
+                jQuery('.mwCart-inc-btn, .mwCart-dec-btn')
+                .css({'pointer-events' : 'all'});
+                
+                jQuery('.mwCart-inc-btn')
+                .empty()
+                .html('+')
+                
+                jQuery('.mwCart-dec-btn')
+                .empty()
+                .html('-')
+
+                console.log('Request complete');
+            }
+        });
+    }
+
+    function updateCart(productId, qty) {
+        mwCart_ajax('update', {id: productId, qty: qty}, function(response) {
+            if (response.success) {
+                console.log('Cart updated successfully');
+            } else {
+                console.error('Failed to update cart:', response);
+            }
+        });
+    }
+
+	function mwCart_addProductToDiv(i){
+        var product = cartProducts[i];
+		var template = "<div class='mwCart-product-wrp' id='mwCart-product-" + i + "'>" + 
+                "<a href='" + product.url + "'>" + 
+                    "<img class='mwCart-img' src='" + baseImageUrl + product.img_url + ".jpg'/>" +
+                "</a>" + 
+                "<div class='mwCart-prd-info-wrp'>" + 
+                    "<div><a class='mwCart-prd-descrip' href='" + product.url + "'>" + product.descrip + "</a></div>" + 
+                    "<b class='text-right'>" + 
+                        "<button class='mwCart-dec-btn' onclick='mwCart_qtyDecrease(" + i + ")'>-</button>" + 
+                        "<input class='mwCart-qty-input' type='text'" + 
+                            "onchange='mwCart_validateAndUpdate(" + i + ", this.value)' id='cart_qty_" + i + "' value=" + product.qty + " />" + 
+                        "<button class='mwCart-inc-btn' onclick='mwCart_qtyIncrease(" + i + ")'>+</button>" + 
+                        "<b class='mwCart-prd-subtotal mwCart-prd-subtotalWithDiscounts-" + i + "'></b>" +
+                    "</b>" + 
+                    "<div class='mwCart-prd-avail'><b style='color: #7987a0;'>" + product.avail + "</b> Available</div>" + 
+                    "<button class='btn btn-xs' style='display: inline-block; position: absolute; right: 0;bottom: 0;' onclick='mwCart_validateAndUpdate(" + i + ", 0);'>Remove</button>";
+        //Display information about options selected.
+        if(product.selectedOptions){
+            var optionTemplate = '';
+            for(var x = 0; x < product.selectedOptions.length; x ++){
+                option = product.selectedOptions[x];
+                if(option.label != 'assembly'){
+                    optionTemplate += "<a href='/" + option.url + "'><div style='font-size: 13px;'> - " + option.value + "</div></a>";
+                }
+            }
+
+            if(optionTemplate){
+                template +=  "<div style='font-size: 14px; font-weight: 700;'>Option Selected</div>" + optionTemplate;
+            }
+        }
+    
+        template += "</div></div>";
+		jQuery('#mwCart-products-wrp').append(template);
+	}
+
+	function mwCart_qtyIncrease(i){
+		mwCart_validateAndUpdate(i, cartProducts[i].qty + 1);
+	}
+
+	function mwCart_qtyDecrease(i){
+		mwCart_validateAndUpdate(i, cartProducts[i].qty - 1);
+    }
+    
+    /**
+     * A universal qty increase and decrease function for the optional modal.
+     */
+    function mwCart_optionModal_changeQty(element, avail, direction = false){
+        inputElem = document.getElementById(element);
+        getValue = parseInt(inputElem.value);
+        newValue = 0;
+
+        if(direction)
+            newValue = eval( getValue + direction + 1);
+        else
+            newValue = getValue;
+
+        if(newValue < 0)
+            newValue = 0;
+        else if(newValue > avail)
+            newValue = parseInt(avail);
+        
+        inputElem.value = newValue;
+
+        //If this is a main product quantity show the rest of the form.
+        if(element === 'mwCart_optionModal_mainQty'){
+            var optionSelectWrapper = document.getElementById('mwCart_optionSelectWrapper');
+            if(newValue > 0){
+                optionSelectWrapper.style.display = 'block';
+            } else {
+                optionSelectWrapper.style.display = 'none';
+            }
+            jQuery.colorbox.resize();
+        }
+    }
+
+    /*
+    Validates the qty is less than products available and updates all the necessary 
+    channels with the new qty.
+     */
+	function mwCart_validateAndUpdate(i, value){
+        value = Math.abs(Math.round(+value));
+        //Check if value is a number.
+        if(isNaN(value)){
+            jQuery('#cart_qty_' + i).val(cartProducts[i].qty);
+            jQuery('#cr-product-qty-' + i).val(cartProducts[i].qty);
+            return;
+        }
+        //If value is greater than products available set to max.
+		if(value > cartProducts[i].avail){
+			value = +cartProducts[i].avail;
+		}
+        //Update Magento's cart.
+        mwCart_ajax('update', { id: cartProducts[i].itemId, qty: value });
+        
+        //Handle all the html with jquery
+		if(value == 0){
+            mwCart_removeProduct(i);
+		} else {
+            cartProducts[i].qty = value;
+            jQuery('#cart_qty_' + i).val(value);
+            jQuery('#cr-product-qty-' + i).val(value);
+        }
+        mwCart_calcAndDisplayTotals();
+    }
+
+    /**
+    Display all the product totals and discounts in the HTML. To see the backend product
+    calculations see app\code\local\Mgw\Modalcart\Model\Observer\Price.php::getColumnPrice()
+
+    This function was modified heavily on 9/5/19 to handle hopefully any scenario you could think of.
+    */
+    function mwCart_calcAndDisplayTotals(){
+
+        var subtotalStandard = 0;       //Total price if no discount was applied. Just standard column pricing.
+        var subtotalEQP = 0;            //Total price with only eqp removed.
+        var subtotalPostDiscount = 0;   //Total after all discounts are removed.
+        var eqpDiscount = 0;            //End Quantity Pricing discount if applicable.
+        var eppDiscount = 0;            //15% discount if applied 
+        var tariffSurcharge = 0;        //Products coming from china are 
+        
+        var productCount = 0;           //Count the number of total products in the cart.
+        var discountVerbiage = "";      //Percentage discount to display, Example "15%"
+
+        for(var x = 0; x < cartProducts.length;  x++){
+
+
+            var product = cartProducts[x];
+            var productSubTotalStd = 0; //Subtotal of product without EQP.
+            var productPrice = 0;       //Standard price of product, no discounts.
+            var prodChange = 0;         //Price after changes are applied.
+
+            if(!product.itemId) continue;
+
+            // https://crystaldit.mydonedone.com/issuetracker/projects/70721/issues/129
+            // If a product is in the cart twice we need to add it to the qty discount
+            // For backend change search for "catalog_product_get_final_price"
+            var totalProductQty = cartProducts.reduce((total, prod) => {
+                return prod.productId == product.productId? prod.qty + total : total;
+            }, 0);
+            console.log(product, totalProductQty);
+
+            //STD
+            if(totalProductQty >= product.tr_qty3){
+                productPrice = product.tr_price3;
+            } else if(totalProductQty >= product.tr_qty2){
+                productPrice = product.tr_price2;
+            } else {
+                productPrice = product.tr_price1;
+            }
+
+            
+
+            //EQP
+            if(taxVat == 1 || taxVat == 2 || taxVat == 3){
+                prodChange = product.tr_price3;
+                var discount = productPrice - prodChange;
+                if(prodChange){
+                    eqpDiscount += (parseFloat(discount.toFixed(2))) * product.qty;
+                    //prodChange -= discount; //Why did I have this?
+                }
+            } else{
+                prodChange = productPrice; //init
+            }
+
+            //EPP
+            if(taxVat == 2){
+                var discount = prodChange * 0.15;
+                discountVerbiage = "15%";
+                eppDiscount += (parseFloat(discount.toFixed(2))) * product.qty;
+                prodChange -= discount;
+            }
+
+            //EPP
+            if(taxVat == 3){
+                var discount = prodChange * 0.10;
+                discountVerbiage = "10%";
+                eppDiscount += (parseFloat(discount.toFixed(2))) * product.qty;
+                prodChange -= discount;
+            }
+
+            //#tariffSurcharge
+	/*
+            if( product.country == 'China'){
+                var addition = prodChange * 0.03;
+                tariffSurcharge += (parseFloat(addition.toFixed(2))) * product.qty;
+                prodChange = prodChange + addition;
+            }
+
+            if (product.country && product.country.toLowerCase() === 'china') {
+                var addition = prodChange * 0.15;
+                tariffSurcharge += (parseFloat(addition.toFixed(2))) * product.qty;
+                prodChange = prodChange + addition;
+            }
+            */
+
+            //Product totals
+            productSubtotalStd = (parseFloat(productPrice.toFixed(2))) * product.qty;
+            var productSubtotalWithDiscount = (parseFloat(prodChange.toFixed(2))) * product.qty;
+
+            subtotalStandard += productSubtotalStd;
+            subtotalPostDiscount += productSubtotalWithDiscount;
+
+            productCount += product.qty;
+
+            //Set product information
+            setClassInnerHtml('mwCart-prd-subtotalStandard-' + x, "$" + productSubtotalStd.toFixed(2));
+            setClassInnerHtml('mwCart-prd-subtotalWithDiscounts-' + x, "$" + productSubtotalWithDiscount.toFixed(2));
+            setClassInnerHtml('mwCart-prd-price-' + x, "$" + productPrice.toFixed(2));
+            if(product.qty > 1){
+                jQuery('.mwCart-prd-priceEach-container-' + x).show();
+            } else {
+                jQuery('.mwCart-prd-priceEach-container-' + x).hide();
+            }
+
+        }
+        
+        //Set the totals
+        setClassInnerHtml('mwCart-subtotalStd', "$" + subtotalStandard.toFixed(2));
+        setClassInnerHtml('mwCart-count', productCount);
+
+        if(eqpDiscount){
+            jQuery('.mwCart-eqpDiscount-container').show();
+            setClassInnerHtml('mwCart-eqpDiscount', "- $" + eqpDiscount.toFixed(2));
+        } else {
+            jQuery('.mwCart-eqpDiscount-container').hide();
+        }
+
+        if(eppDiscount){
+            jQuery('.mwCart-eppDiscount-container').show();
+            setClassInnerHtml('mwCart-eppDiscountVerbiage', discountVerbiage);
+            setClassInnerHtml('mwCart-eppDiscount', "- $" + eppDiscount.toFixed(2));
+        } else {
+            jQuery('.mwCart-eppDiscount-container').hide();
+        }
+
+        setClassInnerHtml('mwCart-grandSubtotal', "$" + subtotalPostDiscount.toFixed(2));
+        if(eqpDiscount || eppDiscount){
+            jQuery('.mwCart-grandSubtotal-container').show();
+        } else {
+            jQuery('.mwCart-grandSubtotal-container').hide();
+        }
+
+	    
+        // if(tariffSurcharge){
+        //     jQuery('.mwCart-tariffSurcharge-container').show();
+        //     setClassInnerHtml('mwCart-tariffSurcharge', "+ $" + tariffSurcharge.toFixed(2));
+        // } else {
+        //     jQuery('.mwCart-tariffSurcharge-container').hide();
+        // }
+    
+    }
+    
+    function mwCart_removeProduct(i){
+        cartProducts[i] = {}; //Can't mess up the order off the array. Will be removed on refresh
+        jQuery('#mwCart-product-' + i).remove();
+        jQuery('#cr-product-container-' + i).remove();
+    }
+
+    function setClassInnerHtml(className, value){
+        value = value === "0.00"? "&#151;" : value;
+        var elems = jQuery('.' + className);
+        for(var x = 0; x < elems.length; x++){
+            elems[x].innerHTML = value;
+        }
+    }
+
+    </script>
+<?php endif; ?>
+<?php endif; ?>

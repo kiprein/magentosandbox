@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <NeoTheme_Blog>
+            <active>true</active>
+            <codePool>community</codePool>
+        </NeoTheme_Blog>
+    </modules>
+</config> 

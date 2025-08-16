@@ -1,0 +1,254 @@
+<!--
+/**
+ * NeoTheme (Neo Industries Pty Ltd)
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to Neo Industries Pty LTD Non-Distributable Software Modification License (NDSML)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.neotheme.com/legal/licenses/NDSM.html
+ * If the license is not included with the package or for any other reason, 
+ * you did not receive your licence please send an email to 
+ * license@neotheme.com so we can send you a copy immediately.
+ *
+ * This software comes with no warrenty of any kind. By Using this software, the user agrees to hold 
+ * Neo Industries Pty Ltd harmless of any damage it may cause.
+ *
+ * @category    modules
+ * @module      NeoTheme_Blog
+ * @copyright   Copyright (c) 2011 Neo Industries Pty Ltd (http://www.neotheme.com)
+ * @license     http://www.neotheme.com/  Non-Distributable Software Modification License(NDSML 1.0)
+ */
+-->
+<config>
+    <tabs>
+        <neotheme translate="label" module="neotheme_blog">
+            <label>Neotheme</label>
+            <sort_order>900</sort_order>
+        </neotheme>
+    </tabs>
+    <sections>
+        <blog translate="label" module="neotheme_blog">
+            <label>nBlog</label>
+            <tab>neotheme</tab>
+            <class>neotheme-admin</class>
+            <sort_order>40</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general translate="label" module="neotheme_blog">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>0</sort_order>
+                    <fields>
+                        <draft_ips translate="label" module="neotheme_blog">
+                            <label>Show draft posts on the frontend on the Following IP Addresses</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>40</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </draft_ips>
+                        <add_ips_on_save translate="label" module="neotheme_blog">
+                            <label>Automatically add author's Ip to safe list (above) on post save?</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </add_ips_on_save>
+                        <frontend_url_key translate="label" module="neotheme_blog">
+                            <label>Frontend Url Key</label>
+                            <comment><![CDATA[the prefix for url identifiers]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>55</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </frontend_url_key>
+                        <enable_top_menu_link translate="label" module="neotheme_blog">
+                            <label>Enable Top Menu Link</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>50</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enable_top_menu_link>
+                        <time_format translate="label" module="neotheme_blog">
+                            <label>Time Format to use through Blog</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>neotheme_blog/attribute_source_locale_format</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </time_format>
+                        <time_format_custom translate="label" module="neotheme_blog">
+                            <label>Custom Date/Time Format</label>
+                            <comment><![CDATA[Please see <a target="_new" href="http://framework.zend.com/manual/1.12/en/zend.date.constants.html#zend.date.constants.selfdefinedformats">Zend ISO Format</a> for date format]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>70</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><time_format>custom</time_format></depends>
+                        </time_format_custom>
+                        <customer_group_filtering translate="label" module="neotheme_blog">
+                            <label>Customer Group Filtering</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>80</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>[Beta] Shows Certain Posts to Defined Customer Groups</comment>
+                        </customer_group_filtering>
+                    </fields>
+                </general>
+                <frontend>
+                    <label>Frontend</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>20</sort_order>
+                    <fields>
+                        <default_root_template>
+                            <label>Default Layout</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>page/source_layout</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment>The Default layout for all blog pages</comment>
+                        </default_root_template>
+                        <default_meta_keywords>
+                            <label>Default Meta Keywords</label>
+                            <comment><![CDATA[Default meta keywords for the blog]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </default_meta_keywords>
+                        <default_meta_description>
+                            <label>Default Meta Description</label>
+                            <comment><![CDATA[Default meta description for the blog]]></comment>
+                            <frontend_type>textarea</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </default_meta_description>
+                    </fields>
+                </frontend>
+                <category translate="label" module="neotheme_blog">
+                    <label>Category</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>30</sort_order>
+                    <fields>
+                        <show_populated_only translate="label" module="neotheme_blog">
+                            <label>Hide categories without posts?</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </show_populated_only>
+                    </fields>
+                </category>
+                <comment translate="label" module="neotheme_blog">
+                    <label>Comment</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>40</sort_order>
+                    <fields>
+                        <type_template translate="label" module="neotheme_blog">
+                            <label>Comment template</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>neotheme_blog/attribute_source_comment_type</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </type_template>
+                        <comments_count translate="label" module="neotheme_blog">
+                            <label>Number of comments to show</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>20</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </comments_count>
+                        <facebook_comment_width translate="label" module="neotheme_blog">
+                            <label>Facebook Widget Width (px)</label>
+                            <frontend_type>Text</frontend_type>
+                            <sort_order>30</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><type_template>neotheme/blog/comment/form/facebook.phtml</type_template></depends>
+                        </facebook_comment_width>
+
+                    </fields>
+                </comment>
+                <customer translate="label" module="neotheme_blog">
+                    <label>Customer Preferences</label>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <sort_order>50</sort_order>
+                    <fields>
+                        <enabled translate="label" module="neotheme_blog">
+                            <label>Enable customer blog preferences</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>60</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </enabled>
+                    </fields>
+                </customer>
+            </groups>
+        </blog>
+        <rss translate="label" module="rss">
+            <groups>
+                <neotheme_blog translate="label">
+                    <label>Neotheme Blog</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>2</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                         <active translate="label">
+                            <label>Enable RSS</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_enabledisable</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                    </fields>
+                </neotheme_blog>
+            </groups>
+       </rss>
+    </sections>
+</config>

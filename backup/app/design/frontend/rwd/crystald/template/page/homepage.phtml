@@ -1,0 +1,139 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Template for Mage_Page_Block_Html
+ */
+?>
+
+<!DOCTYPE html>
+
+<!--[if lt IE 7 ]>
+<html lang="<?php echo $this->getLang(); ?>" id="top" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>
+<html lang="<?php echo $this->getLang(); ?>" id="top" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>
+<html lang="<?php echo $this->getLang(); ?>" id="top" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>
+<html lang="<?php echo $this->getLang(); ?>" id="top" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="<?php echo $this->getLang(); ?>" id="top" class="no-js"> <!--<![endif]-->
+
+<head>
+	<?php echo $this->getChildHtml('head') ?>
+</head>
+<body<?php echo $this->getBodyClass() ? ' class="' . $this->getBodyClass() . '"' : '' ?>>
+<?php echo $this->getChildHtml('after_body_start') ?>
+<div id="wrapper" class="wrapper">
+	<?php echo $this->getChildHtml('global_notices') ?>
+    <div class="page">
+		<?php echo $this->getChildHtml('header') ?>
+
+        <div class="page-content">
+            <div class="row main-slider-wrapper bg-white">
+                <div class="col-xs-12 col-sm-12 hidden-lg hidden-md hidden-sm">
+                    <?php echo $this->getChildHtml('mobile-banners'); ?>
+                </div>
+                <div class="col-md-12 hidden-xs">
+                    <?php echo $this->getChildHtml('banners'); ?>
+                </div>
+            </div>
+
+            <div class="row mobile-m-0 bg-white">
+                <div class="col-xs-12">
+                    <div class="container occasions-container mobile-ps-0">
+                        <h3 class="light-grey">What's Hot at Crystal D</h3>
+                        <?php echo $this->getChildHtml('occasions'); ?>
+                    </div>
+                </div>
+            </div>
+			
+			<div class="row mobile-m-0 bg-white">
+                <div class="col-xs-12">
+                    <div class="container featured-gallery-container mobile-ps-0">
+                        <h3 class="light-grey">Featured Galleries</h3>
+				        <?php echo $this->getChildHtml('featured.gallery'); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-wrapper row">
+                <p class="light-grey">Working with Crystal D is awesome because...</p>
+                <img class="video-play-btn" src="<?php echo $this->getSkinUrl('images/large-play-btn.png', array('_secure' => true)); ?>"
+                alt="Play Button"/>
+                <iframe id="video" src="https://www.youtube.com/embed/I1BWQtg_Ugk?rel=0&showinfo=0" width="1280" height="328"
+                        allow="autoplay; encrypted-media"></iframe>
+                <a class="video-close">X</a>
+            </div>
+            <div class="row mobile-m-0 bg-white">
+                <div class="col-xs-12">
+                    <div class="container callouts-container mobile-ps-0">
+	                    <?php echo $this->getChildHtml('callouts'); ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="idea-callout-wrapper">
+                <p class="light-grey idea-callout-header">Need Ideas?</p>
+                <p class="idea-callout-text">You came to the right place! Our solutions team has come up with some of the
+                    most stellar ideas in the world.</p>
+                <a href="<?php echo $this->getUrl('ideas'); ?>" class="btn btn-register">Discover Amazing Ideas</a>
+            </div>
+
+        </div>
+    </div>
+	<?php echo $this->getChildHtml('footer_before') ?>
+	<?php echo $this->getChildHtml('footer') ?>
+	<?php echo $this->getChildHtml('global_cookie_notice') ?>
+	<?php echo $this->getChildHtml('before_body_end') ?>
+</div>
+<?php echo $this->getAbsoluteFooter() ?>
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		jQuery('.video-play-btn').on('click', function (ev) {
+			jQuery(this).css('display', 'none');
+                jQuery('#video').css('display', 'block');
+                jQuery('.video-close').css('display', 'block');
+
+                jQuery("#video")[0].src += "&autoplay=1";
+			ev.preventDefault();
+		});
+
+        jQuery('.video-close').on('click', function (ev) {
+            jQuery(this).css('display', 'none');
+            jQuery('#video').css('display', 'none');
+            jQuery('.video-play-btn').css('display', 'block');
+
+            ev.preventDefault();
+        });
+
+    });
+</script>
+
+</body>
+</html>

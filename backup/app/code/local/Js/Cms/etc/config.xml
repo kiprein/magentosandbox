@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Js_Cms>
+            <version>0.1.0</version>
+        </Js_Cms>
+    </modules>
+    <global>
+        <page>
+            <layouts>
+                <category_details translate="label">
+                    <label>Category Details</label>
+                    <template>page/category_details.phtml</template>
+                    <layout_handle>Category_Details</layout_handle>
+                </category_details>
+                <one_column_twelve_eighty translate="label">
+                    <label>1 column (1280 Width)</label>
+                    <template>js/page/1column-1280.phtml</template>
+                    <layout_handle>one_column_twelve_eighty</layout_handle>
+                </one_column_twelve_eighty>
+                <one_column_nine_eighty translate="label">
+                    <label>1 column (980 Width)</label>
+                    <template>js/page/1column-980.phtml</template>
+                    <layout_handle>one_column_nine_eighty</layout_handle>
+                </one_column_nine_eighty>
+            </layouts>
+        </page>
+    </global>
+</config>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kip_BotLimiter>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Kip_BotLimiter>
+    </modules>
+</config>

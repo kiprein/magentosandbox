@@ -1,0 +1,40 @@
+<?php
+$cRandId = mt_rand(1000000, 9999999);
+?>
+
+<div id="carousel__<?php echo $cRandId ?>" class="splide cd-car__carousel" style="visibility: visible">
+  <div class="splide__track cd-car__track">
+    <div class="splide__list cd-car__list">
+
+      <?php
+        foreach ($cSlides as $s){
+
+          $sHL = $s->getSlideHeadline();
+          $sSHL = $s->getSlideSubheadline();
+          $sBod = $s->getSlideBody();
+          $sHref = $s->getSlideLink();
+          $sCta = $s->getSlideLinkCta();
+          $sSlideImg = $s->getSlideImage();
+          $sSlideImgMobile = $s->getSlideImageMobile();
+          $sImg = Mage::getBaseUrl('media').'carousel/'.$sSlideImg;
+          $sMobImg = Mage::getBaseUrl('media').'carousel/'.$sSlideImgMobile;
+          $sTheme = $s->getSlideTheme();
+          $sVideo = $s['slide_video'];
+          
+          ?>
+          
+
+          <div class="splide__slide">
+            <?php include __DIR__ . '/slides/default.phtml'; ?>
+          </div>
+
+        <?php }
+      ?>
+
+    </div>
+  </div>
+</div>
+
+<?php
+include __DIR__ . '/js/carousel_js.phtml';
+?>

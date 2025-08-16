@@ -1,0 +1,6 @@
+# Crawlers Setup
+User-agent:
+
+Sitemap: http://www.crystal-d.com/sitemap
+
+*

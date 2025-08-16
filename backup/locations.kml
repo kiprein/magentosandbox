@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+	<Document>
+		<name>Locations for Crystal D.</name>
+		<atom:link rel="related" href="http://www.crystal-d.com" />
+		<Folder>
+			<Placemark>
+				<name><![CDATA[Crystal D]]></name>
+				<address><![CDATA[505 Atwater Cir, Saint Paul, MN, 55103, United States]]></address>
+				<description><![CDATA[]]></description>
+				<Point>
+					<coordinates>-93.1216659,44.9671193,0</coordinates>
+				</Point>
+			</Placemark>
+		</Folder>
+	</Document>
+</kml>

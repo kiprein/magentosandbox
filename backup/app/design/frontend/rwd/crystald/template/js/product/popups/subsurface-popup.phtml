@@ -1,0 +1,40 @@
+<div class="container subsurface-container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="popup-title">
+                3D Subsurface Imprint Process
+            </div>
+            <div class="row mt-20">
+	            <?php //For mobile ?>
+	            <?php if (Mage::helper('mobiledetect')->isMobile() || Mage::helper('mobiledetect')->isTablet()): ?>
+                    <div class="col-xs-12 center fs-14">
+                        <p class="lh-initial">Using our state-of-the-art technology, an image can be
+                            recreated inside
+                            crystal. A high-laser makes minute fractures inside the crystal,
+                            producing a clear image.
+                            <br><br>
+                            Take a look!</p>
+                        <br>
+                        <iframe style="display: block; margin-left: auto; margin-right: auto; float: left;"
+                                src="https://www.youtube.com/embed/o4y59ue5STY"></iframe>
+                    </div>
+	            <?php else: ?>
+                <div class="col-xs-3"></div>
+                <div class="col-xs-6 center fs-14">
+                    <p class="lh-initial">Using our state-of-the-art technology, an image can be recreated inside
+                        crystal. A high-laser makes minute fractures inside the crystal, producing a clear image.
+                        <br><br>
+                        Take a look!</p>
+                    <br>
+                    <iframe src="https://www.youtube.com/embed/o4y59ue5STY"
+                            style="width: 480px;height: 275px;"></iframe>
+                </div>
+                <div class="col-xs-3"></div>
+                <?php endif ;?>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>

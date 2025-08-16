@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Kip_NoSessionForGuests>
+            <version>0.1.0</version>
+        </Kip_NoSessionForGuests>
+    </modules>
+    <global>
+        <events>
+            <controller_front_init_before>
+                <observers>
+                    <kip_nosessionforguests>
+                        <type>singleton</type>
+                        <class>kip_nosessionforguests/observer</class>
+                        <method>preventSessionStart</method>
+                    </kip_nosessionforguests>
+                </observers>
+            </controller_front_init_before>
+        </events>
+    </global>
+</config>

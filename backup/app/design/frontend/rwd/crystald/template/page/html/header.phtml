@@ -1,0 +1,147 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magento.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magento.com for more information.
+ *
+ * @category    design
+ * @package     rwd_default
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+$_wishlistCount = $this->helper('js_guestwishlist')->getWishlistCount();
+$wishlistViewUrl = $this->helper('js_guestwishlist')->wishlistViewUrl();
+
+//Used for git header
+if($this->helper('js_utility')->gitHeaderEnabled()) {
+	$stringfromfile = file('.git/HEAD', FILE_USE_INCLUDE_PATH);
+	$firstLine = $stringfromfile[0]; //get the string from the array
+	$explodedstring = explode("/", $firstLine, 3); //seperate out by the "/" in the string
+	$branchname = $explodedstring[2]; //get the one that is always the branch name
+	echo '<div class="git-header">Current branch: <span class="git-header-text">' . $branchname . '</span><br><span class="git-header-text">Please make sure to refresh the cache if styling seems off.</div>';
+}
+
+$tagline = $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'tagline' )->toHtml();
+$topSearch = $this->getChildHtml( 'topSearch' );
+?>
+
+<header id="header">
+	<div class="header-top">
+		<div class="container zero-padding">
+			<div class="col-md-12">
+			    <div class="row mobile-header hidden-sm hidden-md hidden-lg">
+                    <!-- Mobile Header -->
+                    <div class="col-sm-12 zero-padding">
+                        <button id="mobile-icon" class="hamburger hamburger--collapse" type="button">
+                        <span class="hamburger-box">
+                            <span class="hamburger-inner"></span>
+                        </span>
+                        </button>
+	                    <?php echo $this->getChildHtml('mobile-menu'); ?>
+                        <div class="mobile-tagline">
+						    <?php echo $tagline; ?>
+                        </div>
+                        <div id="mobile-search-icon">
+
+                        </div>
+                        <div class="mobile-search no-display-mobile">
+						    <?php echo $topSearch; ?>
+                        </div>
+                    </div>
+                </div>
+				<div class="row hidden-xs">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-0">
+						<ul class="top-nav">
+                            <li>
+                                <i class="fa fa-home"></i>
+                            </li>
+                            <?php if ( Mage::helper( 'customer' )->isLoggedIn() ): ?>
+                                <li><a class="red" href="<?php echo Mage::helper( 'customer' )->getLogoutUrl(); ?>">Log Out</a></li>
+                                <span class="light-grey">|</span>
+                                <li>
+                                    <a href="<?php echo $this->getUrl('dashboard'); ?>">
+                                        View Dashboard
+                                    </a>
+                                </li>
+                                <span class="light-grey">|</span>
+                                <li><a class="red" href="<?php echo $this->getUrl('customer/account/edit'); ?>">Change Password</a></li>
+                            <?php else: ?>
+                                <li> <a class="red" href="<?php echo Mage::helper( 'customer' )->getLoginUrl(); ?>">Login</a></li>
+                            <?php endif;?>
+                            <span class="light-grey">|</span>
+                            <li>
+                                <a class="red" href="<?php echo $wishlistViewUrl ?>">
+                                    Award Idea List <?php if($_wishlistCount > 0) { echo '('.$_wishlistCount.')'; } ?>
+                                </a>
+                            </li>
+                            <span id="mwCart-header-btn-wrp" style="display: none;">
+                                <span class="light-grey">|</span>
+                                <li> <a class="red" style="cursor: pointer;" id="mwCart-header-btn">Cart</a></li>
+                            </span>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-3 padding-left-0 zero-padding-mobile">
+                <div class="logo-block"><a href="<?php echo $this->getUrl( '' ) ?>">
+                        <?php echo $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'logo' )->toHtml(); ?></a>
+                </div>
+            </div>
+            <div class="col-md-9 col-sm-9 padding-right-0">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 hidden-xs">
+                        <div class="top-menu">
+                            <?php echo $this->getLayout()->createBlock( 'cms/block' )->setBlockId( 'customer-service' )->toHtml(); ?>
+                            <div class="top-search">
+                                <?php echo $topSearch; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 hidden-xs">
+                        <div id="header-nav" class="skip-content">
+                            <?php echo $this->getChildHtml( 'topMenu' ) ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+    <div class="">
+        <div class="row main-nav-row">
+            <div class="col-sm-12 col-md-12 hidden-xs">
+                <?php echo $this->getChildHtml( 'main.nav' ) ?>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div id="sticky-menu-wrapper" class="col-sm-12 col-md-12 hidden-xs hidden">
+                <?php $this->getChild("sticky.nav")->setData("search", $topSearch); ?>
+                <?php echo $this->getChildHtml( 'sticky.nav' ) ?>
+
+            </div>
+        </div>
+    </div>
+</header>
+<?php echo $this->getChildHtml( 'topContainer' ); ?>

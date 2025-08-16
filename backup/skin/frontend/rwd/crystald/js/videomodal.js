@@ -1,0 +1,79 @@
+
+  // Public function called by your onclick
+  window.vidModal = function(rawUrl) {
+    const src = toYouTubeEmbed(rawUrl);
+
+    // Reuse if already open
+    let modal = document.querySelector('.cd-car__videomodal');
+    if (modal) {
+      const iframe = modal.querySelector('iframe');
+      if (iframe) iframe.src = src;
+      modal.dataset.open = "true";
+      return;
+    }
+
+    const html =
+      '<div class="cd-car__videomodal" data-open="true">' +
+        '<section class="cd-car__videomodal__section" role="dialog" aria-modal="true">' +
+          '<header class="cd-car__videomodal__header">' +
+            '<button type="button" class="cd-car__videomodal__closebutton" aria-label="Close video">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">' +
+                '<path fill-rule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+              '</svg>' +
+            '</button>' +
+          '</header>' +
+          '<div class="cd-car__videomodal__body">' +
+            '<iframe width="1920" height="1080" src="' + src + '" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>' +
+          '</div>' +
+          '<footer class="cd-car__videomodal__footer"></footer>' +
+        '</section>' +
+        '<div class="cd-car__videomodal__backdrop"></div>' +
+      '</div>';
+
+    document.body.insertAdjacentHTML('beforeend', html);
+    modal = document.querySelector('.cd-car__videomodal');
+
+    const teardown = () => {
+      // stop playback then remove
+      const iframe = modal.querySelector('iframe');
+      if (iframe) iframe.src = 'about:blank';
+      modal.remove();
+      document.removeEventListener('keydown', onKeydown);
+    };
+
+    const onKeydown = (e) => {
+      if (e.key === 'Escape') teardown();
+    };
+
+    modal.querySelector('.cd-car__videomodal__closebutton').addEventListener('click', teardown);
+    modal.querySelector('.cd-car__videomodal__backdrop').addEventListener('click', teardown);
+    document.addEventListener('keydown', onKeydown);
+  };
+
+  // Convert common YouTube URLs/IDs to an autoplaying embed
+  function toYouTubeEmbed(input) {
+    try {
+      if (!input) return '';
+      if (/^[\w-]{11}$/.test(input)) {
+        return 'https://www.youtube.com/embed/' + input + '?autoplay=1&rel=0&modestbranding=1';
+      }
+      const u = new URL(input, window.location.href);
+      // already an embed
+      if (u.pathname.startsWith('/embed/')) {
+        return u.href + (u.search ? '&' : '?') + 'autoplay=1&rel=0&modestbranding=1';
+      }
+      // youtu.be/{id}
+      if (u.hostname.includes('youtu.be')) {
+        const id = u.pathname.replace('/', '');
+        return 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+      }
+      // youtube.com/watch?v={id}
+      if (u.hostname.includes('youtube.com')) {
+        const id = u.searchParams.get('v');
+        if (id) return 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1';
+      }
+      return input; // fallback: use provided src as-is
+    } catch {
+      return input;
+    }
+  }
